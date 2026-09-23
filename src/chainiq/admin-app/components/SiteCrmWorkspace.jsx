@@ -1,0 +1,162 @@
+import React, { useEffect, useMemo, useState } from 'react';
+
+const TABS = [
+  ['overview', 'Overview'],
+  ['tools', 'Tools'],
+];
+
+const emptyForms = {
+  backlink: { name: '', url: '', notes: '' },
+  blog: { title: '', slug: '', excerpt: '', content: '', status: 'draft', category: 'Engineering' },
+  review: { author: '', rating: 5, comment: '', is_published: true },
+  project: { title: '', site_name: '', site_url: '', description: '', category: 'Web Development', image_url: '', is_published: true },
+};
+
+async function crmAction(action, payload = {}) {
+  const response = await fetch('/api/crm/action', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, ...payload }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data.ok === false) throw new Error(data.error || data.message || `Action failed (${response.status})`);
+  return data;
+}
+
+function Button({ children, onClick, danger = false, secondary = false, disabled = false }) {
+  return <button type="button" disabled={disabled} className={`aax-site-crm-btn${secondary ? ' secondary' : ''}${danger ? ' danger' : ''}`} onClick={onClick}>{children}</button>;
+}
+
+function Field({ label, value, onChange, multiline = false, type = 'text' }) {
+  const props = { value: value ?? '', onChange: (e) => onChange(e.target.value), type };
+  return <label className="aax-site-crm-field"><span>{label}</span>{multiline ? <textarea {...props} rows={4} /> : <input {...props} />}</label>;
+}
+
+function RecordForm({ type, onSaved, onCancel, initial }) {
+  const [form, setForm] = useState({ ...emptyForms[type], ...(initial || {}) });
+  const [saving, setSaving] = useState(false);
+  const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
+  const submit = async (event) => {
+    event.preventDefault();
+    setSaving(true);
+    try {
+      const action = initial?.id
+        ? ({ backlink: 'update_backlink', blog: 'update_blog', review: 'update_review', project: 'update_project' }[type])
+        : ({ backlink: 'add_backlink', blog: 'save_blog', review: 'save_review', project: 'save_project' }[type]);
+      await crmAction(action, initial?.id ? { id: initial.id, ...form } : form);
+      onSaved();
+    } catch (error) {
+      window.alert(error.message);
+    } finally { setSaving(false); }
+  };
+  return <form className="aax-site-crm-form" onSubmit={submit}>
+    {type === 'backlink' && <><Field label="Name" value={form.name} onChange={(v) => set('name', v)} /><Field label="URL" value={form.url} onChange={(v) => set('url', v)} /><Field label="Notes" value={form.notes} onChange={(v) => set('notes', v)} multiline /></>}
+    {type === 'blog' && <><Field label="Title" value={form.title} onChange={(v) => set('title', v)} /><Field label="Slug" value={form.slug} onChange={(v) => set('slug', v)} /><Field label="Excerpt" value={form.excerpt} onChange={(v) => set('excerpt', v)} multiline /><Field label="Content" value={form.content} onChange={(v) => set('content', v)} multiline /><Field label="Category" value={form.category} onChange={(v) => set('category', v)} /></>}
+    {type === 'review' && <><Field label="Author" value={form.author} onChange={(v) => set('author', v)} /><Field label="Rating" value={form.rating} onChange={(v) => set('rating', Number(v))} type="number" /><Field label="Comment" value={form.comment} onChange={(v) => set('comment', v)} multiline /><label className="aax-site-crm-check"><input type="checkbox" checked={Boolean(form.is_published)} onChange={(e) => set('is_published', e.target.checked)} /> Published</label></>}
+    {type === 'project' && <><Field label="Title" value={form.title} onChange={(v) => set('title', v)} /><Field label="Site name" value={form.site_name} onChange={(v) => set('site_name', v)} /><Field label="Site URL" value={form.site_url} onChange={(v) => set('site_url', v)} /><Field label="Category" value={form.category} onChange={(v) => set('category', v)} /><Field label="Description" value={form.description} onChange={(v) => set('description', v)} multiline /><Field label="Image URL" value={form.image_url} onChange={(v) => set('image_url', v)} /><label className="aax-site-crm-check"><input type="checkbox" checked={Boolean(form.is_published)} onChange={(e) => set('is_published', e.target.checked)} /> Published</label></>}
+    <div className="aax-site-crm-form-actions"><Button secondary onClick={onCancel}>Cancel</Button><Button disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button></div>
+  </form>;
+}
+
+function Table({ children }) { return <div className="aax-site-crm-table-wrap"><table className="aax-site-crm-table"><tbody>{children}</tbody></table></div>; }
+
+export default function SiteCrmWorkspace({
+  showNotification = () => {},
+  defaultTab = 'overview',
+  standalone = false,
+  pageTitle = 'Site CRM',
+  pageSubtitle = 'Manage the public website, content, enquiries, visitors, and communication from Codex Dynamics.'
+}) {
+  const [tab, setTab] = useState(defaultTab);
+  const [data, setData] = useState(null);
+  const [formType, setFormType] = useState(null);
+  const [editing, setEditing] = useState(null);
+  const [webhook, setWebhook] = useState('');
+  const [chatThreads, setChatThreads] = useState([]);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [selectedThread, setSelectedThread] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [uploading, setUploading] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/crm/data');
+      const next = await response.json();
+      setData(next);
+      setWebhook(next.settings?.webhookUrl || '');
+    } finally { setLoading(false); }
+  };
+  useEffect(() => { load(); }, []);
+  useEffect(() => { setTab(defaultTab); }, [defaultTab]);
+
+  const run = async (action, payload = {}) => {
+    try { await crmAction(action, payload); await load(); showNotification('Saved successfully.'); }
+    catch (error) { window.alert(error.message); }
+  };
+  const enquiries = data?.enquiries || [];
+  const blogs = data?.blogs || [];
+  const reviews = data?.reviews || [];
+  const projects = data?.projects || [];
+  const backlinks = data?.backlinks || [];
+  const stats = data?.stats || {};
+  const formTitle = formType ? `${editing ? 'Edit' : 'Add'} ${formType}` : '';
+  const closeForm = () => { setFormType(null); setEditing(null); };
+  const edit = (type, item) => { setFormType(type); setEditing(item); };
+
+  useEffect(() => {
+    if (tab !== 'chat') return;
+    fetch('/api/crm/chat/threads').then((r) => r.json()).then((r) => setChatThreads(r.threads || []));
+  }, [tab]);
+  const selectThread = async (thread) => {
+    setSelectedThread(thread);
+    const response = await fetch(`/api/crm/chat/messages?threadId=${encodeURIComponent(thread.id)}&markRead=true`);
+    const result = await response.json();
+    setChatMessages(result.messages || []);
+  };
+  const changePassword = async (event) => {
+    event.preventDefault();
+    if (passwords.newPassword !== passwords.confirmPassword) return window.alert('New passwords do not match.');
+    await run('change_password', { currentPassword: passwords.currentPassword, newPassword: passwords.newPassword });
+    setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  };
+  const uploadImage = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const result = await crmAction('upload_image', { name: file.name, data });
+      await navigator.clipboard?.writeText(result.url || '');
+      showNotification(`Uploaded ${file.name}. URL copied.`);
+    } catch (error) { window.alert(error.message); } finally { setUploading(false); event.target.value = ''; }
+  };
+
+  if (loading || !data) return <div className="aax-site-crm-loading">Loading shared site CRM...</div>;
+  const visibleTabs = standalone ? [] : TABS;
+  return <section className="aax-site-crm-workspace">
+    <header className="aax-site-crm-header"><div><p className="aax-site-crm-eyebrow">Codex Dynamics</p><h2>{standalone ? pageTitle : 'Site CRM'}</h2><p>{standalone ? pageSubtitle : pageSubtitle}</p></div><Button onClick={load}>Refresh</Button></header>
+    {!standalone && <nav className="aax-site-crm-tabs">{visibleTabs.map(([key, label]) => <button key={key} className={tab === key ? 'active' : ''} onClick={() => setTab(key)}>{label}</button>)}</nav>}
+
+    {tab === 'overview' && <div className="aax-site-crm-grid">
+      {[['Leads', stats.totalLeads || 0], ['Enquiries', stats.totalEnquiries || enquiries.length], ['Blogs', stats.totalBlogs || blogs.length], ['Reviews', stats.totalReviews || reviews.length], ['Projects', stats.totalProjects || projects.length]].map(([label, value]) => <div className="aax-site-crm-stat" key={label}><span>{label}</span><strong>{value}</strong></div>)}
+      <div className="aax-site-crm-panel wide"><h3>Recent enquiries</h3>{enquiries.slice(0, 6).map((row) => <div className="aax-site-crm-row" key={row.id}><div><strong>{row.name}</strong><span>{row.email}</span></div><em>{row.status}</em></div>)}</div>
+    </div>}
+
+    {tab === 'enquiries' && <div className="aax-site-crm-panel"><h3>Enquiries</h3><Table>{enquiries.map((row) => <tr key={row.id}><td><strong>{row.name}</strong><small>{row.email} · {row.phone}</small></td><td>{row.message}</td><td><select value={row.status} onChange={(e) => run('update_enquiry_status', { id: row.id, status: e.target.value })}><option>new</option><option>contacted</option><option>closed</option></select><Button danger secondary onClick={() => run('delete_enquiry', { id: row.id })}>Delete</Button></td></tr>)}</Table></div>}
+
+    {tab === 'content' && <div className="aax-site-crm-content-grid">{[['backlink', 'Backlinks', backlinks], ['blog', 'Blogs', blogs], ['review', 'Reviews', reviews], ['project', 'Projects', projects]].map(([type, title, rows]) => <div className="aax-site-crm-panel" key={type}><div className="aax-site-crm-panel-heading"><h3>{title}</h3><Button onClick={() => edit(type)}>Add</Button></div>{rows.slice(0, 8).map((row) => <div className="aax-site-crm-row" key={row.id}><div><strong>{row.title || row.name || row.author}</strong><span>{row.url || row.slug || row.comment || row.category}</span></div><div className="aax-site-crm-row-actions"><Button secondary onClick={() => edit(type, row)}>Edit</Button><Button danger secondary onClick={() => run({ backlink: 'delete_backlink', blog: 'delete_blog', review: 'delete_review', project: 'delete_project' }[type], { id: row.id })}>Delete</Button></div></div>)}</div>)}</div>}
+
+    {tab === 'chat' && <div className="aax-site-crm-chat"><div className="aax-site-crm-panel"><h3>Chat threads</h3>{chatThreads.map((thread) => <button className={`aax-site-crm-thread ${selectedThread?.id === thread.id ? 'active' : ''}`} key={thread.id} onClick={() => selectThread(thread)}><strong>{thread.visitor_name || 'Visitor'}</strong><span>{thread.last_message || 'No messages'}</span></button>)}</div><div className="aax-site-crm-panel"><h3>{selectedThread?.visitor_name || 'Select a thread'}</h3>{chatMessages.map((message) => <div className="aax-site-crm-message" key={message.id}><strong>{message.sender_name}</strong><p>{message.message}</p><small>{message.created_at}</small></div>)}{selectedThread && <Button danger onClick={() => run('delete_thread', { threadId: selectedThread.id })}>Delete thread</Button>}</div></div>}
+
+    {tab === 'tools' && <div className="aax-site-crm-tools"><div className="aax-site-crm-panel"><h3>Webhook</h3><Field label="Webhook URL" value={webhook} onChange={setWebhook} /><Button onClick={() => run('save_webhook', { url: webhook })}>Save webhook</Button><Button secondary onClick={() => run('test_webhook', { url: webhook })}>Send test</Button></div><div className="aax-site-crm-panel"><h3>Backup and restore</h3><p>Download the shared CRM data or restore a previous JSON snapshot.</p><Button onClick={() => { const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `codex-site-crm-${new Date().toISOString().slice(0, 10)}.json`; link.click(); }}>Export backup</Button><label className="aax-site-crm-upload">Restore backup<input type="file" accept="application/json" onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; await run('restore_backup', { backupData: JSON.parse(await file.text()) }); }} /></label></div><div className="aax-site-crm-panel"><h3>Admin password</h3><form className="aax-site-crm-form" onSubmit={changePassword}><Field label="Current password" value={passwords.currentPassword} onChange={(v) => setPasswords((p) => ({ ...p, currentPassword: v }))} type="password" /><Field label="New password" value={passwords.newPassword} onChange={(v) => setPasswords((p) => ({ ...p, newPassword: v }))} type="password" /><Field label="Confirm new password" value={passwords.confirmPassword} onChange={(v) => setPasswords((p) => ({ ...p, confirmPassword: v }))} type="password" /><Button>Change password</Button></form></div><div className="aax-site-crm-panel"><h3>Media upload</h3><p>Upload an image to the shared site media library. The resulting URL is copied for use in content.</p><label className="aax-site-crm-upload">{uploading ? 'Uploading...' : 'Choose image'}<input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" disabled={uploading} onChange={uploadImage} /></label></div></div>}
+
+    {formType && <div className="aax-site-crm-modal"><div className="aax-site-crm-modal-card"><div className="aax-site-crm-panel-heading"><h3>{formTitle}</h3><Button secondary onClick={closeForm}>Close</Button></div><RecordForm type={formType} initial={editing} onCancel={closeForm} onSaved={async () => { closeForm(); await load(); }} /></div></div>}
+  </section>;
+}

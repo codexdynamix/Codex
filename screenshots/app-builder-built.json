@@ -1,0 +1,41 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Codex Dynamics",
+      "hasCanvas": false,
+      "bodyTextLen": 14780,
+      "bodyTextHash": "110bc665c28b183d5f2108b454930583cb2a0b2216d58af04f4b93a08082d97f",
+      "bodyTextPrefix": "C Codex Dynamics Services Projects Process About Reviews Contact",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Codex Dynamics",
+      "hasCanvas": false,
+      "bodyTextLen": 14710,
+      "bodyTextHash": "5f5379423b6e794f26be6d06e8d8af7db9280ba28cada295a3047cea393b2fc6",
+      "bodyTextPrefix": "C Codex Dynamics CODEX DYNAMICS Precision on every screen. Websi",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": true,
+  "baselineReasons": [
+    "mobile: title changed (\"High-Performance Websites & Digital Agency — Codex Dynamics\" -> \"Codex Dynamics\")",
+    "mobile: body text changed (17075 -> 14710 chars, hash mismatch)"
+  ]
+}
