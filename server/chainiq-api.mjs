@@ -78,14 +78,9 @@ const CAPS = {
   trading: true,
   balances: true,
   transactions: true,
-  card_management: true,
-  crypto_addresses: true,
   registrations: true,
   notifications: true,
   security: true,
-  deposits: true,
-  withdrawals: true,
-  kyc_review: true,
 };
 
 const nowIso = () => new Date().toISOString();
@@ -1088,7 +1083,7 @@ export async function handleChainiqApi({ method, path, search, headers, rawBody 
     }
 
     if (p === "/api/admin/pending-counts") {
-      return json(200, { withdrawals: 0, deposits: 1, card_requests: 0, password_resets: 0 });
+      return json(200, { password_resets: 0 });
     }
     if (p === "/api/admin/status") {
       return json(200, { db_ms: 1, online_total: 2, online_staff: 1, online_clients: 1, visitor_today: 12 });
@@ -1109,16 +1104,9 @@ export async function handleChainiqApi({ method, path, search, headers, rawBody 
     if (p === "/api/admin/messages") return json(200, { messages: [] });
     if (p === "/api/admin/messages/unread_counts") return json(200, { counts: {} });
     if (p === "/api/admin/transactions") { const transactions = getChainiqResource("transactions", []); return json(200, { transactions, total: transactions.length }); }
-    if (p === "/api/admin/cards") return json(200, { cards: getChainiqResource("cards", []) });
-    if (p === "/api/admin/cards/audit" || p === "/api/admin/cards/audit/all") return json(200, { audit: [] });
-    if (p === "/api/admin/crypto/addresses") return json(200, { addresses: getChainiqResource("crypto_addresses", []) });
-    if (p === "/api/admin/withdrawals") return json(200, { withdrawals: [] });
-    if (p === "/api/admin/deposit-requests") return json(200, { requests: [{ id: "dep_1", user_id: "usr_maya", amount: 2500, asset: "USDT", status: "pending", created_at: nowIso() }] });
     if (p === "/api/admin/signup-requests") return json(200, { requests: getChainiqResource("signup_requests", []) });
-    if (p === "/api/admin/card-requests") return json(200, { requests: [] });
     if (p === "/api/admin/password-reset-requests") return json(200, { requests: [] });
     if (p === "/api/admin/audit") { const entries = getChainiqResource("audit", []); return json(200, { entries, total: entries.length }); }
-    if (p === "/api/admin/kyc") return json(200, { items: [] });
 
     if (method === "GET") return json(200, { ok: true, items: [], ...emptyPage("items") });
     return json(200, { ok: true });

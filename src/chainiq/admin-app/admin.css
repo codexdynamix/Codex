@@ -3715,7 +3715,7 @@
   gap: 15px;
 }
 
-.aax-admin-app /* Responsive adjustments for modals */
+/* Responsive adjustments for modals */
 @media (max-width: 768px) {
   .aax-modal-content {
     margin: 10px;
@@ -4209,7 +4209,7 @@
   font-size: 14px;
 }
 
-.aax-admin-app /* (11) Premium feel on larger monitors - scale up base type & spacing */
+/* (11) Premium feel on larger monitors - scale up base type & spacing */
 @media (min-width: 1440px) {
   .aax-super-admin-container,
   .aax-super-admin-content {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { listPasswordResetRequests, sendPasswordResetCode } from '../../adminApi';
 import { usePlatformSettings } from '../../../platformDefaults';
-import '../DepositRequests/deposit-modal.css';
+import '../modal.css';
 
 function timeAgo(iso) {
   if (!iso) return '-';

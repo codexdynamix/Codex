@@ -90,7 +90,11 @@ export function BlogEditorPage({
     initialBlog?.category || "Engineering"
   );
   const [tags, setTags] = useState<string[]>(
-    initialBlog?.tags || ["Engineering", "Architecture", "Performance"]
+    initialBlog?.tags
+      ? Array.isArray(initialBlog.tags)
+        ? initialBlog.tags
+        : initialBlog.tags.split(",").map((t) => t.trim())
+      : ["Engineering", "Architecture", "Performance"]
   );
   const [tagInput, setTagInput] = useState("");
   const [author, setAuthor] = useState(
@@ -1024,7 +1028,7 @@ export function BlogEditorPage({
                     type="button"
                     onClick={() => setEditorView("preview")}
                     className={`px-2.5 py-1 text-xs font-medium rounded transition-all cursor-pointer ${
-                      editorView === "preview"
+                      (editorView as string) === "preview"
                         ? "bg-white text-[#1e1e1e] font-semibold shadow-xs"
                         : "text-neutral-600 hover:text-neutral-900"
                     }`}
@@ -2107,13 +2111,13 @@ export function BlogEditorPage({
       <ImagePickerModal
         isOpen={isImagePickerOpen}
         onClose={() => setIsImagePickerOpen(false)}
-        onSelect={(meta: ImageSelectionMeta) => {
-          setImageUrl(meta.url);
-          setImageAlt(meta.alt || title);
-          setImageCaption(meta.caption || "");
+        currentValue={imageUrl}
+        onSelect={(url: string, meta?: ImageSelectionMeta) => {
+          setImageUrl(url);
+          if (meta?.alt) setImageAlt(meta.alt);
+          if (meta?.caption) setImageCaption(meta.caption);
           toast.success("Featured photo updated!");
         }}
-        currentUrl={imageUrl}
       />
 
       {/* Insert Link Modal */}

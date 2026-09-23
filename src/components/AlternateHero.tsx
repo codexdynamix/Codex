@@ -35,7 +35,7 @@ export function AlternateHero({ layout }: { layout: HeroLayout }) {
             <div className="mt-6 flex flex-wrap gap-2">
               {clips.map((video, i) => (
                 <button
-                  key={video.label || video.id || i}
+                  key={video.label || i}
                   type="button"
                   onClick={() => setClip(i)}
                   className={cn(
@@ -88,7 +88,7 @@ export function AlternateHero({ layout }: { layout: HeroLayout }) {
           <div className="mx-auto mt-5 flex max-w-3xl flex-wrap justify-center gap-1.5">
             {clips.map((video, i) => (
               <button
-                key={video.label || video.id || i}
+                key={video.label || i}
                 type="button"
                 onClick={() => setClip(i)}
                 className={cn(
@@ -118,8 +118,8 @@ export function AlternateHero({ layout }: { layout: HeroLayout }) {
             <img src={current.poster} alt="" className="h-full w-full object-cover" />
           </div>
           <div className="mt-4 flex flex-wrap gap-6 text-[13px] text-muted-foreground">
-            {clips.map((video) => (
-              <span key={video.label || video.id} className="tracking-wide">
+            {clips.map((video, i) => (
+              <span key={video.label || i} className="tracking-wide">
                 {video.label}
               </span>
             ))}
@@ -143,7 +143,7 @@ export function AlternateHero({ layout }: { layout: HeroLayout }) {
         </div>
         {clips.slice(0, 3).map((video, i) => (
           <button
-            key={video.label || video.id || i}
+            key={video.label || i}
             type="button"
             onClick={() => setClip(i)}
             className={cn(

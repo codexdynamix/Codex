@@ -3,12 +3,12 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   ROLE, LEAD_STATUSES, normalizeStage,
   getOfficeName, getTeamName, getUserName, getCountryFlag, statusClass,
-  formatLeadId, EditLeadModal, CreateLeadModal, KycReviewModal, stageColor,
+  formatLeadId, EditLeadModal, CreateLeadModal, stageColor,
 } from '../shared';
 import { useConfirmDialog } from '../components/ConfirmModal/ConfirmModal';
 import { SearchAutocomplete } from '../components/UserChrome.jsx';
 import { searchAdminLeads } from '../adminApi';
-import { getAdminMessages, sendAdminMessage, markAdminMessagesRead, getAdminUnreadMessageCounts, deleteAdminMessage, clearAdminChat, adminSetClientPassword, deleteLeadCommentApi, deleteLeadStatusEntryApi, getLeadNotificationsAsAdmin, listAdminWithdrawals, listUserTransactions, fetchLeadById, postAdminPresence, getAdminMessageAttachmentUrl, getStaffCapabilities, fetchAdminMe } from '../adminApi';
+import { getAdminMessages, sendAdminMessage, markAdminMessagesRead, getAdminUnreadMessageCounts, deleteAdminMessage, clearAdminChat, adminSetClientPassword, deleteLeadCommentApi, deleteLeadStatusEntryApi, getLeadNotificationsAsAdmin, fetchLeadById, postAdminPresence, getAdminMessageAttachmentUrl, getStaffCapabilities, fetchAdminMe } from '../adminApi';
 import AdminNotificationsInbox from '../components/AdminNotificationsInbox/AdminNotificationsInbox.jsx';
 import ReactCapabilityWorkspace from '../components/ReactCapabilityWorkspace.jsx';
 import { getLeadProfilePath, getRoleScopedLeads, getRoleWorkspacePath } from '../leadProfileRouting';
@@ -661,23 +661,9 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
   const [showSecurityModal, setShowSecurityModal] = useState(false);
   const [liveClientPassword, setLiveClientPassword] = useState(lead?.clientPassword || '');
   const [showChatModal, setShowChatModal] = useState(false);
-  const [showDepositModal, setShowDepositModal] = useState(false);
-  const [depositAmount, setDepositAmount] = useState('');
-  const [depositStatus, setDepositStatus] = useState('');
-  const [prevStatus, setPrevStatus] = useState('');
   const [showClientPassword, setShowClientPassword] = useState(false);
-  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
-  const [withdrawalHistory, setWithdrawalHistory] = useState([]);
-  const [withdrawalHistoryLoading, setWithdrawalHistoryLoading] = useState(false);
-  const [depositHistory, setDepositHistory] = useState([]);
-  const [depositHistoryLoading, setDepositHistoryLoading] = useState(false);
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [showEditLeadModal, setShowEditLeadModal] = useState(false);
-  const [showKycReviewModal, setShowKycReviewModal] = useState(false);
-  // Default to enabled when the field has never been set, so existing leads
-  // keep their trades access until the agent explicitly switches it off.
-  const tradesEnabled = lead?.tradesEnabled !== false;
-  const cardsEnabled  = lead?.cardsEnabled  !== false;
   const chatEndRef       = useRef(null);
   const typingTimeoutRef = useRef(null);
   useEffect(() => {
@@ -761,32 +747,6 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
       postAdminPresence(lead.id, { isTyping: false }).catch(() => {});
     }, 4000);
   }, [chatInput, lead?.id, showChatModal]);
-
-  // Fetch real withdrawal history from the backend when the modal opens.
-  useEffect(() => {
-    if (!showWithdrawModal || !lead?.id) return;
-    let cancelled = false;
-    setWithdrawalHistoryLoading(true);
-    listAdminWithdrawals({ userId: lead.id, limit: 200 })
-      .then(res => { if (!cancelled) setWithdrawalHistory(res.withdrawals || []); })
-      .catch(() => { if (!cancelled) setWithdrawalHistory([]); })
-      .finally(() => { if (!cancelled) setWithdrawalHistoryLoading(false); });
-    return () => { cancelled = true; };
-  }, [lead?.id, showWithdrawModal]);
-
-  // Fetch real deposit/transaction history from the backend when the deposit
-  // history modal opens (the standalone "Deposits" button, not the status-change flow).
-  useEffect(() => {
-    if (!lead?.id || depositStatus) return;
-    if (!showDepositModal) return;
-    let cancelled = false;
-    setDepositHistoryLoading(true);
-    listUserTransactions(lead.id, { limit: 200, type: 'Deposit' })
-      .then(res => { if (!cancelled) setDepositHistory(res.transactions || []); })
-      .catch(() => { if (!cancelled) setDepositHistory([]); })
-      .finally(() => { if (!cancelled) setDepositHistoryLoading(false); });
-    return () => { cancelled = true; };
-  }, [lead?.id, showDepositModal, depositStatus]);
 
   // Delete a single message on both sides. Optimistically removes the
   // bubble locally, then asks the backend. Rollback on failure so the
@@ -919,35 +879,9 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
 
   const handleStatusChange = (newStatus) => {
     if (newStatus === status) return;
-    setPrevStatus(status);
     setStatus(newStatus);
     updateLead(lead.id, { stage: newStatus, lastCommentDate: new Date().toISOString().slice(0, 10) });
     showNotification(`Lead status updated to ${newStatus}.`);
-  };
-
-  const handleConfirmDeposit = () => {
-    const amount = Number(depositAmount);
-    if (!lead || isNaN(amount) || amount <= 0) {
-      showNotification('Please enter a valid deposit amount.');
-      return;
-    }
-
-    const depositEntry = {
-      status: depositStatus,
-      amount,
-      date: new Date().toISOString().slice(0, 10),
-    };
-
-    updateLead(lead.id, {
-      stage: depositStatus,
-      lastCommentDate: new Date().toISOString().slice(0, 10),
-    });
-
-    setShowDepositModal(false);
-    setDepositAmount('');
-    setPrevStatus('');
-
-    showNotification(`Deposit ${depositStatus === 'Deposit' ? 'confirmed' : 'marked as failed'}: ${amount}`);
   };
 
   const actorName = currentUser?.name || 'Unknown';
@@ -1079,96 +1013,6 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
           <button type="button" className="aax-action-btn aax-support-btn" onClick={() => setShowChatModal(true)} title="Open support chat"><PaIcon name="support" />Lead Support</button>
         </div>
       </div>
-
-      {/* Retired trading/card category surface retained only for data compatibility. */}
-      {false && <div
-        style={{
-          display: 'flex',
-          alignItems: 'stretch',
-          gap: 12,
-          flexWrap: 'wrap',
-          padding: '14px 18px',
-          margin: '14px 0',
-          borderRadius: 12,
-          background: tradesEnabled
-            ? 'linear-gradient(135deg, rgba(14, 203, 129, 0.10) 0%, rgba(14, 203, 129, 0.03) 100%)'
-            : 'linear-gradient(135deg, rgba(245, 158, 11, 0.10) 0%, rgba(245, 158, 11, 0.03) 100%)',
-          border: `1px solid ${tradesEnabled ? 'rgba(14, 203, 129, 0.35)' : 'rgba(245, 158, 11, 0.35)'}`,
-        }}
-      >
-        {/* Category badge */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4, flex: '1 1 200px' }}>
-          <div style={{ fontSize: 10, color: '#848E9C', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Lead Category</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '5px 14px',
-                borderRadius: 999,
-                background: tradesEnabled ? 'rgba(14, 203, 129, 0.18)' : 'rgba(245, 158, 11, 0.16)',
-                color: tradesEnabled ? '#0ECB81' : '#F59E0B',
-                border: `1px solid ${tradesEnabled ? 'rgba(14, 203, 129, 0.5)' : 'rgba(245, 158, 11, 0.45)'}`,
-                fontWeight: 800,
-                fontSize: 13,
-                letterSpacing: '0.06em',
-              }}
-            >
-              {tradesEnabled ? (
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" />
-                </svg>
-              ) : (
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M3 12h18M3 6h18M3 18h18" />
-                </svg>
-              )}
-              {tradesEnabled ? 'Forex Lead' : 'Recovery Lead'}
-            </span>
-          </div>
-          <div style={{ fontSize: 11, color: '#848E9C', marginTop: 2, lineHeight: 1.45 }}>
-            {tradesEnabled
-              ? 'This client has the Trades section enabled - they can place and manage trades.'
-              : 'This client is in recovery mode - the Trades section is not available to them.'}
-          </div>
-        </div>
-
-        {/* Cards status */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4, flex: '0 0 auto', borderLeft: '1px solid rgba(255,255,255,0.07)', paddingLeft: 16 }}>
-          <div style={{ fontSize: 10, color: '#848E9C', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Cards Feature</div>
-          <span
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '4px 12px',
-              borderRadius: 999,
-              background: cardsEnabled ? 'rgba(155, 109, 255, 0.16)' : 'rgba(132, 142, 156, 0.12)',
-              color: cardsEnabled ? '#9B6DFF' : '#848E9C',
-              border: `1px solid ${cardsEnabled ? 'rgba(155, 109, 255, 0.45)' : 'rgba(132, 142, 156, 0.3)'}`,
-              fontWeight: 700,
-              fontSize: 12,
-            }}
-          >
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" />
-            </svg>
-            {cardsEnabled ? 'Cards ON' : 'Cards OFF'}
-          </span>
-          <div style={{ fontSize: 10, color: '#848E9C', marginTop: 2 }}>
-            {cardsEnabled ? 'Cards page visible' : 'Cards page hidden'}
-          </div>
-        </div>
-
-        {/* Info note */}
-        <div style={{ width: '100%', marginTop: 4, display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#848E9C', fontStyle: 'italic' }}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-          Category is set by Super Admin. Contact your supervisor to change this lead's category.
-        </div>
-      </div>}
 
       <div className="aax-detail-grid aax-detail-grid-three">
         <div className="aax-detail-column">
@@ -1511,254 +1355,6 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
         </div>
       )}
 
-      {false && showDepositModal && (
-        <div className="aax-modal-overlay" onClick={() => { setShowDepositModal(false); setStatus(prevStatus || status); }}>
-          <div className="aax-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="aax-modal-header">
-              <h3>{depositStatus === 'Failed Deposit' ? 'Failed Deposit Amount' : 'Deposit Amount'} for {lead.firstName} {lead.lastName}</h3>
-              <button className="aax-small-btn" onClick={() => { setShowDepositModal(false); setStatus(prevStatus || status); }}>Close</button>
-            </div>
-            <div className="aax-field-group">
-              <label>Amount</label>
-              <input
-                className="aax-input"
-                type="number"
-                min="0"
-                step="0.01"
-                value={depositAmount}
-                placeholder="e.g. 1200.00"
-                onChange={(e) => setDepositAmount(e.target.value)}
-              />
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
-              <button className="aax-small-btn" onClick={() => { setShowDepositModal(false); setStatus(prevStatus || status); }}>Cancel</button>
-              <button className="aax-small-btn" onClick={handleConfirmDeposit} disabled={!depositAmount || Number(depositAmount) <= 0}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Deposit History Modal */}
-      {false && showDepositModal && !depositStatus && (
-        <div className="aax-modal-overlay" onClick={() => setShowDepositModal(false)}>
-          <div className="aax-modal-content aax-large-modal" onClick={e => e.stopPropagation()}>
-            <div className="aax-modal-header">
-              <h3>[money] Deposit History - {lead.firstName} {lead.lastName}</h3>
-              <button className="aax-close-btn" onClick={() => setShowDepositModal(false)}>×</button>
-            </div>
-            <div className="aax-modal-body">
-              <div className="aax-history-container">
-                {depositHistoryLoading ? (
-                  <div className="aax-empty-state" style={{ padding: '40px 0' }}>
-                    <div className="aax-empty-state-icon" style={{ fontSize: 28 }}>[pending]</div>
-                    <div className="aax-empty-state-title">Loading...</div>
-                  </div>
-                ) : (
-                  <>
-                    <div className="aax-history-header">
-                      <div className="aax-history-stats">
-                        <div className="aax-history-stat-card">
-                          <div className="aax-history-stat-value">{depositHistory.length}</div>
-                          <div className="aax-history-stat-label">Total Deposits</div>
-                        </div>
-                        <div className="aax-history-stat-card">
-                          <div className="aax-history-stat-value">
-                            ${depositHistory.filter(t => t.amountMinor > 0).reduce((s, t) => s + t.amount, 0).toFixed(2)}
-                          </div>
-                          <div className="aax-history-stat-label">Total Credited</div>
-                        </div>
-                        <div className="aax-history-stat-card">
-                          <div className="aax-history-stat-value">
-                            {depositHistory.filter(t => t.status === 'Completed').length}
-                          </div>
-                          <div className="aax-history-stat-label">Completed</div>
-                        </div>
-                      </div>
-                      <div className="aax-export-section">
-                        <button className="aax-export-btn" onClick={() => {
-                          const csv = 'Date,Asset,Amount,Type,Status,Description\n' +
-                            depositHistory.map(t =>
-                              `${t.createdAt},${t.asset},${t.amount},${t.type},${t.status},"${t.description}"`
-                            ).join('\n');
-                          const blob = new Blob([csv], { type: 'text/csv' });
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = `deposits-${lead.firstName}-${lead.lastName}.csv`;
-                          a.click();
-                          showNotification('Deposit history exported successfully');
-                        }}>
-                          [chart] Export CSV
-                        </button>
-                      </div>
-                    </div>
-
-                    {depositHistory.length > 0 ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
-                        {depositHistory.map(t => {
-                          const statusColor = t.status === 'Completed' ? '#0ECB81'
-                            : t.status === 'Reversed' ? '#F6465D'
-                            : '#F0B90B';
-                          return (
-                            <div key={t.id} className="aax-history-item">
-                              <div className="aax-history-item-header">
-                                <div>
-                                  <div className="aax-history-amount aax-positive">
-                                    +{t.amount.toFixed(t.asset === 'BTC' || t.asset === 'ETH' ? 6 : 2)} {t.asset}
-                                  </div>
-                                  <div className="aax-history-date">
-                                    {new Date(t.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                  </div>
-                                  <div className="aax-history-status" style={{ color: statusColor, fontWeight: 600 }}>{t.status}</div>
-                                </div>
-                              </div>
-                              {t.description && (
-                                <div className="aax-history-details">
-                                  <div className="aax-history-detail">
-                                    <div className="aax-history-detail-label">Description</div>
-                                    <div className="aax-history-detail-value">{t.description}</div>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="aax-empty-state">
-                        <div className="aax-empty-state-icon">[money]</div>
-                        <div className="aax-empty-state-title">No Deposit History</div>
-                        <div className="aax-empty-state-description">This client hasn't made any deposits yet. Deposits will appear here once completed.</div>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Withdrawal History Modal */}
-      {false && showWithdrawModal && (
-        <div className="aax-modal-overlay" onClick={() => setShowWithdrawModal(false)}>
-          <div className="aax-modal-content aax-large-modal" onClick={e => e.stopPropagation()}>
-            <div className="aax-modal-header">
-              <h3>💸 Withdrawal History - {lead.firstName} {lead.lastName}</h3>
-              <button className="aax-close-btn" onClick={() => setShowWithdrawModal(false)}>×</button>
-            </div>
-            <div className="aax-modal-body">
-              <div className="aax-history-container">
-                {withdrawalHistoryLoading ? (
-                  <div className="aax-empty-state" style={{ padding: '40px 0' }}>
-                    <div className="aax-empty-state-icon" style={{ fontSize: 28 }}>[pending]</div>
-                    <div className="aax-empty-state-title">Loading...</div>
-                  </div>
-                ) : (
-                  <>
-                    <div className="aax-history-header">
-                      <div className="aax-history-stats">
-                        <div className="aax-history-stat-card">
-                          <div className="aax-history-stat-value">{withdrawalHistory.length}</div>
-                          <div className="aax-history-stat-label">Total Withdrawals</div>
-                        </div>
-                        <div className="aax-history-stat-card">
-                          <div className="aax-history-stat-value">
-                            ${withdrawalHistory.reduce((sum, w) => sum + (w.asset === 'USD' ? w.amount : 0), 0).toFixed(2)}
-                          </div>
-                          <div className="aax-history-stat-label">Total USD</div>
-                        </div>
-                        <div className="aax-history-stat-card">
-                          <div className="aax-history-stat-value">
-                            {withdrawalHistory.filter(w => w.status === 'Pending').length}
-                          </div>
-                          <div className="aax-history-stat-label">Pending</div>
-                        </div>
-                      </div>
-                      <div className="aax-export-section">
-                        <button className="aax-export-btn" onClick={() => {
-                          const csv = 'Date,Asset,Amount,Status,Destination\n' +
-                            withdrawalHistory.map(w =>
-                              `${w.createdAt},${w.asset},${w.amount},${w.status},"${w.destination}"`
-                            ).join('\n');
-                          const blob = new Blob([csv], { type: 'text/csv' });
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = `withdrawals-${lead.firstName}-${lead.lastName}.csv`;
-                          a.click();
-                          showNotification('Withdrawal history exported successfully');
-                        }}>
-                          [chart] Export CSV
-                        </button>
-                      </div>
-                    </div>
-
-                    {withdrawalHistory.length > 0 ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
-                        {withdrawalHistory.map(w => {
-                          const statusColor = w.status === 'Approved' ? '#0ECB81'
-                            : w.status === 'Rejected' ? '#F6465D'
-                            : w.status === 'Cancelled' ? '#848E9C'
-                            : '#F0B90B';
-                          return (
-                            <div key={w.id} className="aax-history-item">
-                              <div className="aax-history-item-header">
-                                <div>
-                                  <div className="aax-history-amount aax-negative">
-                                    -{w.amount.toFixed(w.asset === 'BTC' || w.asset === 'ETH' ? 6 : 2)} {w.asset}
-                                  </div>
-                                  <div className="aax-history-date">
-                                    {new Date(w.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                  </div>
-                                  <div className="aax-history-status" style={{ color: statusColor, fontWeight: 600 }}>
-                                    {w.status}
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="aax-history-details">
-                                <div className="aax-history-detail">
-                                  <div className="aax-history-detail-label">Destination</div>
-                                  <div className="aax-history-detail-value" style={{ wordBreak: 'break-all' }}>{w.destination || '-'}</div>
-                                </div>
-                                {w.network && (
-                                  <div className="aax-history-detail">
-                                    <div className="aax-history-detail-label">Network</div>
-                                    <div className="aax-history-detail-value">{w.network}</div>
-                                  </div>
-                                )}
-                                {w.decisionNote && (
-                                  <div className="aax-history-detail">
-                                    <div className="aax-history-detail-label">Decision Note</div>
-                                    <div className="aax-history-detail-value">{w.decisionNote}</div>
-                                  </div>
-                                )}
-                                {w.decidedByName && (
-                                  <div className="aax-history-detail">
-                                    <div className="aax-history-detail-label">Decided By</div>
-                                    <div className="aax-history-detail-value">{w.decidedByName}</div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="aax-empty-state">
-                        <div className="aax-empty-state-icon">💸</div>
-                        <div className="aax-empty-state-title">No Withdrawal History</div>
-                        <div className="aax-empty-state-description">This client hasn't made any withdrawals yet. Withdrawal requests will appear here once processed.</div>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Activity Modal */}
       {showActivityModal && (
         <div className="aax-modal-overlay" onClick={() => setShowActivityModal(false)}>
@@ -1884,17 +1480,6 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
             setShowEditLeadModal(false);
             showNotification(`Profile updated for ${updates.firstName || lead.firstName} ${updates.lastName || lead.lastName}`);
           }}
-        />
-      )}
-
-      {false && showKycReviewModal && (
-        <KycReviewModal
-          lead={lead}
-          onClose={() => setShowKycReviewModal(false)}
-          onUpdate={(updates) => {
-            updateLead(lead.id, { ...updates, _actorName: actorName, _actorId: currentUser?.id });
-          }}
-          showNotification={showNotification}
         />
       )}
 

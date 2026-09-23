@@ -480,7 +480,7 @@ const writeClientToken = (token) => {
     if (typeof localStorage === 'undefined') return;
     if (token) localStorage.setItem(CLIENT_TOKEN_KEY, token);
     else localStorage.removeItem(CLIENT_TOKEN_KEY);
-  } catch (_) {}
+  } catch (_) { /* ignore */ }
 };
 
 export const clearClientToken = () => writeClientToken(null);
@@ -496,7 +496,7 @@ export const onSessionExpired = (cb) => {
 
 const emitSessionExpired = (reason) => {
   sessionExpiredListeners.forEach((cb) => {
-    try { cb(reason); } catch (_) {}
+    try { cb(reason); } catch (_) { /* ignore */ }
   });
 };
 
@@ -548,7 +548,7 @@ const apiFetch = async (path, { method = 'GET', body, auth = false } = {}) => {
       credentials: 'include',
       body: body !== undefined ? (isFormData ? body : JSON.stringify(body)) : undefined,
     });
-  } catch (networkErr) {
+  } catch (_networkErr) {
     throw new Error('Cannot reach the server. Please try again in a moment.');
   }
 
@@ -830,7 +830,7 @@ const LEGACY_CLIENT_STORAGE_KEYS = [
 export const purgeLegacyClientStorage = () => {
   if (typeof localStorage === 'undefined') return;
   LEGACY_CLIENT_STORAGE_KEYS.forEach((k) => {
-    try { localStorage.removeItem(k); } catch (_) {}
+    try { localStorage.removeItem(k); } catch (_) { /* ignore */ }
   });
 };
 
@@ -1038,7 +1038,7 @@ export const submitKyc = async (docs) => {
 
   let data = null;
   const text = await res.text();
-  if (text) { try { data = JSON.parse(text); } catch (_) {} }
+  if (text) { try { data = JSON.parse(text); } catch (_) { /* ignore */ } }
 
   if (!res.ok) {
     if ((res.status === 401 || res.status === 403) && token) {
@@ -1084,7 +1084,7 @@ export const submitKycForUser = async (userId, docs) => {
   });
   const text = await res.text();
   let data = null;
-  if (text) { try { data = JSON.parse(text); } catch (_) {} }
+  if (text) { try { data = JSON.parse(text); } catch (_) { /* ignore */ } }
   if (!res.ok) {
     throw new Error((data && (data.message || data.error)) || `Upload failed (${res.status}).`);
   }
@@ -1254,7 +1254,7 @@ export const getAdminPreviewDepositAddresses = async (userId, asset) => {
   ).then(async (res) => {
     const text = await res.text();
     let body = null;
-    if (text) { try { body = JSON.parse(text); } catch (_) {} }
+    if (text) { try { body = JSON.parse(text); } catch (_) { /* ignore */ } }
     if (!res.ok) {
       const err = new Error((body && (body.message || body.error)) || `Request failed (${res.status}).`);
       err.status = res.status;

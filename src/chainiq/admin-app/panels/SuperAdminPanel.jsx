@@ -10,18 +10,13 @@ import { useConfirmDialog } from '../components/ConfirmModal/ConfirmModal';
 import Dashboard from '../components/Dashboard/Dashboard.jsx';
 import Balances from '../components/Balances/Balances.jsx';
 import Transactions from '../components/Transactions/Transactions.jsx';
-import CardManagement from '../components/CardManagement/CardManagement.jsx';
-import CryptoAddresses from '../components/CryptoAddresses/CryptoAddresses.jsx';
 import { SiteContentTab } from '../../../components/admin/SiteContentTab';
 import SiteCrmWorkspace from '../components/SiteCrmWorkspace.jsx';
 import AuditLog from '../components/AuditLog/AuditLog.jsx';
-import KycReview from '../components/KycReview/KycReview.jsx';
 import Notifications from '../components/Notifications/Notifications.jsx';
 import NotificationToast from '../components/NotificationToast/NotificationToast.jsx';
-import DepositRequests from '../components/DepositRequests/DepositRequests.jsx';
 import SignupRequests from '../components/SignupRequests/SignupRequests.jsx';
 import SecurityRequests from '../components/SecurityRequests/SecurityRequests.jsx';
-import WithdrawalQueue from '../components/WithdrawalQueue/WithdrawalQueue.jsx';
 import Sessions from '../components/Sessions/Sessions.jsx';
 import AgentAccess from '../components/AgentAccess.jsx';
 import HealthIndicator from '../components/HealthIndicator/HealthIndicator.jsx';
@@ -34,7 +29,7 @@ import {
   faArrowDown, faArrowUp, faKey, faGlobe, faComments,
 } from '@fortawesome/free-solid-svg-icons';
 import {
-  adminGetAllCards, listCryptoAddresses, getAdminToken, getUserProfileHistoryApi,
+  getAdminToken, getUserProfileHistoryApi,
   bulkAssignLeadsApi, deleteOffice, deleteTeam, deleteStaffApi, updateOffice, updateTeam,
   updateStaffApi, resetLeadStatusApi, clearLeadCommentsApi,
   updateLeadApi, deleteLeadApi, restoreLeadApi, listAllTransactions,
@@ -1196,53 +1191,6 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                   <button onClick={() => setSelected([])} style={{ marginLeft: 8, background: 'transparent', border: '1px solid #444A55', color: '#848E9C', fontSize: 11, padding: '3px 8px', borderRadius: 4, cursor: 'pointer' }}>clear</button>
                 </span>
                 <span style={{ width: 1, height: 22, background: '#444A55' }} />
-                {false && <BulkTradesActions
-                  selectedIds={selected}
-                  updateLead={(id, updates) => {
-                    // SuperAdminPanel keeps its own optimistic state via setData
-                    // (it doesn't go through App.jsx's updateLead helper), so we
-                    // mirror the change locally and then PATCH the backend.
-                    const { _actorName, _actorId, ...payload } = updates;
-                    setData(prev => ({
-                      ...prev,
-                      leads: (prev.leads || []).map(l => (l.id === id ? { ...l, ...payload } : l)),
-                    }));
-                    updateLeadApi(id, payload).then((server) => {
-                      if (!server || !server.id) return;
-                      setData(prev => ({
-                        ...prev,
-                        leads: (prev.leads || []).map(l => (l.id === id ? { ...l, ...server } : l)),
-                      }));
-                    }).catch(() => {
-                      showNotification(`Failed to update one or more leads.`);
-                    });
-                  }}
-                  showNotification={showNotification}
-                  onDone={() => setSelected([])}
-                />}
-                <span style={{ width: 1, height: 22, background: '#444A55' }} />
-                {false && <BulkCardsActions
-                  selectedIds={selected}
-                  updateLead={(id, updates) => {
-                    const { _actorName, _actorId, ...payload } = updates;
-                    setData(prev => ({
-                      ...prev,
-                      leads: (prev.leads || []).map(l => (l.id === id ? { ...l, ...payload } : l)),
-                    }));
-                    updateLeadApi(id, payload).then((server) => {
-                      if (!server || !server.id) return;
-                      setData(prev => ({
-                        ...prev,
-                        leads: (prev.leads || []).map(l => (l.id === id ? { ...l, ...server } : l)),
-                      }));
-                    }).catch(() => {
-                      showNotification(`Failed to update one or more leads.`);
-                    });
-                  }}
-                  showNotification={showNotification}
-                  onDone={() => setSelected([])}
-                />}
-                <span style={{ width: 1, height: 22, background: '#444A55' }} />
                 <button
                   className="aax-super-admin-btn aax-super-admin-btn-small"
                   style={{ background: 'rgba(246,70,93,0.15)', color: '#F6465D', border: '1px solid #F6465D40' }}
@@ -1749,157 +1697,6 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                 </div>
               </div>
             </div>
-
-            {/* Trading and card feature toggles are retired from the client-services CRM. */}
-            {false && (() => {
-              const tradOn = profileLead.tradesEnabled !== false;
-              const cardOn = profileLead.cardsEnabled !== false;
-
-              const handleProfileToggleTrades = async (enable) => {
-                const prev = { ...profileLead };
-                const updated = { ...profileLead, tradesEnabled: enable };
-                setProfileLead(updated);
-                setData(d => ({ ...d, leads: d.leads.map(l => l.id === profileLead.id ? { ...l, tradesEnabled: enable } : l) }));
-                try {
-                  await updateLeadApi(profileLead.id, { tradesEnabled: enable });
-                  showNotification(enable ? `Forex mode enabled for ${profileLead.firstName} ${profileLead.lastName}.` : `${profileLead.firstName} ${profileLead.lastName} moved to Recovery.`);
-                } catch (err) {
-                  setProfileLead(prev);
-                  setData(d => ({ ...d, leads: d.leads.map(l => l.id === profileLead.id ? { ...l, tradesEnabled: prev.tradesEnabled } : l) }));
-                  showNotification('Failed to update lead category.');
-                }
-              };
-
-              const handleProfileToggleCards = async (enable) => {
-                const prev = { ...profileLead };
-                const updated = { ...profileLead, cardsEnabled: enable };
-                setProfileLead(updated);
-                setData(d => ({ ...d, leads: d.leads.map(l => l.id === profileLead.id ? { ...l, cardsEnabled: enable } : l) }));
-                try {
-                  await updateLeadApi(profileLead.id, { cardsEnabled: enable });
-                  showNotification(enable ? `Cards enabled for ${profileLead.firstName} ${profileLead.lastName}.` : `Cards disabled for ${profileLead.firstName} ${profileLead.lastName}.`);
-                } catch (err) {
-                  setProfileLead(prev);
-                  setData(d => ({ ...d, leads: d.leads.map(l => l.id === profileLead.id ? { ...l, cardsEnabled: prev.cardsEnabled } : l) }));
-                  showNotification('Failed to update cards feature.');
-                }
-              };
-
-              return (
-                <div style={{ background: '#2A2E36', border: '1px solid #444A55', borderRadius: 10, padding: '16px 18px', marginBottom: 20 }}>
-                  <div style={{ fontSize: 11, color: '#848E9C', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ background: '#F0B90B20', color: '#F0B90B', border: '1px solid #F0B90B40', borderRadius: 4, padding: '1px 7px', fontSize: 10, fontWeight: 800 }}>SA ONLY</span>
-                    Lead Category &amp; Feature Access
-                  </div>
-                  <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-
-                    {/* Trades / Category toggle */}
-                    <div style={{
-                      flex: '1 1 240px',
-                      padding: '12px 14px',
-                      borderRadius: 8,
-                      background: tradOn
-                        ? 'linear-gradient(135deg, rgba(14,203,129,0.12) 0%, rgba(14,203,129,0.04) 100%)'
-                        : 'linear-gradient(135deg, rgba(245,158,11,0.10) 0%, rgba(245,158,11,0.03) 100%)',
-                      border: `1px solid ${tradOn ? 'rgba(14,203,129,0.4)' : 'rgba(245,158,11,0.4)'}`,
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 3 }}>
-                            <span style={{
-                              padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 800,
-                              background: tradOn ? 'rgba(14,203,129,0.18)' : 'rgba(245,158,11,0.16)',
-                              color: tradOn ? '#0ECB81' : '#F59E0B',
-                              border: `1px solid ${tradOn ? 'rgba(14,203,129,0.5)' : 'rgba(245,158,11,0.45)'}`,
-                            }}>
-                              {tradOn ? '[trend] Forex Lead' : '🔄 Recovery Lead'}
-                            </span>
-                          </div>
-                          <div style={{ fontSize: 11, color: '#848E9C', lineHeight: 1.4 }}>
-                            {tradOn ? 'Trades section visible - client can place trades.' : 'Recovery mode - Trades section hidden from client.'}
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          role="switch"
-                          aria-checked={tradOn}
-                          onClick={() => handleProfileToggleTrades(!tradOn)}
-                          title={tradOn ? 'Switch to Recovery (disable trades)' : 'Switch to Forex (enable trades)'}
-                          style={{
-                            position: 'relative', width: 48, height: 26, minWidth: 48, borderRadius: 999,
-                            border: 'none', outline: 'none', cursor: 'pointer', padding: 0, flex: '0 0 auto',
-                            background: tradOn ? '#0ECB81' : '#3a3f48',
-                            boxShadow: tradOn ? '0 0 0 3px rgba(14,203,129,0.15)' : 'none',
-                            transition: 'background 0.2s',
-                          }}
-                        >
-                          <span style={{
-                            position: 'absolute', top: 3, left: 3, width: 20, height: 20, borderRadius: '50%',
-                            background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.4)',
-                            transform: tradOn ? 'translateX(22px)' : 'translateX(0)',
-                            transition: 'transform 0.2s cubic-bezier(0.4,0,0.2,1)',
-                          }} />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Cards toggle */}
-                    <div style={{
-                      flex: '1 1 240px',
-                      padding: '12px 14px',
-                      borderRadius: 8,
-                      background: cardOn
-                        ? 'linear-gradient(135deg, rgba(155,109,255,0.12) 0%, rgba(155,109,255,0.04) 100%)'
-                        : 'linear-gradient(135deg, rgba(132,142,156,0.08) 0%, rgba(132,142,156,0.02) 100%)',
-                      border: `1px solid ${cardOn ? 'rgba(155,109,255,0.4)' : 'rgba(132,142,156,0.25)'}`,
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 3 }}>
-                            <span style={{
-                              padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 800,
-                              background: cardOn ? 'rgba(155,109,255,0.18)' : 'rgba(132,142,156,0.14)',
-                              color: cardOn ? '#9B6DFF' : '#848E9C',
-                              border: `1px solid ${cardOn ? 'rgba(155,109,255,0.5)' : 'rgba(132,142,156,0.3)'}`,
-                            }}>
-                              [card] Cards Feature
-                            </span>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: cardOn ? '#9B6DFF' : '#848E9C' }}>
-                              {cardOn ? 'ON' : 'OFF'}
-                            </span>
-                          </div>
-                          <div style={{ fontSize: 11, color: '#848E9C', lineHeight: 1.4 }}>
-                            {cardOn ? 'Cards page visible - client can view and manage cards.' : 'Cards page hidden from client.'}
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          role="switch"
-                          aria-checked={cardOn}
-                          onClick={() => handleProfileToggleCards(!cardOn)}
-                          title={cardOn ? 'Disable Cards feature' : 'Enable Cards feature'}
-                          style={{
-                            position: 'relative', width: 48, height: 26, minWidth: 48, borderRadius: 999,
-                            border: 'none', outline: 'none', cursor: 'pointer', padding: 0, flex: '0 0 auto',
-                            background: cardOn ? '#9B6DFF' : '#3a3f48',
-                            boxShadow: cardOn ? '0 0 0 3px rgba(155,109,255,0.15)' : 'none',
-                            transition: 'background 0.2s',
-                          }}
-                        >
-                          <span style={{
-                            position: 'absolute', top: 3, left: 3, width: 20, height: 20, borderRadius: '50%',
-                            background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.4)',
-                            transform: cardOn ? 'translateX(22px)' : 'translateX(0)',
-                            transition: 'transform 0.2s cubic-bezier(0.4,0,0.2,1)',
-                          }} />
-                        </button>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              );
-            })()}
 
             {/* Comment History */}
             {profileLead.commentHistory && profileLead.commentHistory.length > 0 && (
@@ -2605,19 +2402,11 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
     return () => { cancelled = true; clearInterval(interval); };
   }, [cryptoCryptoData]);
 
-  const [cryptoCardData, setCryptoCardData] = useState([]);
-  const [cryptoWithdrawalData, setCryptoWithdrawalData] = useState([]);
   const [cryptoUserFees, setCryptoUserFees] = useState({});
   const [cryptoClientSpecificFees, setCryptoClientSpecificFees] = useState({});
   // Platform settings (brand, colors, hero copy, etc.) are no longer mirrored
   // into the admin React context. Components that need them call
   // usePlatformSettings() directly - single source of truth, single subscriber.
-  // Crypto address book - loaded from /api/admin/crypto/addresses below.
-  // The two arrays here are kept in sync with the DB by the address-book
-  // mutation handlers in CryptoAddresses.jsx (which call the backend and
-  // then push the returned row through these setters).
-  const [cryptoGlobalAddressData, setCryptoGlobalAddressData] = useState([]);
-  const [cryptoClientAddressData, setCryptoClientAddressData] = useState([]);
 
   const notificationRef = useRef(null);
   const showCryptoNotification = (message, type) => {
@@ -2732,48 +2521,9 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
     let cancelled = false;
     const loadFinancialData = async () => {
       try {
-        const [cardResult, txResult] = await Promise.all([
-          adminGetAllCards().catch(() => null),
-          listAllTransactions({ limit: 500 }).catch(() => ({ transactions: [] })),
-        ]);
+        const txResult = await listAllTransactions({ limit: 500 }).catch(() => ({ transactions: [] }));
         const transactions = txResult.transactions || [];
         if (!cancelled) {
-          if (cardResult && Array.isArray(cardResult.cards)) {
-            const mapped = cardResult.cards.map(c => {
-              const expiryStr = (c.expiry_month && c.expiry_year)
-                ? `${String(c.expiry_month).padStart(2, '0')}/${String(c.expiry_year).slice(-2)}`
-                : '**/**';
-              return {
-                id:                 c.id,
-                userId:             c.user_id,
-                cardholderName:     c.user_name || '',
-                type:               (c.type || '').toLowerCase(),
-                status:             c.status,
-                isFrozen:           c.status === 'Frozen',
-                isBlocked:          c.status === 'Blocked',
-                balance:            0,
-                expiry:             expiryStr,
-                expiryMonth:        c.expiry_month || null,
-                expiryYear:         c.expiry_year  || null,
-                cardNumber:         c.pan || '****************',
-                cvv:                c.cvv || '***',
-                panSet:             !!c.pan,
-                cvvSet:             !!c.cvv,
-                expirySet:          !!(c.expiry_month && c.expiry_year),
-                physicalCardStatus: 'active',
-                limits:             c.limits || { daily: 5000, monthly: 25000, contactless: 200 },
-                has_pin:            c.has_pin,
-                issuedAt:           c.issued_at,
-              };
-            });
-            setCryptoCardData(prev => {
-              // Merge: backend is authoritative for any card it knows about.
-              // Cards that only exist locally (optimistic inserts) are kept.
-              const backendIds = new Set(mapped.map(c => c.id));
-              const localOnly = prev.filter(c => !backendIds.has(c.id));
-              return [...mapped, ...localOnly];
-            });
-          }
           setCryptoTransactionData(Array.isArray(transactions) ? transactions : []);
         }
       } catch (error) {
@@ -2784,24 +2534,6 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
     return () => {
       cancelled = true;
     };
-  }, []);
-
-  // Hydrate the crypto address book from the server. The two arrays are
-  // then mutated in-place by the handlers in CryptoAddresses.jsx, which
-  // call the backend and patch the returned row through these setters.
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const { global, client } = await listCryptoAddresses();
-        if (cancelled) return;
-        setCryptoGlobalAddressData(global);
-        setCryptoClientAddressData(client);
-      } catch (err) {
-        console.error('[SuperAdminPanel] failed to load crypto address book', err);
-      }
-    })();
-    return () => { cancelled = true; };
   }, []);
 
   // Load fees from the backend on mount so they reflect the last admin save,
@@ -2840,12 +2572,8 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
     activityLog: cryptoActivityLog, setActivityLog: setCryptoActivityLog,
     auditLog: cryptoAuditLog, setAuditLog: setCryptoAuditLog,
     cryptoData: cryptoCryptoData, setCryptoData: setCryptoCryptoData,
-    cardData: cryptoCardData, setCardData: setCryptoCardData,
-    withdrawalData: cryptoWithdrawalData, setWithdrawalData: setCryptoWithdrawalData,
     userFees: cryptoUserFees, setUserFees: setCryptoUserFees,
     clientSpecificFees: cryptoClientSpecificFees, setClientSpecificFees: setCryptoClientSpecificFees,
-    globalAddressData: cryptoGlobalAddressData, setGlobalAddressData: setCryptoGlobalAddressData,
-    clientAddressData: cryptoClientAddressData, setClientAddressData: setCryptoClientAddressData,
     logAdminAction,
     logActivity,
   };
@@ -3197,9 +2925,7 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
               className="aax-super-admin-tabs"
             >
               {tabs.map(tab => {
-                const badge =
-                  tab.name === 'Withdrawals' ? pendingCounts.withdrawals :
-                  tab.name === 'Deposits'    ? pendingCounts.deposits    : 0;
+                const badge = 0;
                 return (
                   <button
                     key={tab.name}
@@ -3446,12 +3172,12 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                       </div>
                     </div>
                   </div>
+                ) : activeSubTab === 'Back Office' ? (
+                  <ClientBackOfficeManager data={data} showNotification={showNotification} />
                 ) : activeSubTab === 'Balances' ? (
                   <Balances />
                 ) : activeSubTab === 'Transactions' ? (
                   <Transactions />
-                ) : activeSubTab === 'Crypto Addresses' ? (
-                  <CryptoAddresses />
                 ) : activeSubTab === 'Registrations' ? (
                   <SignupRequests
                     data={data}
@@ -3471,12 +3197,6 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                   <Notifications data={data} setData={setData} currentUserId={data.users.find(u => u.role === ROLE.SUPER_ADMIN)?.id} />
                 ) : activeSubTab === 'Security' ? (
                   <SecurityRequests showNotification={showNotification} />
-                ) : activeSubTab === 'Deposits' ? (
-                  <DepositRequests />
-                ) : activeSubTab === 'Withdrawals' ? (
-                  <WithdrawalQueue />
-                ) : activeSubTab === 'KYC Review' ? (
-                  <KycReview />
                 ) : null}
               </div>
             ) : activeTab === 'Enquiries' ? (
