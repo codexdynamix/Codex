@@ -5,7 +5,7 @@ import { useContactModal } from "@/context/ContactModalContext";
 
 export function AnnouncementBanner() {
   const { config } = useSiteConfig();
-  const { open: openContactModal } = useContactModal();
+  const { openContactModal } = useContactModal();
   const [dismissed, setDismissed] = useState(false);
 
   const banner = config.banner;

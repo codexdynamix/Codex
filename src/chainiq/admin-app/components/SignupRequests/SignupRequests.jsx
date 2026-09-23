@@ -8,7 +8,7 @@ import {
 import MessageReasonPicker from '../MessageReasonPicker/MessageReasonPicker';
 import { SIGNUP_REJECTION_REASONS } from '../../data/messageCatalogs';
 import { usePlatformSettings } from '../../../platformDefaults';
-import '../DepositRequests/deposit-modal.css';
+import '../modal.css';
 
 const REJECTION_REASONS = SIGNUP_REJECTION_REASONS;
 const REJECTION_CATEGORIES = Object.keys(REJECTION_REASONS);

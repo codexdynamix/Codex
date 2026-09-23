@@ -8,6 +8,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "strictNullChecks": true,
+    "allowImportingTsExtensions": true,
     "jsx": "react-jsx",
     "strict": false,
     "baseUrl": ".",
