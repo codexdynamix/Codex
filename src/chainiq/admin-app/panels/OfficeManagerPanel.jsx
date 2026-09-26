@@ -5,7 +5,7 @@ import {
   getOfficeName, getTeamName, getUserName, getCountryFlag,
   getTeamAgentCount, statusClass,
   CreateLeadModal, AddCommentModal,
-  TradesStatusBadge, CardsStatusBadge, stageColor,
+  stageColor,
   assignableAgents, assignableAgentLabel,
 } from '../shared';
 import { SearchAutocomplete } from '../components/UserChrome.jsx';
@@ -358,8 +358,6 @@ function OfficeLeadsTable({ data, currentUser, teamsForOffice, agents, setLeadAs
   const [search, setSearch] = useState('');
   const [filterTeam, setFilterTeam] = useState('');
   const [filterAgent, setFilterAgent] = useState('');
-  const [filterTrades, setFilterTrades] = useState(''); // '' | 'on' | 'off'
-  const [filterCards,  setFilterCards]  = useState(''); // '' | 'on' | 'off'
   const [page, setPage] = useState(1);
   const [bulkTeamId, setBulkTeamId] = useState('');
   const [bulkAgentId, setBulkAgentId] = useState('');
@@ -380,16 +378,6 @@ function OfficeLeadsTable({ data, currentUser, teamsForOffice, agents, setLeadAs
       if (filterAgent === '__unassigned__' && lead.assignedToAgent) return false;
       if (filterAgent && filterAgent !== '__unassigned__' && lead.assignedToAgent !== filterAgent) return false;
 
-      if (filterTrades) {
-        const on = lead.tradesEnabled !== false;
-        if (filterTrades === 'on' && !on) return false;
-        if (filterTrades === 'off' && on) return false;
-      }
-      if (filterCards) {
-        const on = lead.cardsEnabled !== false;
-        if (filterCards === 'on' && !on) return false;
-        if (filterCards === 'off' && on) return false;
-      }
       if (q && !(
         (lead.firstName || '').toLowerCase().includes(q) ||
         (lead.lastName || '').toLowerCase().includes(q) ||
@@ -399,7 +387,7 @@ function OfficeLeadsTable({ data, currentUser, teamsForOffice, agents, setLeadAs
       )) return false;
       return true;
     });
-  }, [officeLeads, search, filterTeam, filterAgent, filterTrades, filterCards]);
+  }, [officeLeads, search, filterTeam, filterAgent]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
@@ -458,25 +446,16 @@ function OfficeLeadsTable({ data, currentUser, teamsForOffice, agents, setLeadAs
           { label: 'Pending Agent', value: pendingAgent, color: '#0A84FF' },
           { label: 'Fully Assigned', value: fullyAssigned, color: '#0ECB81' },
           {
-            label: 'Forex Leads',
-            value: `${officeLeads.filter(l => l.tradesEnabled !== false).length} / ${officeLeads.length}`,
+            label: 'Active Leads',
+            value: officeLeads.filter(l => (l.stage || l.status || '').toLowerCase() === 'active').length,
             color: '#0ECB81',
-            title: 'Forex leads - Trades feature ON',
-            onClick: () => { setFilterTrades('on'); setPage(1); },
+            title: 'Active agency leads',
           },
           {
-            label: 'Recovery Leads',
-            value: `${officeLeads.filter(l => l.tradesEnabled === false).length} / ${officeLeads.length}`,
+            label: 'New Leads',
+            value: officeLeads.filter(l => (l.stage || l.status || '').toLowerCase() === 'new').length,
             color: '#F59E0B',
-            title: 'Recovery leads - Trades feature OFF',
-            onClick: () => { setFilterTrades('off'); setPage(1); },
-          },
-          {
-            label: 'Cards Feature OFF',
-            value: `${officeLeads.filter(l => l.cardsEnabled === false).length} / ${officeLeads.length}`,
-            color: '#9B6DFF',
-            title: 'Office clients with the Cards section currently disabled',
-            onClick: () => { setFilterCards('off'); setPage(1); },
+            title: 'New incoming leads',
           },
           { label: 'Total Office', value: officeLeads.length, color: '#EAECEF' },
         ].map(s => (
@@ -531,23 +510,13 @@ function OfficeLeadsTable({ data, currentUser, teamsForOffice, agents, setLeadAs
           <option value="">All Teams</option>
           {teamsForOffice.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
         </select>
-        <select style={{ flex: 1, minWidth: 160, padding: '8px', background: '#363B44', border: '1px solid #444A55', borderRadius: 6, color: '#f5f6fb', fontSize: 13 }} value={filterTrades} onChange={e => { setFilterTrades(e.target.value); setPage(1); }} title="Filter by Trades Feature access">
-          <option value="">All Trades Feature</option>
-          <option value="on">Trades Feature ON</option>
-          <option value="off">Trades Feature OFF</option>
-        </select>
-        <select style={{ flex: 1, minWidth: 160, padding: '8px', background: '#363B44', border: '1px solid #444A55', borderRadius: 6, color: '#f5f6fb', fontSize: 13 }} value={filterCards} onChange={e => { setFilterCards(e.target.value); setPage(1); }} title="Filter by Cards Feature access">
-          <option value="">All Cards Feature</option>
-          <option value="on">Cards Feature ON</option>
-          <option value="off">Cards Feature OFF</option>
-        </select>
         <select style={{ flex: 1, minWidth: 130, padding: '8px', background: '#363B44', border: '1px solid #444A55', borderRadius: 6, color: '#f5f6fb', fontSize: 13 }} value={filterAgent} onChange={e => { setFilterAgent(e.target.value); setPage(1); }}>
           <option value="">All (incl. assigned)</option>
           <option value="__unassigned__">Unassigned to Agent</option>
           {agents.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
         </select>
-        {(search || filterTeam || filterAgent || filterTrades || filterCards) && (
-          <button onClick={() => { setSearch(''); setFilterTeam(''); setFilterAgent(''); setFilterTrades(''); setFilterCards(''); setPage(1); }} style={{ padding: '8px 12px', background: '#444A55', color: '#a3adc0', border: '1px solid #444A55', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>Clear</button>
+        {(search || filterTeam || filterAgent) && (
+          <button onClick={() => { setSearch(''); setFilterTeam(''); setFilterAgent(''); setPage(1); }} style={{ padding: '8px 12px', background: '#444A55', color: '#a3adc0', border: '1px solid #444A55', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>Clear</button>
         )}
         <button
           onClick={() => setShowShuffle(v => !v)}
@@ -629,8 +598,6 @@ function OfficeLeadsTable({ data, currentUser, teamsForOffice, agents, setLeadAs
               <th>Name</th>
               <th>Country</th>
               <th>Status</th>
-              <th style={{ textAlign: 'center' }}>Trades Feature</th>
-              <th style={{ textAlign: 'center' }}>Cards Feature</th>
               <th>Team</th>
               <th>Agent</th>
               <th>Registered</th>
@@ -639,7 +606,7 @@ function OfficeLeadsTable({ data, currentUser, teamsForOffice, agents, setLeadAs
           </thead>
           <tbody>
             {paged.length === 0 ? (
-              <tr><td colSpan={11} style={{ textAlign: 'center', padding: 20, color: '#848E9C' }}>No leads match your filters.</td></tr>
+              <tr><td colSpan={9} style={{ textAlign: 'center', padding: 20, color: '#848E9C' }}>No leads match your filters.</td></tr>
             ) : paged.map(lead => (
               <tr
                 key={lead.id}
@@ -659,8 +626,6 @@ function OfficeLeadsTable({ data, currentUser, teamsForOffice, agents, setLeadAs
                 </td>
                 <td style={{ fontSize: 12 }}>{getCountryFlag(lead.countryCode, lead.country)} {lead.country}</td>
                 <td><span className={`aax-status-badge ${statusClass(lead.stage)}`}>{normalizeStage(lead.stage)}</span></td>
-                <td style={{ textAlign: 'center' }}><TradesStatusBadge enabled={lead.tradesEnabled !== false} /></td>
-                <td style={{ textAlign: 'center' }}><CardsStatusBadge enabled={lead.cardsEnabled !== false} /></td>
                 <td style={{ color: lead.assignedToTeam ? '#EAECEF' : '#F0B90B', fontSize: 12 }}>
                   {lead.assignedToTeam ? getTeamName(lead.assignedToTeam, data.teams) : 'Unassigned'}
                 </td>

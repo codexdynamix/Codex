@@ -15,21 +15,19 @@ const TXN_TYPES = [
   { value: 'Withdrawal',  label: '[upload] Withdrawal' },
   { value: 'Transfer',    label: '→ Transfer' },
   { value: 'Refund',      label: 'Refund' },
-  { value: 'Trade',       label: '🔄 Trade' },
   { value: 'Card Top-Up', label: '[card] Card Top-Up' },
   { value: 'Adjustment',  label: '⚙ Adjustment' },
   { value: '__custom__',  label: ' Custom...' },
 ];
 const TXN_STATUS_OPTIONS = ['Completed', 'Pending', 'Failed', 'Reversed'];
-const INJECTABLE_ASSETS  = new Set(['USD', 'BTC', 'ETH', 'USDT', 'CARD']);
-const CURRENCIES         = ['USD', 'BTC', 'ETH', 'USDT', 'TRX', 'BNB', 'USDC', 'SOL', 'XRP', 'ADA', 'DOGE', 'MATIC', 'DOT', 'AVAX', 'LINK', 'UNI', 'LTC', 'BCH', 'XLM', 'FIL', 'NEAR', 'CARD'];
+const INJECTABLE_ASSETS  = new Set(['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'CARD']);
+const CURRENCIES         = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'CARD'];
 
 // ── Badge helpers ─────────────────────────────────────────────────────────────
 const TYPE_BADGE_STYLE = (type) => {
   const k = (type || '').toLowerCase();
   if (k === 'deposit')     return { background: 'rgba(14,203,129,.15)',  color: '#0ECB81' };
   if (k === 'withdrawal')  return { background: 'rgba(246,70,93,.15)',   color: '#F6465D' };
-  if (k === 'trade')       return { background: 'rgba(153,102,255,.15)', color: '#9966ff' };
   if (k === 'transfer')    return { background: 'rgba(24,144,255,.15)',  color: '#1890ff' };
   if (k === 'refund')      return { background: 'rgba(0,210,210,.15)',   color: '#00d2d2' };
   if (k === 'card top-up') return { background: 'rgba(202,138,4,.18)',   color: '#f0b90b' };
@@ -653,7 +651,7 @@ const Transactions = () => {
             />
             <select className="search-dropdown" value={typeFilter} onChange={e => { setTypeFilter(e.target.value); setCurrentPage(1); }}>
               <option value="all">All Types</option>
-              {['Deposit','Withdrawal','Transfer','Refund','Trade','Card Top-Up','Adjustment'].map(t =>
+              {['Deposit','Withdrawal','Transfer','Refund','Card Top-Up','Adjustment'].map(t =>
                 <option key={t} value={t.toLowerCase()}>{t}</option>)}
             </select>
             <select className="search-dropdown" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setCurrentPage(1); }}>
@@ -851,7 +849,7 @@ const Transactions = () => {
 
                   {createAffectBal && !INJECTABLE_ASSETS.has(createCurrency) && (
                     <div style={{ background:'rgba(246,70,93,.1)', border:'1px solid rgba(246,70,93,.3)', borderRadius:6, padding:'8px 12px', marginBottom:12, fontSize:12, color:'#F6465D' }}>
-                      Warning <strong>{createCurrency}</strong> has no balance column - switch to USD/BTC/ETH/USDT/CARD to affect the balance.
+                      Warning <strong>{createCurrency}</strong> has no balance column - switch to USD/EUR/GBP/CAD/AUD/CARD to affect the balance.
                     </div>
                   )}
 
@@ -1131,7 +1129,7 @@ const Transactions = () => {
 
                                     {editAffectBal && !INJECTABLE_ASSETS.has(editForm.currency) && (
                                       <div style={{ background:'rgba(246,70,93,.08)', border:'1px solid rgba(246,70,93,.25)', borderRadius:6, padding:'7px 11px', marginBottom:10, fontSize:11, color:'#F6465D' }}>
-                                        Warning <strong>{editForm.currency}</strong> has no balance column - switch to USD/BTC/ETH/USDT/CARD.
+                                        Warning <strong>{editForm.currency}</strong> has no balance column - switch to USD/EUR/GBP/CAD/AUD/CARD.
                                       </div>
                                     )}
 

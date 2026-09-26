@@ -1,69 +1,45 @@
-import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { DataContext, NotificationContext } from '../../shared';
 import { injectBalance, getLeadBalanceHistory, deleteBalanceHistoryEntryApi, clearBalanceHistoryApi, resetAllBalancesApi, searchAdminLeads } from '../../adminApi';
 import { SearchAutocomplete } from '../UserChrome';
 
-// Maps the frontend crypto ticker to the backend asset code + minor-unit multiplier.
-// Only assets supported by the balance injection endpoint are listed.
-const TICKER_TO_BACKEND = {
-  BTC:  { asset: 'BTC',  multiplier: 1e8,  balanceKey: 'btc_sat'    },
-  ETH:  { asset: 'ETH',  multiplier: 1e9,  balanceKey: 'eth_wei_e9' },
-  USDT: { asset: 'USDT', multiplier: 1e2,  balanceKey: 'usdt_minor' },
-  USD:  { asset: 'USD',  multiplier: 1e2,  balanceKey: 'fiat_minor' },
-};
-
-// Fiat is intentionally not part of the market asset catalog, but it belongs
-// in this balance-management view alongside the crypto assets.
-const FIAT_ASSET = {
-  id: 'asset-usd',
-  asset: 'US Dollar',
-  ticker: 'USD',
-  price: 1,
-  category: 'fiat',
-};
-
 const Balances = () => {
-  const { leads, setLeads, cryptoData, logAdminAction } = useContext(DataContext);
+  const { leads, setLeads, logAdminAction } = useContext(DataContext);
   const showNotification = useContext(NotificationContext);
 
-  const [selectedCryptoLead, setSelectedCryptoLead] = useState(null);
-  const [cryptoLeadSearch, setCryptoLeadSearch] = useState('');
-  const [cryptoAmount, setCryptoAmount] = useState('');
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [leadSearch, setLeadSearch] = useState('');
+  const [balanceAmount, setBalanceAmount] = useState('');
 
-  // Live balance + audit-log timeline for the currently selected crypto lead.
-  // Loaded from /api/admin/users/{id}/balance-history every time the operator
-  // picks a lead and after every successful injection. Keeping this in local
-  // state (rather than relying on the leads-list cache) is what guarantees the
-  // panel always shows the same numbers the user portal sees.
+  // Authoritative balance + audit-log timeline for the currently selected lead.
+  // Loaded from /api/admin/users/{id}/balance-history whenever the operator
+  // selects a lead and after every balance adjustment.
   const [leadBalanceHistory, setLeadBalanceHistory] = useState([]);
-  const [leadBalanceFresh, setLeadBalanceFresh]     = useState(null); // { fiat_minor, btc_sat, ... }
-  const [leadBalanceDisplay, setLeadBalanceDisplay] = useState({});   // { usd, btc, eth, usdt, cardUsd }
+  const [leadBalanceFresh, setLeadBalanceFresh]     = useState(null);
+  const [leadBalanceDisplay, setLeadBalanceDisplay] = useState({});
   const [historyLoading, setHistoryLoading]         = useState(false);
   const [historyError, setHistoryError]             = useState(null);
   const [selectedHistoryIds, setSelectedHistoryIds] = useState(new Set());
   const [deletingHistory, setDeletingHistory]       = useState(false);
   const [resettingAll, setResettingAll]             = useState(false);
 
-  const baseLead = selectedCryptoLead ? leads.find(lead => lead.id === selectedCryptoLead.id) || selectedCryptoLead : null;
-  // Merge the freshly-fetched balance over whatever the leads list happened to
-  // cache, so the rest of the component reads from one consistent object.
-  const currentSelectedCryptoLead = baseLead ? {
+  const baseLead = selectedLead ? leads.find(lead => lead.id === selectedLead.id) || selectedLead : null;
+  const currentSelectedLead = baseLead ? {
     ...baseLead,
     balance:        leadBalanceFresh   || baseLead.balance   || null,
     balances:       Object.keys(leadBalanceDisplay).length > 0 ? leadBalanceDisplay : (baseLead.balances || {}),
     balanceHistory: leadBalanceHistory,
   } : null;
-  const currentFiatBalance = currentSelectedCryptoLead
-    ? (Number.isFinite(Number(currentSelectedCryptoLead.balance?.fiat_minor))
-      ? Number(currentSelectedCryptoLead.balance.fiat_minor) / 100
-      : Number(currentSelectedCryptoLead.balances?.usd || 0))
+
+  const currentFiatBalance = currentSelectedLead
+    ? (Number.isFinite(Number(currentSelectedLead.balance?.fiat_minor))
+      ? Number(currentSelectedLead.balance.fiat_minor) / 100
+      : Number(currentSelectedLead.balances?.usd || 0))
     : 0;
-  const currentFiatCurrency = currentSelectedCryptoLead?.balances?.fiatCurrency
-    || currentSelectedCryptoLead?.balance?.fiat_currency
+  const currentFiatCurrency = currentSelectedLead?.balances?.fiatCurrency
+    || currentSelectedLead?.balance?.fiat_currency
     || 'USD';
-  // Pull the authoritative balance + audit-log history for the given user.
-  // Also writes the fresh balance back into the global leads list so any
-  // other panel reading from `leads` reflects the same numbers.
+
   const refreshBalanceHistory = useCallback(async (leadId) => {
     if (!leadId) return;
     setHistoryLoading(true);
@@ -86,11 +62,9 @@ const Balances = () => {
     }
   }, [setLeads]);
 
-  const handleCryptoLeadSelect = (lead) => {
-    setSelectedCryptoLead(lead);
-    setCryptoLeadSearch(lead.name || lead.email || lead.phone || lead.id || '');
-    // Reset stale state from the previously-selected lead before the network
-    // call returns, so the UI never briefly shows another user's history.
+  const handleLeadSelect = (lead) => {
+    setSelectedLead(lead);
+    setLeadSearch(lead.name || lead.email || lead.phone || lead.id || '');
     setLeadBalanceFresh(null);
     setLeadBalanceDisplay({});
     setLeadBalanceHistory([]);
@@ -98,25 +72,23 @@ const Balances = () => {
     refreshBalanceHistory(lead.id);
   };
 
-  // Re-fetch when the selection changes through other means (e.g. the parent
-  // updates leads). Cleared selection wipes the panel.
   useEffect(() => {
-    if (!selectedCryptoLead) {
+    if (!selectedLead) {
       setLeadBalanceFresh(null);
       setLeadBalanceDisplay({});
       setLeadBalanceHistory([]);
       setHistoryError(null);
     }
-  }, [selectedCryptoLead]);
+  }, [selectedLead]);
 
-  const handleSetCryptoBalance = async (e) => {
+  const handleSetBalance = async (e) => {
     e.preventDefault();
-    if (!currentSelectedCryptoLead || !cryptoAmount) {
+    if (!currentSelectedLead || !balanceAmount) {
       showNotification('Please enter a USD amount.', 'error');
       return;
     }
 
-    const amount = parseFloat(cryptoAmount);
+    const amount = parseFloat(balanceAmount);
     if (isNaN(amount) || amount < 0) {
       showNotification('Invalid USD amount.', 'error');
       return;
@@ -129,24 +101,24 @@ const Balances = () => {
     }
 
     try {
-      const result = await injectBalance(currentSelectedCryptoLead.id, {
+      const result = await injectBalance(currentSelectedLead.id, {
         asset: 'USD',
         amount_minor: amountMinor,
         type: 'Adjustment',
-        description: `Admin added $${amount.toFixed(2)} to USD balance`,
+        description: `Admin added $${amount.toFixed(2)} to account balance`,
       });
 
       const freshBalances = result?.balances ?? {};
       setLeads(prevLeads => prevLeads.map(lead =>
-        lead.id === currentSelectedCryptoLead.id
+        lead.id === currentSelectedLead.id
           ? { ...lead, balance: { ...(lead.balance || {}), ...freshBalances } }
           : lead
       ));
-      refreshBalanceHistory(currentSelectedCryptoLead.id);
+      refreshBalanceHistory(currentSelectedLead.id);
 
-      logAdminAction('Admin', 'Add USD Balance', `Added $${amount.toFixed(2)} USD to ${currentSelectedCryptoLead.name}'s account balance.`);
-      showNotification(`Added $${amount.toFixed(2)} USD to ${currentSelectedCryptoLead.name}'s balance.`, 'success');
-      setCryptoAmount('');
+      logAdminAction('Admin', 'Add USD Balance', `Added $${amount.toFixed(2)} USD to ${currentSelectedLead.name}'s account balance.`);
+      showNotification(`Added $${amount.toFixed(2)} USD to ${currentSelectedLead.name}'s balance.`, 'success');
+      setBalanceAmount('');
     } catch (error) {
       console.error('[Balances] balance injection failed:', error);
       const msg = error?.message || 'Balance could not be saved to backend.';
@@ -197,7 +169,7 @@ const Balances = () => {
   }, [refreshBalanceHistory, showNotification]);
 
   const handleResetAllBalances = useCallback(async (leadId, leadName) => {
-    if (!window.confirm(`Reset ALL crypto balances to zero for ${leadName}? This cannot be undone.`)) return;
+    if (!window.confirm(`Reset all balances to zero for ${leadName}? This cannot be undone.`)) return;
     setResettingAll(true);
     try {
       await resetAllBalancesApi(leadId);
@@ -223,15 +195,6 @@ const Balances = () => {
     color: '#EAECEF',
     fontSize: '14px',
     lineHeight: '1.4',
-  };
-  const balanceSelectStyle = {
-    ...balanceFieldStyle,
-    paddingRight: '38px',
-    backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"6\" fill=\"%23848E9C\" viewBox=\"0 0 10 6\"><path d=\"M0 0l5 6 5-6z\"/></svg>')",
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'right 12px center',
-    appearance: 'none',
-    WebkitAppearance: 'none',
   };
   const balanceFormGroupStyle = {
     display: 'flex',
@@ -273,22 +236,22 @@ const Balances = () => {
     color: '#1A1E2A',
     boxShadow: '0 1px 2px rgba(240, 185, 11, 0.18)',
   };
-  const selectedBalanceHistory = currentSelectedCryptoLead?.balanceHistory || [];
+  const selectedBalanceHistory = currentSelectedLead?.balanceHistory || [];
 
   return (
     <div id="balances-section" className="aax-admin-section aax-balances-page">
-      <h2>[money] Balances Management</h2>
+      <h2>Balances Management</h2>
       <div style={{ marginBottom: '32px' }}>
-        <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '16px', color: '#848E9C' }}>[card] Manage Account Balances</h3>
+        <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '16px', color: '#848E9C' }}>Manage Client Account Balances</h3>
          <SearchAutocomplete
-           value={cryptoLeadSearch}
+           value={leadSearch}
            onChange={(value) => {
-             setCryptoLeadSearch(value);
-             if (selectedCryptoLead && value !== (selectedCryptoLead.name || selectedCryptoLead.email || selectedCryptoLead.phone || selectedCryptoLead.id)) {
-               setSelectedCryptoLead(null);
+             setLeadSearch(value);
+             if (selectedLead && value !== (selectedLead.name || selectedLead.email || selectedLead.phone || selectedLead.id)) {
+               setSelectedLead(null);
              }
            }}
-           onSelect={(suggestion) => handleCryptoLeadSelect(suggestion?.lead || suggestion)}
+           onSelect={(suggestion) => handleLeadSelect(suggestion?.lead || suggestion)}
            placeholder="Search name, email, phone or ID..."
            className="admin-input"
            style={{ width: '100%', marginBottom: 16 }}
@@ -308,25 +271,25 @@ const Balances = () => {
            }}
            maxSuggestions={15}
            inputProps={{
-             id: 'crypto-lead-search',
+             id: 'lead-balance-search',
              'aria-label': 'Select lead for account balance management',
            }}
          />
-        {currentSelectedCryptoLead && (
-          <div className="aax-fiat-balance-summary" aria-label={`${currentFiatCurrency} fiat balance`}>
+        {currentSelectedLead && (
+          <div className="aax-fiat-balance-summary" aria-label={`${currentFiatCurrency} balance`}>
             <div>
-              <span className="aax-fiat-balance-label">{currentFiatCurrency} Fiat Balance</span>
-              <span className="aax-fiat-balance-subtitle">{currentSelectedCryptoLead.name}</span>
+              <span className="aax-fiat-balance-label">{currentFiatCurrency} Balance</span>
+              <span className="aax-fiat-balance-subtitle">{currentSelectedLead.name}</span>
             </div>
             <strong>{currentFiatBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currentFiatCurrency}</strong>
           </div>
         )}
-        {currentSelectedCryptoLead && (
+        {currentSelectedLead && (
           <div style={{ marginBottom: '16px', padding: '16px', background: '#363B44', border: '1px solid #444A55', borderRadius: '10px' }}>
             <div style={{ fontWeight: 700, marginBottom: '12px', color: '#f3ba2f', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-              <span>Current USD balance for {currentSelectedCryptoLead.name}</span>
+              <span>Current USD balance for {currentSelectedLead.name}</span>
               <button
-                onClick={() => handleResetAllBalances(currentSelectedCryptoLead.id, currentSelectedCryptoLead.name)}
+                onClick={() => handleResetAllBalances(currentSelectedLead.id, currentSelectedLead.name)}
                 disabled={resettingAll}
                 style={{ fontSize: '0.78rem', padding: '4px 12px', background: 'rgba(246,70,93,0.12)', border: '1px solid rgba(246,70,93,0.4)', borderRadius: 6, color: '#F6465D', cursor: resettingAll ? 'not-allowed' : 'pointer', fontWeight: 600 }}
                 title="Reset USD balance to zero"
@@ -342,17 +305,17 @@ const Balances = () => {
             </div>
             <div style={{ fontWeight: 700, marginBottom: '8px', color: '#848E9C', display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
               <span>Balance update history ({selectedBalanceHistory.length})</span>
-              {historyLoading && <span style={{ fontSize: '0.8rem', color: '#9fb1d1' }}> /  refreshing...</span>}
-              {historyError && <span style={{ fontSize: '0.8rem', color: '#F6465D' }}> /  {historyError}</span>}
+              {historyLoading && <span style={{ fontSize: '0.8rem', color: '#9fb1d1' }}> / refreshing...</span>}
+              {historyError && <span style={{ fontSize: '0.8rem', color: '#F6465D' }}> / {historyError}</span>}
               <div style={{ marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center' }}>
                 {selectedHistoryIds.size > 0 && (
-                  <button onClick={() => handleBulkDeleteHistory(currentSelectedCryptoLead.id)} disabled={deletingHistory}
+                  <button onClick={() => handleBulkDeleteHistory(currentSelectedLead.id)} disabled={deletingHistory}
                     style={{ fontSize: '0.75rem', padding: '3px 10px', background: 'rgba(246,70,93,0.15)', border: '1px solid rgba(246,70,93,0.4)', borderRadius: 6, color: '#F6465D', cursor: 'pointer', fontWeight: 600 }}>
                     Delete {selectedHistoryIds.size} selected
                   </button>
                 )}
                 {selectedBalanceHistory.length > 0 && (
-                  <button onClick={() => handleClearAllHistory(currentSelectedCryptoLead.id)} disabled={deletingHistory}
+                  <button onClick={() => handleClearAllHistory(currentSelectedLead.id)} disabled={deletingHistory}
                     style={{ fontSize: '0.75rem', padding: '3px 10px', background: 'rgba(246,70,93,0.08)', border: '1px solid #444A55', borderRadius: 6, color: '#9fb1d1', cursor: 'pointer' }}>
                     Clear all
                   </button>
@@ -363,26 +326,37 @@ const Balances = () => {
               <div style={{ maxHeight: '260px', overflowY: 'auto', border: '1px solid #444A55', borderRadius: '8px' }}>
                 {selectedBalanceHistory.map(entry => {
                   const deltaPositive = (entry.delta || 0) >= 0;
-                  const entryId = entry.id || `${entry.date}-${entry.asset}`;
+                  const entryId = entry.id || `${entry.date}-${entry.asset || 'USD'}`;
                   const isChecked = selectedHistoryIds.has(entryId);
                   return (
                     <div key={entryId} style={{ display: 'grid', gridTemplateColumns: '24px 1.3fr 1fr 1fr 1fr 28px', gap: '8px', padding: '10px 10px', borderBottom: '1px solid #444A55', color: '#848E9C', alignItems: 'center' }}>
                       <input
                         type="checkbox" checked={isChecked}
-                        onChange={e => setSelectedHistoryIds(prev => { const next = new Set(prev); e.target.checked ? next.add(entryId) : next.delete(entryId); return next; })}
+                        onChange={e => {
+                          const checked = e.target.checked;
+                          setSelectedHistoryIds(prev => {
+                            const next = new Set(prev);
+                            if (checked) {
+                              next.add(entryId);
+                            } else {
+                              next.delete(entryId);
+                            }
+                            return next;
+                          });
+                        }}
                         style={{ cursor: 'pointer', accentColor: '#F0B90B' }}
                       />
                       <div>
-                        <div style={{ fontWeight: 700 }}>{entry.assetName || entry.asset} <span style={{ fontSize: '0.78rem', color: '#9fb1d1', fontWeight: 400 }}>({entry.txType || 'Adjustment'})</span></div>
+                        <div style={{ fontWeight: 700 }}>{entry.assetName || entry.asset || 'USD'} <span style={{ fontSize: '0.78rem', color: '#9fb1d1', fontWeight: 400 }}>({entry.txType || 'Adjustment'})</span></div>
                         <div style={{ fontSize: '0.78rem', color: '#9fb1d1' }}>{entry.date ? new Date(entry.date).toLocaleString() : '-'}</div>
                         <div style={{ fontSize: '0.78rem', color: '#9fb1d1' }}>by {entry.actorName || entry.actorRole || entry.actorAdminId || 'admin'}</div>
                       </div>
-                      <div style={{ fontSize: '0.9rem' }}>Before: <strong>{Number(entry.previousBalance || 0).toLocaleString(undefined, { maximumFractionDigits: 8 })} {entry.ticker || ''}</strong></div>
-                      <div style={{ fontSize: '0.9rem' }}>After: <strong style={{ color: '#f3ba2f' }}>{Number(entry.newBalance || 0).toLocaleString(undefined, { maximumFractionDigits: 8 })} {entry.ticker || ''}</strong></div>
+                      <div style={{ fontSize: '0.9rem' }}>Before: <strong>{Number(entry.previousBalance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {entry.ticker || 'USD'}</strong></div>
+                      <div style={{ fontSize: '0.9rem' }}>After: <strong style={{ color: '#f3ba2f' }}>{Number(entry.newBalance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {entry.ticker || 'USD'}</strong></div>
                       <div style={{ fontSize: '0.9rem', color: deltaPositive ? '#0ECB81' : '#F6465D' }}>
-                        {deltaPositive ? '+' : ''}{Number(entry.delta || 0).toLocaleString(undefined, { maximumFractionDigits: 8 })} {entry.ticker || ''}
+                        {deltaPositive ? '+' : ''}{Number(entry.delta || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {entry.ticker || 'USD'}
                       </div>
-                      <button onClick={() => handleDeleteHistoryEntry(currentSelectedCryptoLead.id, entryId)}
+                      <button onClick={() => handleDeleteHistoryEntry(currentSelectedLead.id, entryId)}
                         title="Delete entry"
                         style={{ background: 'transparent', border: 'none', color: 'rgba(246,70,93,0.6)', cursor: 'pointer', padding: '2px 4px', borderRadius: 4, fontSize: '0.85rem', lineHeight: 1 }}>
                         ✕
@@ -396,27 +370,27 @@ const Balances = () => {
             )}
           </div>
         )}
-        <fieldset id="crypto-balance-fieldset" disabled={!selectedCryptoLead} style={{ opacity: !selectedCryptoLead ? 0.5 : 1, border: 'none', padding: 0, margin: 0 }}>
-          <form id="crypto-balance-form" onSubmit={handleSetCryptoBalance} style={{ background: '#363B44', border: '1px solid #444A55', borderRadius: '10px', padding: 0 }}>
+        <fieldset id="lead-balance-fieldset" disabled={!selectedLead} style={{ opacity: !selectedLead ? 0.5 : 1, border: 'none', padding: 0, margin: 0 }}>
+          <form id="lead-balance-form" onSubmit={handleSetBalance} style={{ background: '#363B44', border: '1px solid #444A55', borderRadius: '10px', padding: 0 }}>
             <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
               <div className="admin-form-group" style={balanceFormGroupStyle}>
-                <label htmlFor="crypto-balance-amount" className="admin-form-label" style={balanceLabelStyle}>💵 USD Amount</label>
+                <label htmlFor="lead-balance-amount" className="admin-form-label" style={balanceLabelStyle}>USD Amount</label>
                 <input
                   type="number"
                   step="any"
-                  id="crypto-balance-amount"
+                  id="lead-balance-amount"
                   className="admin-input"
                   placeholder="e.g., 500.00"
                   required
-                  value={cryptoAmount}
+                  value={balanceAmount}
                   style={balanceFieldStyle}
-                  onChange={(e) => setCryptoAmount(e.target.value)}
+                  onChange={(e) => setBalanceAmount(e.target.value)}
                 />
               </div>
             </div>
             <div style={{ marginBottom: 0, fontSize: '0.95rem', color: '#b0c1d7' }}>
-              Balance adjustments are always recorded in USD units.
+              Balance adjustments are recorded directly in account USD currency.
             </div>
             <div style={balanceActionsStyle}>
               <button type="submit" className="aax-btn-primary" style={balanceActionButtonStyle}>Add USD Balance</button>

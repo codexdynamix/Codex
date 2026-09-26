@@ -1110,52 +1110,14 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
                 <div className="aax-status-timeline-empty">No status changes recorded yet. Update the status to start tracking the workflow.</div>
               ) : (
                 statusHistory.map((entry, idx) => {
-                  const isTradesFlip =
-                    (entry.from === 'Trades ON' || entry.from === 'Trades OFF') &&
-                    (entry.to   === 'Trades ON' || entry.to   === 'Trades OFF');
-                  const tradesNowOn = entry.to === 'Trades ON';
-                  const tradesPillColor = tradesNowOn ? '#0ECB81' : '#F0B90B';
                   return (
-                  <div key={idx} className="aax-status-timeline-row">
-                    <div className="aax-status-timeline-arrow">
-                      {isTradesFlip ? (
-                        <span
-                          className="aax-status-pill"
-                          style={{
-                            color: tradesPillColor,
-                            border: `1px solid ${tradesPillColor}`,
-                            background: tradesNowOn ? 'rgba(14, 203, 129, 0.10)' : 'rgba(240, 185, 11, 0.10)',
-                            padding: '3px 10px',
-                            borderRadius: 999,
-                            fontSize: 12,
-                            fontWeight: 600,
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 6,
-                          }}
-                          title={`Trades ${tradesNowOn ? 'enabled' : 'disabled'} for this client`}
-                        >
-                          <span
-                            aria-hidden
-                            style={{
-                              width: 6,
-                              height: 6,
-                              borderRadius: '50%',
-                              background: tradesPillColor,
-                              boxShadow: tradesNowOn ? '0 0 6px rgba(14, 203, 129, 0.8)' : 'none',
-                            }}
-                          />
-                          {tradesNowOn ? 'Trades enabled' : 'Trades disabled'}
-                        </span>
-                      ) : (
-                        <>
-                          <span className="aax-status-pill" style={{ color: stageColor(entry.from), border: `1px solid ${stageColor(entry.from)}`, padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 600, background: 'transparent' }}>{entry.from}</span>
-                          <span className="aax-status-pill-arrow">→</span>
-                          <span className="aax-status-pill" style={{ color: stageColor(entry.to), border: `1px solid ${stageColor(entry.to)}`, padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 600, background: 'transparent' }}>{entry.to}</span>
-                        </>
-                      )}
-                    </div>
-                    <div className="aax-status-timeline-meta">
+                    <div key={idx} className="aax-status-timeline-row">
+                      <div className="aax-status-timeline-arrow">
+                        <span className="aax-status-pill" style={{ color: stageColor(entry.from), border: `1px solid ${stageColor(entry.from)}`, padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 600, background: 'transparent' }}>{entry.from}</span>
+                        <span className="aax-status-pill-arrow">→</span>
+                        <span className="aax-status-pill" style={{ color: stageColor(entry.to), border: `1px solid ${stageColor(entry.to)}`, padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 600, background: 'transparent' }}>{entry.to}</span>
+                      </div>
+                      <div className="aax-status-timeline-meta">
                       <span>By <span className="aax-by">{entry.byName || 'Unknown'}</span></span>
                       <span>{entry.at ? new Date(entry.at).toLocaleString() : ''}</span>
                     </div>

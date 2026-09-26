@@ -44,7 +44,6 @@ import {
   getClientWorkspaceAdmin, updateClientWorkspaceAdmin,
 } from '../adminApi';
 import { fetchAdminSettings } from '../../platformDefaults';
-import { getCryptoData } from '../../api';
 import { getLeadProfilePath } from '../leadProfileRouting';
 import {
   createLogAdminAction,
@@ -341,7 +340,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
     const headers = [
       'Lead ID', 'Name', 'First Name', 'Last Name', 'Email', 'Phone',
       'Country', 'Status', 'KYC Status', 'Stage', 'Funnel',
-      'Office', 'Team', 'Agent', 'Trades Enabled', 'Cards Enabled',
+      'Office', 'Team', 'Agent',
       'Registered Date', 'Created At', 'Updated At',
     ];
     const rows = (data.leads || []).map(lead => {
@@ -353,8 +352,6 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
         lead.id, name, lead.firstName, lead.lastName, lead.email, lead.phone,
         lead.country, lead.status, lead.kycStatus, lead.stage, lead.funnel,
         office?.name, team?.name, agent?.name,
-        lead.tradesEnabled === false ? 'OFF' : 'ON',
-        lead.cardsEnabled === false ? 'OFF' : 'ON',
         lead.registeredDate, lead.createdAt, lead.updatedAt,
       ].map(csvCell).join(',');
     });
@@ -2295,19 +2292,11 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
     }
   };
 
-  // Crypto admin data uses leads as the single account source for dashboard finance views.
   // Transactions are loaded from the backend via listAllTransactions() below.
   // The server is the single source of truth.
   const [cryptoTransactionData, setCryptoTransactionData] = useState([]);
   const [cryptoActivityLog, setCryptoActivityLog] = useState([]);
   const [cryptoAuditLog, setCryptoAuditLog] = useState([]);
-  const [cryptoCryptoData, setCryptoCryptoData] = useState([]);
-
-  useEffect(() => {
-    getCryptoData().then((list) => {
-      if (Array.isArray(list) && list.length) setCryptoCryptoData(list);
-    }).catch(() => {});
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -2341,66 +2330,6 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
     }).catch(() => {});
     return () => { cancelled = true; };
   }, []);
-
-  // Live crypto prices: keep the admin's market table in lock-step with what
-  // users see by polling CoinGecko every 20 seconds (3 calls/min - well within
-  // the public-tier rate limit). Only mutates `price` and `change24h`; other
-  // fields like `id`, `asset`, `ticker` stay intact so the rest of the app
-  // (Balances, CryptoAddresses, etc.) keeps working with the same identifiers.
-  useEffect(() => {
-    const ids = {
-      BTC: 'bitcoin', ETH: 'ethereum', BNB: 'binancecoin', SOL: 'solana',
-      XRP: 'ripple', ADA: 'cardano', DOGE: 'dogecoin', AVAX: 'avalanche-2',
-      DOT: 'polkadot', LINK: 'chainlink', MATIC: 'matic-network', LTC: 'litecoin',
-      USDT: 'tether', USDC: 'usd-coin', UNI: 'uniswap',
-      BCH: 'bitcoin-cash', XLM: 'stellar', FIL: 'filecoin', NEAR: 'near',
-    };
-    let cancelled = false;
-    const tick = async () => {
-      try {
-        const coinIds = [...new Set(cryptoCryptoData.map(a => ids[a.ticker]).filter(Boolean))];
-        if (coinIds.length === 0) return;
-        // Prefer the backend proxy (shared 30s cache, no CORS), fall back to
-        // CoinGecko direct if the proxy is unreachable.
-        let markets = null;
-        try {
-          const res = await fetch(`/api/market/crypto?ids=${coinIds.join(',')}`);
-          if (res.ok) {
-            const json = await res.json();
-            markets = (json.coins || []).map(c => ({
-              id: c.id, current_price: c.current_price, price_change_percentage_24h: c.price_change_percentage_24h,
-              total_volume: c.total_volume, market_cap: c.market_cap,
-            }));
-          }
-        } catch {}
-        if (!markets) {
-          const res = await fetch(
-            `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coinIds.join(',')}&order=market_cap_desc&per_page=50&page=1&sparkline=false`,
-            { headers: { Accept: 'application/json' } }
-          );
-          if (!res.ok) return;
-          markets = await res.json();
-        }
-        if (cancelled) return;
-        const priceMap = {};
-        markets.forEach(m => { priceMap[m.id] = m; });
-        setCryptoCryptoData(prev => prev.map(asset => {
-          const live = priceMap[ids[asset.ticker]];
-          if (!live) return asset;
-          return {
-            ...asset,
-            price:      Number.isFinite(live.current_price)               ? live.current_price               : asset.price,
-            change24h:  Number.isFinite(live.price_change_percentage_24h) ? live.price_change_percentage_24h : asset.change24h,
-            volume24h:  Number.isFinite(live.total_volume)                ? live.total_volume                : asset.volume24h,
-            marketCap:  Number.isFinite(live.market_cap)                  ? live.market_cap                  : asset.marketCap,
-          };
-        }));
-      } catch (_) { /* swallow - retry on next tick */ }
-    };
-    tick();
-    const interval = setInterval(tick, 20000);
-    return () => { cancelled = true; clearInterval(interval); };
-  }, [cryptoCryptoData]);
 
   const [cryptoUserFees, setCryptoUserFees] = useState({});
   const [cryptoClientSpecificFees, setCryptoClientSpecificFees] = useState({});
@@ -2571,7 +2500,7 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
     transactionData: cryptoTransactionData, setTransactionData: setCryptoTransactionData,
     activityLog: cryptoActivityLog, setActivityLog: setCryptoActivityLog,
     auditLog: cryptoAuditLog, setAuditLog: setCryptoAuditLog,
-    cryptoData: cryptoCryptoData, setCryptoData: setCryptoCryptoData,
+    cryptoData: [], setCryptoData: () => {},
     userFees: cryptoUserFees, setUserFees: setCryptoUserFees,
     clientSpecificFees: cryptoClientSpecificFees, setClientSpecificFees: setCryptoClientSpecificFees,
     logAdminAction,

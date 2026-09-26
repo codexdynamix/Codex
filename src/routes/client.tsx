@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { BarChart3, Bell, CalendarDays, CheckCircle2, ClipboardCheck, ExternalLink, FileSignature, FolderOpen, Headphones, LayoutDashboard, LogOut, MessageCircle, Receipt, Send, ShieldCheck, Sparkles, ThumbsUp, Upload, UserRound, WalletCards } from "lucide-react";
-import { authMe, clearClientToken, getClientMessages, getClientWorkspace, getKycStatus, getTransactionsPage, readClientToken, requestClientService, sendClientMessage } from "@/chainiq/api.js";
+import { authMe, clearClientToken, getClientMessages, getClientWorkspace, getKycStatus, getTransactionsPage, readClientToken, requestClientService, sendClientMessage } from "@/crm/api.js";
 
 export const Route = createFileRoute("/client")({ component: ClientWorkspace });
 

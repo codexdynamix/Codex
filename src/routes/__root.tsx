@@ -6,7 +6,7 @@ import { SiteConfigProvider } from "@/context/SiteConfigContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ContactModalProvider } from "@/context/ContactModalContext";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
-import CodexDynamicsAdminApp from "@/chainiq/admin-app/App.jsx";
+import CodexDynamicsAdminApp from "@/crm/admin-app/App.jsx";
 import { Toaster } from "sonner";
 import { TidioWidget } from "@/components/TidioWidget";
 import { GlobalVisitorTracker } from "@/components/GlobalVisitorTracker";

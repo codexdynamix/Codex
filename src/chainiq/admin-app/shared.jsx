@@ -462,7 +462,7 @@ function _EyeIcon({ visible }) {
   );
 }
 
-function _CopyBtn({ link }) {
+function CopyBtn({ link }) {
   const [copied, setCopied] = React.useState(false);
   const copy = () => {
     if (!link) return;
@@ -483,7 +483,7 @@ function _CopyBtn({ link }) {
   );
 }
 
-function _PwField({ value, onChange, readOnly, placeholder, autoComplete }) {
+function PwField({ value, onChange, readOnly, placeholder, autoComplete }) {
   const [show, setShow] = React.useState(false);
   return (
     <div style={{ display: 'flex', alignItems: 'stretch', border: '1px solid #444A55', borderRadius: 4, background: '#2A2E36', overflow: 'hidden' }}>
@@ -515,7 +515,7 @@ function _PwSection({ currentPassword, newPassword, onNewPasswordChange, newPass
     <>
       <div style={_fg}>
         <label style={_lbl}>Current Password</label>
-        <_PwField value={currentPassword} readOnly placeholder="not recorded" />
+        <PwField value={currentPassword} readOnly placeholder="not recorded" />
         {!hasStored && (
           <p style={{ margin: '4px 0 0', fontSize: 11, color: '#848E9C', lineHeight: 1.4 }}>
             This account's password predates our records. Set a new one below to store it going forward.
@@ -527,7 +527,7 @@ function _PwSection({ currentPassword, newPassword, onNewPasswordChange, newPass
           {newPasswordLabel || 'New Password'}{' '}
           <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(blank = keep current)</span>
         </label>
-        <_PwField value={newPassword} onChange={onNewPasswordChange} placeholder="Enter new password..." autoComplete="new-password" />
+        <PwField value={newPassword} onChange={onNewPasswordChange} placeholder="Enter new password..." autoComplete="new-password" />
       </div>
     </>
   );
@@ -626,7 +626,7 @@ export function EditOfficeModal({ office, officeManager, isManagerBlocked, onBlo
                   <label style={_lbl}>Login Link</label>
                   <div style={_lnkRow}>
                     <input style={_lnkInput} value={loginLink || ''} readOnly />
-                    <_CopyBtn link={loginLink} />
+                    <CopyBtn link={loginLink} />
                   </div>
                 </div>
               </>
@@ -727,7 +727,7 @@ export function EditTeamModal({ team, offices, teamLeader, isLeaderBlocked, onBl
                   <label style={_lbl}>Login Link</label>
                   <div style={_lnkRow}>
                     <input style={_lnkInput} value={loginLink || ''} readOnly />
-                    <_CopyBtn link={loginLink} />
+                    <CopyBtn link={loginLink} />
                   </div>
                 </div>
               </>
@@ -801,7 +801,7 @@ export function EditAgentModal({ agent, teams, isBlocked, onBlock, onClose, onSa
               <label style={_lbl}>Login Link</label>
               <div style={_lnkRow}>
                 <input style={_lnkInput} value={loginLink || ''} readOnly />
-                <_CopyBtn link={loginLink} />
+                <CopyBtn link={loginLink} />
               </div>
             </div>
             {teams && teams.length > 0 && (
@@ -1095,42 +1095,3 @@ export function AddCommentModal({ leadName, onClose, onSubmit }) {
   );
 }
 
-/**
- * Compact pill that shows whether a lead currently has Trades access.
- * Defaults to "ON" when the field is missing (legacy rows) so admins
- * don't see "OFF" for clients we never explicitly disabled.
- */
-export function TradesStatusBadge({ enabled }) {
-  const on = enabled !== false;
-  const style = on
-    ? { background: 'rgba(14,203,129,0.12)', color: '#0ECB81', border: '1px solid #0ECB8140' }
-    : { background: 'rgba(245,158,11,0.12)', color: '#F59E0B', border: '1px solid #F59E0B40' };
-  return (
-    <span
-      title={on ? 'Forex Lead - Trades section enabled' : 'Recovery Lead - Trades section disabled'}
-      style={{ ...style, padding: '2px 8px', borderRadius: 10, fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}
-    >
-      {on ? 'Forex' : 'Recovery'}
-    </span>
-  );
-}
-
-/**
- * Compact pill that shows whether a lead currently has Cards access.
- * Mirrors TradesStatusBadge with a distinct violet accent so the two
- * feature flags don't visually collide in the same row.
- */
-export function CardsStatusBadge({ enabled }) {
-  const on = enabled !== false;
-  const style = on
-    ? { background: 'rgba(155,109,255,0.14)', color: '#9B6DFF', border: '1px solid #9B6DFF40' }
-    : { background: 'rgba(245,158,11,0.12)', color: '#F59E0B', border: '1px solid #F59E0B40' };
-  return (
-    <span
-      title={on ? 'Cards section is visible to this client' : 'Cards section is hidden from this client'}
-      style={{ ...style, padding: '2px 8px', borderRadius: 10, fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}
-    >
-      {on ? 'ON' : 'OFF'}
-    </span>
-  );
-}

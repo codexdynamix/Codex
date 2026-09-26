@@ -9,7 +9,14 @@ import {
   fetchSettingsHistory,
 } from '../../../platformDefaults';
 import { getAdminToken } from '../../adminApi';
-import { cryptoData as ALL_CRYPTO } from '../../data/data';
+
+const SUPPORTED_FIAT_CURRENCIES = [
+  { id: 'curr-usd', ticker: 'USD', name: 'US Dollar ($)' },
+  { id: 'curr-eur', ticker: 'EUR', name: 'Euro (€)' },
+  { id: 'curr-gbp', ticker: 'GBP', name: 'British Pound (£)' },
+  { id: 'curr-cad', ticker: 'CAD', name: 'Canadian Dollar (C$)' },
+  { id: 'curr-aud', ticker: 'AUD', name: 'Australian Dollar (A$)' },
+];
 
 const staffRoles = ['Super Admin', 'Office Manager', 'Team Leader', 'Agent'];
 
@@ -518,10 +525,10 @@ const COLOR_PRESETS = [
     textColor: '#ECEFF1',
   },
 
-  // ── Crypto Wallet Themes (Dark) ─────────────────────────────────────────
+  // ── Modern Brand Themes (Dark) ──────────────────────────────────────────
   {
-    id: 'bitcoin-orange',
-    name: 'Bitcoin Orange',
+    id: 'amber-glow',
+    name: 'Amber Glow',
     primaryColor: '#F7931A',
     secondaryColor: '#1A0F00',
     accentColor: '#FFAB40',
@@ -530,8 +537,8 @@ const COLOR_PRESETS = [
     textColor: '#FFF4E0',
   },
   {
-    id: 'ethereum-violet',
-    name: 'Ethereum Violet',
+    id: 'slate-violet',
+    name: 'Slate Violet',
     primaryColor: '#627EEA',
     secondaryColor: '#110E28',
     accentColor: '#8FA4F5',
@@ -540,8 +547,8 @@ const COLOR_PRESETS = [
     textColor: '#E8EEFF',
   },
   {
-    id: 'solana-wave',
-    name: 'Solana Wave',
+    id: 'cyber-mint',
+    name: 'Cyber Mint',
     primaryColor: '#14F195',
     secondaryColor: '#130D2A',
     accentColor: '#9945FF',
@@ -550,8 +557,8 @@ const COLOR_PRESETS = [
     textColor: '#E0FFF5',
   },
   {
-    id: 'avalanche-peak',
-    name: 'Avalanche Peak',
+    id: 'crimson-peak',
+    name: 'Crimson Peak',
     primaryColor: '#E84142',
     secondaryColor: '#1F0A0A',
     accentColor: '#FF6B6B',
@@ -560,8 +567,8 @@ const COLOR_PRESETS = [
     textColor: '#FFE8E8',
   },
   {
-    id: 'polkadot-magenta',
-    name: 'Polkadot Magenta',
+    id: 'vivid-magenta',
+    name: 'Vivid Magenta',
     primaryColor: '#E6007A',
     secondaryColor: '#200016',
     accentColor: '#FF4DB3',
@@ -570,8 +577,8 @@ const COLOR_PRESETS = [
     textColor: '#FFE0F2',
   },
   {
-    id: 'cosmos-indigo',
-    name: 'Cosmos Indigo',
+    id: 'deep-indigo',
+    name: 'Deep Indigo',
     primaryColor: '#2E4DA7',
     secondaryColor: '#0C1029',
     accentColor: '#6D83D9',
@@ -580,8 +587,8 @@ const COLOR_PRESETS = [
     textColor: '#E0E8FF',
   },
   {
-    id: 'chainlink-azure',
-    name: 'Chainlink Azure',
+    id: 'azure-cloud',
+    name: 'Azure Cloud',
     primaryColor: '#375BD2',
     secondaryColor: '#080F28',
     accentColor: '#6B8FFF',
@@ -590,8 +597,8 @@ const COLOR_PRESETS = [
     textColor: '#E5EDFF',
   },
   {
-    id: 'uniswap-orchid',
-    name: 'Uniswap Orchid',
+    id: 'magenta-orchid',
+    name: 'Magenta Orchid',
     primaryColor: '#FF007A',
     secondaryColor: '#1F0015',
     accentColor: '#FF6BB3',
@@ -600,8 +607,8 @@ const COLOR_PRESETS = [
     textColor: '#FFE0F0',
   },
   {
-    id: 'phantom-dusk',
-    name: 'Phantom Dusk',
+    id: 'twilight-dusk',
+    name: 'Twilight Dusk',
     primaryColor: '#AB9FF2',
     secondaryColor: '#130F22',
     accentColor: '#C8C0FF',
@@ -610,8 +617,8 @@ const COLOR_PRESETS = [
     textColor: '#EDE8FF',
   },
   {
-    id: 'kraken-storm',
-    name: 'Kraken Storm',
+    id: 'royal-storm',
+    name: 'Royal Storm',
     primaryColor: '#5741D9',
     secondaryColor: '#0E0C20',
     accentColor: '#8B78FF',
@@ -620,10 +627,10 @@ const COLOR_PRESETS = [
     textColor: '#E8E4FF',
   },
 
-  // ── Crypto Wallet Themes (Light) ────────────────────────────────────────
+  // ── Modern Brand Themes (Light) ─────────────────────────────────────────
   {
-    id: 'bitcoin-light',
-    name: 'Bitcoin (Light)',
+    id: 'amber-light',
+    name: 'Amber (Light)',
     primaryColor: '#F7931A',
     secondaryColor: '#FDF0E0',
     accentColor: '#E07B10',
@@ -632,8 +639,8 @@ const COLOR_PRESETS = [
     textColor: '#2C1A00',
   },
   {
-    id: 'defi-spring-light',
-    name: 'DeFi Spring (Light)',
+    id: 'spring-green-light',
+    name: 'Spring Green (Light)',
     primaryColor: '#0D9488',
     secondaryColor: '#E6FAF8',
     accentColor: '#14B8A6',
@@ -642,8 +649,8 @@ const COLOR_PRESETS = [
     textColor: '#0D3330',
   },
   {
-    id: 'web3-clean-light',
-    name: 'Web3 Clean (Light)',
+    id: 'clean-slate-light',
+    name: 'Clean Slate (Light)',
     primaryColor: '#4338CA',
     secondaryColor: '#EEF2FF',
     accentColor: '#6366F1',
@@ -652,8 +659,8 @@ const COLOR_PRESETS = [
     textColor: '#1E1B4B',
   },
   {
-    id: 'nft-gallery-light',
-    name: 'NFT Gallery (Light)',
+    id: 'studio-gallery-light',
+    name: 'Studio Gallery (Light)',
     primaryColor: '#DB2777',
     secondaryColor: '#FCE7F3',
     accentColor: '#EC4899',
@@ -662,8 +669,8 @@ const COLOR_PRESETS = [
     textColor: '#500724',
   },
   {
-    id: 'trust-white-light',
-    name: 'Trust White (Light)',
+    id: 'trust-ivory-light',
+    name: 'Trust Ivory (Light)',
     primaryColor: '#1A73E8',
     secondaryColor: '#E8F0FE',
     accentColor: '#4A90E2',
@@ -672,10 +679,10 @@ const COLOR_PRESETS = [
     textColor: '#1A237E',
   },
 
-  // ── Trading App Themes (Dark) ───────────────────────────────────────────
+  // ── Creative Studio Themes (Dark) ───────────────────────────────────────
   {
-    id: 'bull-market',
-    name: 'Bull Market',
+    id: 'emerald-growth',
+    name: 'Emerald Growth',
     primaryColor: '#00C853',
     secondaryColor: '#071A0F',
     accentColor: '#69F0AE',
@@ -684,8 +691,8 @@ const COLOR_PRESETS = [
     textColor: '#E0FFF0',
   },
   {
-    id: 'bear-trap',
-    name: 'Bear Trap',
+    id: 'crimson-pulse',
+    name: 'Crimson Pulse',
     primaryColor: '#FF1744',
     secondaryColor: '#1A0508',
     accentColor: '#FF5252',
@@ -694,8 +701,8 @@ const COLOR_PRESETS = [
     textColor: '#FFE6EA',
   },
   {
-    id: 'options-desk',
-    name: 'Options Desk',
+    id: 'amber-desk',
+    name: 'Amber Studio',
     primaryColor: '#FFB300',
     secondaryColor: '#1A1200',
     accentColor: '#FFD54F',
@@ -704,8 +711,8 @@ const COLOR_PRESETS = [
     textColor: '#FFF8E1',
   },
   {
-    id: 'quant-terminal',
-    name: 'Quant Terminal',
+    id: 'matrix-terminal',
+    name: 'Matrix Terminal',
     primaryColor: '#00FF41',
     secondaryColor: '#001A00',
     accentColor: '#39FF14',
@@ -714,8 +721,8 @@ const COLOR_PRESETS = [
     textColor: '#CCFFCC',
   },
   {
-    id: 'algo-trader',
-    name: 'Algo Trader',
+    id: 'cyber-teal',
+    name: 'Cyber Teal',
     primaryColor: '#00E5FF',
     secondaryColor: '#001520',
     accentColor: '#40C4FF',
@@ -724,8 +731,8 @@ const COLOR_PRESETS = [
     textColor: '#E0F8FF',
   },
   {
-    id: 'forex-pro',
-    name: 'Forex Pro',
+    id: 'gold-standard',
+    name: 'Gold Standard',
     primaryColor: '#FFD600',
     secondaryColor: '#0F1525',
     accentColor: '#FFEA00',
@@ -734,8 +741,8 @@ const COLOR_PRESETS = [
     textColor: '#FFFDE7',
   },
   {
-    id: 'futures-slate',
-    name: 'Futures Slate',
+    id: 'slate-amber',
+    name: 'Slate Amber',
     primaryColor: '#F9A825',
     secondaryColor: '#121212',
     accentColor: '#FDD835',
@@ -744,8 +751,8 @@ const COLOR_PRESETS = [
     textColor: '#FFFDE7',
   },
   {
-    id: 'bloomberg-night',
-    name: 'Bloomberg Night',
+    id: 'obsidian-amber',
+    name: 'Obsidian Amber',
     primaryColor: '#FF6D00',
     secondaryColor: '#131313',
     accentColor: '#FF9E40',
@@ -754,8 +761,8 @@ const COLOR_PRESETS = [
     textColor: '#FFF3E0',
   },
   {
-    id: 'derivatives-dark',
-    name: 'Derivatives Dark',
+    id: 'sapphire-blue',
+    name: 'Sapphire Blue',
     primaryColor: '#2979FF',
     secondaryColor: '#0A0E1F',
     accentColor: '#82B1FF',
@@ -764,8 +771,8 @@ const COLOR_PRESETS = [
     textColor: '#E8EEFF',
   },
   {
-    id: 'short-squeeze',
-    name: 'Short Squeeze',
+    id: 'fuchsia-blaze',
+    name: 'Fuchsia Blaze',
     primaryColor: '#FF4081',
     secondaryColor: '#1A0515',
     accentColor: '#FF80AB',
@@ -774,10 +781,10 @@ const COLOR_PRESETS = [
     textColor: '#FFE6F2',
   },
 
-  // ── Trading App Themes (Light) ──────────────────────────────────────────
+  // ── Creative Studio Themes (Light) ──────────────────────────────────────
   {
-    id: 'market-open-light',
-    name: 'Market Open (Light)',
+    id: 'morning-sky-light',
+    name: 'Morning Sky (Light)',
     primaryColor: '#1565C0',
     secondaryColor: '#E3F2FD',
     accentColor: '#F9A825',
@@ -786,8 +793,8 @@ const COLOR_PRESETS = [
     textColor: '#0D1B3E',
   },
   {
-    id: 'bull-run-light',
-    name: 'Bull Run (Light)',
+    id: 'forest-run-light',
+    name: 'Forest Run (Light)',
     primaryColor: '#2E7D32',
     secondaryColor: '#E8F5E9',
     accentColor: '#43A047',
@@ -796,8 +803,8 @@ const COLOR_PRESETS = [
     textColor: '#0A2E0A',
   },
   {
-    id: 'analyst-white-light',
-    name: 'Analyst White (Light)',
+    id: 'studio-white-light',
+    name: 'Studio White (Light)',
     primaryColor: '#0D47A1',
     secondaryColor: '#EFF3FB',
     accentColor: '#F57C00',
@@ -806,8 +813,8 @@ const COLOR_PRESETS = [
     textColor: '#041A4A',
   },
   {
-    id: 'robinhood-green-light',
-    name: 'Robinhood Green (Light)',
+    id: 'emerald-clean-light',
+    name: 'Emerald Clean (Light)',
     primaryColor: '#00C805',
     secondaryColor: '#E6FFE7',
     accentColor: '#00A804',
@@ -816,8 +823,8 @@ const COLOR_PRESETS = [
     textColor: '#001A00',
   },
   {
-    id: 'charting-pro-light',
-    name: 'Charting Pro (Light)',
+    id: 'teal-pro-light',
+    name: 'Teal Pro (Light)',
     primaryColor: '#00897B',
     secondaryColor: '#E0F2F1',
     accentColor: '#26A69A',
@@ -1939,10 +1946,8 @@ const THEME_CATEGORIES = [
   { id: 'gradient',         label: 'Gradient',          icon: 'fa-droplet' },
   { id: 'accent',           label: 'Accent',            icon: 'fa-bolt' },
   { id: 'gradient-accent',  label: 'Gradient & Accent', icon: 'fa-wand-magic-sparkles' },
-  { id: 'banking',          label: 'Banking',           icon: 'fa-building-columns' },
-  { id: 'crypto',           label: 'Crypto',            icon: 'fa-coins' },
-  { id: 'trading',          label: 'Trading',           icon: 'fa-chart-line' },
-  { id: 'fintech',          label: 'Fintech',           icon: 'fa-mobile-screen' },
+  { id: 'banking',          label: 'Banking & Corporate', icon: 'fa-building-columns' },
+  { id: 'fintech',          label: 'Fintech & SaaS',    icon: 'fa-mobile-screen' },
   { id: 'neon',             label: 'Neon',              icon: 'fa-star-of-david' },
   { id: 'minimal',          label: 'Minimal',           icon: 'fa-circle-half-stroke' },
   { id: 'luxury',           label: 'Luxury',            icon: 'fa-gem' },
@@ -1957,10 +1962,10 @@ const DARK_IDS = new Set([
   'deep-space','electric-lime','tangerine-dream','ocean-breeze',
   'vault-black','iron-reserve','sapphire-vault','onyx-platinum','bronze-ledger',
   'premier-noir','cobalt-trust','smoke-steel','bullion-dark','obsidian-banker',
-  'bitcoin-orange','ethereum-violet','avalanche-peak','polkadot-magenta',
-  'cosmos-indigo','chainlink-azure','uniswap-orchid','phantom-dusk','kraken-storm',
-  'bull-market','bear-trap','options-desk','quant-terminal','algo-trader',
-  'forex-pro','futures-slate','bloomberg-night','derivatives-dark','short-squeeze',
+  'amber-glow','slate-violet','cyber-mint','crimson-peak','vivid-magenta',
+  'deep-indigo','azure-cloud','magenta-orchid','twilight-dusk','royal-storm',
+  'emerald-growth','crimson-pulse','amber-desk','matrix-terminal','cyber-teal',
+  'gold-standard','slate-amber','obsidian-amber','sapphire-blue','fuchsia-blaze',
   'pitch-black','graphite-mono','autumn-ember','pine-forest',
   'revolut-dark','cash-app-dark','paypal-midnight',
   // gradient dark
@@ -1983,8 +1988,8 @@ const LIGHT_IDS = new Set([
   'swiss-banking-light','morgan-elite-light','private-wealth-light',
   'barclays-blue-light','deutsche-silver-light','prestige-ivory-light',
   'nordic-trust-light','commonwealth-light','equity-rose-light','silver-lining-light',
-  'bitcoin-light','defi-spring-light','web3-clean-light','nft-gallery-light','trust-white-light',
-  'market-open-light','bull-run-light','analyst-white-light','robinhood-green-light','charting-pro-light',
+  'amber-light','spring-green-light','clean-slate-light','studio-gallery-light','trust-ivory-light',
+  'morning-sky-light','forest-run-light','studio-white-light','emerald-clean-light','teal-pro-light',
   'pure-white-light','newsprint-light','sepia-classic-light','winter-frost-light',
   'cherry-blossom-light','desert-sand-light',
   'n26-slate-light','monzo-hot-coral-light','wise-green-light','venmo-blue-light',
@@ -2028,7 +2033,7 @@ const ACCENT_IDS = new Set([
 const GRADIENT_ACCENT_IDS = new Set([
   // original
   'cyber-neon','plasma-surge','aurora-borealis','prism-dark','vortex-dark',
-  'thunderbolt','solana-wave',
+  'thunderbolt','cyber-mint',
   // new
   'fire-and-ice','neon-sunset-ga','digital-storm','matrix-rain','aurora-punk',
   'electric-dreams-ga','hyperspace','cyber-jungle','astral-gold','prism-burst',
@@ -2043,20 +2048,6 @@ const BANKING_IDS = new Set([
   'premier-noir','cobalt-trust','smoke-steel','bullion-dark','obsidian-banker',
 ]);
 
-const CRYPTO_IDS = new Set([
-  'binance-gold','bitcoin-orange','ethereum-violet','solana-wave','avalanche-peak',
-  'polkadot-magenta','cosmos-indigo','chainlink-azure','uniswap-orchid','phantom-dusk',
-  'kraken-storm','bitcoin-light','defi-spring-light','web3-clean-light',
-  'nft-gallery-light','trust-white-light',
-]);
-
-const TRADING_IDS = new Set([
-  'bull-market','bear-trap','options-desk','quant-terminal','algo-trader',
-  'forex-pro','futures-slate','bloomberg-night','derivatives-dark','short-squeeze',
-  'market-open-light','bull-run-light','analyst-white-light','robinhood-green-light',
-  'charting-pro-light',
-]);
-
 const FINTECH_IDS = new Set([
   'revolut-dark','cash-app-dark','paypal-midnight',
   'n26-slate-light','monzo-hot-coral-light','wise-green-light','venmo-blue-light',
@@ -2066,7 +2057,7 @@ const FINTECH_IDS = new Set([
 
 const NEON_IDS = new Set([
   'cyber-neon','neon-pulse','plasma-surge','volt-rush','acid-rain',
-  'quant-terminal','thunderbolt','hot-magenta','electric-lime','vortex-dark',
+  'matrix-terminal','thunderbolt','hot-magenta','electric-lime','vortex-dark',
   'prism-dark','aurora-borealis',
 ]);
 
@@ -2090,17 +2081,17 @@ const NATURE_IDS = new Set([
 
 const WARM_IDS = new Set([
   'binance-gold','rose-gold','sunset-coral','tangerine-dream','crimson-onyx',
-  'champagne-noir','bitcoin-orange','lava-flow','solar-flare','autumn-ember',
+  'champagne-noir','amber-glow','lava-flow','solar-flare','autumn-ember',
   'citrus-punch-light','coral-reef-light','amber-glow-light','desert-sand-light',
   'monzo-hot-coral-light','cherry-blossom-light','sherbet-light','sunrise-peach-light',
-  'bloomberg-night','bronze-ledger',
+  'obsidian-amber','bronze-ledger',
 ]);
 
 const COOL_IDS = new Set([
   'midnight-blue','arctic-aurora','ocean-breeze','deep-space','galactic-storm',
-  'nebula-drift','cosmos-indigo','chainlink-azure','algo-trader','derivatives-dark',
+  'nebula-drift','deep-indigo','azure-cloud','cyber-teal','sapphire-blue',
   'sky-blue-light','azure-light','nordic-trust-light','barclays-blue-light',
-  'trust-white-light','bluebell-light','sea-glass-light','winter-frost-light',
+  'trust-ivory-light','bluebell-light','sea-glass-light','winter-frost-light',
   'cobalt-strike','cerulean-edge',
 ]);
 
@@ -2111,8 +2102,6 @@ const THEME_CATEGORY_MAP = {
   accent:            ACCENT_IDS,
   'gradient-accent': GRADIENT_ACCENT_IDS,
   banking:           BANKING_IDS,
-  crypto:            CRYPTO_IDS,
-  trading:           TRADING_IDS,
   fintech:           FINTECH_IDS,
   neon:              NEON_IDS,
   minimal:           MINIMAL_IDS,
@@ -2202,7 +2191,7 @@ const ColorField = ({ id, label, value, onChange, hint }) => (
 // Live Preview Modal - a state-of-the-art before/after preview that mounts
 // when the admin clicks "Preview & Save" on the color scheme. Renders both
 // the saved theme and the pending theme side-by-side with mini reproductions
-// of the landing-page hero, the credit card, and the brand mark.
+// of the landing-page hero and the brand mark.
 // ---------------------------------------------------------------------------
 const PreviewPane = ({ title, settings, badge, badgeColor }) => {
   const platformName = settings.platformName || 'Codex Dynamics';
@@ -2249,7 +2238,7 @@ const PreviewPane = ({ title, settings, badge, badgeColor }) => {
             fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase',
           }}>
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: accent }} />
-            New  /  Live trading
+            New / Client Portal
           </div>
           <div style={{ fontSize: 24, fontWeight: 800, lineHeight: 1.15, whiteSpace: 'pre-line', letterSpacing: '-0.02em' }}>{heroHeader}</div>
           <div style={{ fontSize: 12, color: text, opacity: 0.72, marginTop: 10, lineHeight: 1.55, maxWidth: 320, marginLeft: 'auto', marginRight: 'auto' }}>{heroStatement}</div>
@@ -2267,8 +2256,8 @@ const PreviewPane = ({ title, settings, badge, badgeColor }) => {
           border: '1px solid rgba(255,255,255,0.05)',
         }}>
           {[
-            { v: '$2.4B+', l: 'Volume' },
-            { v: '180+', l: 'Countries' },
+            { v: '500+', l: 'Projects' },
+            { v: '180+', l: 'Clients' },
             { v: '4.9★', l: 'Rating' },
           ].map((s) => (
             <div key={s.l} style={{ textAlign: 'center' }}>
@@ -2280,7 +2269,7 @@ const PreviewPane = ({ title, settings, badge, badgeColor }) => {
 
         {/* Feature pills */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center' }}>
-          {['Instant Swaps', 'Cold Storage', '24/7 Support'].map((f) => (
+          {['Web Development', 'Custom CRM', '24/7 Support'].map((f) => (
             <span key={f} style={{
               fontSize: 10, fontWeight: 600, padding: '4px 10px', borderRadius: 999,
               background: `${primary}14`, color: text, opacity: 0.85,
@@ -2294,118 +2283,6 @@ const PreviewPane = ({ title, settings, badge, badgeColor }) => {
           © {year} {platformName} Technologies Inc. All Rights Reserved.
         </div>
       </div>
-    </div>
-  );
-};
-
-// ---------------------------------------------------------------------------
-// Card Preview - a dedicated mini credit-card mock that lives next to the
-// "Card Brand Name" controls so admins can see exactly how the brand name and
-// current color palette look on issued credit cards.
-// ---------------------------------------------------------------------------
-const CardPreview = ({ settings }) => {
-  const cardBrand = (settings.cardBrandName || '').trim() || 'Brand Name';
-  const primary = settings.primaryColor || '#F0B90B';
-  const accent = settings.accentColor || primary;
-
-  // Mirror the real wallet-card "gold" gradient direction (135deg, 3 stops)
-  // so this preview looks identical to the issued card on the user platform.
-  const gradient = `linear-gradient(135deg, ${primary} 0%, ${accent} 50%, ${primary} 100%)`;
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-start' }}>
-      <div style={{ fontSize: 11, fontWeight: 700, color: '#848E9C', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-        Card Preview
-      </div>
-
-      {/* Real-card aspect ratio (1.586:1, ISO/IEC 7810 ID-1) - caps width so
-          it doesn't stretch awkwardly across the column. */}
-      <div
-        aria-label={`${cardBrand} credit card preview`}
-        style={{
-          position: 'relative',
-          width: '100%',
-          maxWidth: 340,
-          aspectRatio: '1.586 / 1',
-          borderRadius: 16,
-          padding: '20px 22px 18px',
-          background: gradient,
-          color: '#0B0E11',
-          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-          boxShadow: [
-            '0 1px 0 rgba(255,255,255,0.10) inset',
-            '0 -1px 0 rgba(0,0,0,0.25) inset',
-            '0 12px 30px rgba(0,0,0,0.45)',
-          ].join(', '),
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Pattern + shine overlays - same as .wc-pattern / .wc-shine on platform */}
-        <div aria-hidden="true" style={{
-          position: 'absolute', inset: 0, borderRadius: 'inherit', pointerEvents: 'none',
-          background:
-            'radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.10) 0%, transparent 60%),' +
-            'radial-gradient(ellipse at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%)',
-        }} />
-        <div aria-hidden="true" style={{
-          position: 'absolute', inset: 0, borderRadius: 'inherit', pointerEvents: 'none',
-          background:
-            'linear-gradient(120deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 35%, transparent 60%),' +
-            'radial-gradient(circle at 100% 0%, rgba(255,255,255,0.14) 0%, transparent 40%)',
-        }} />
-
-        {/* Top row: brand + tier */}
-        <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div style={{
-            fontSize: 15, fontWeight: 700, letterSpacing: '0.02em',
-            textShadow: '0 1px 2px rgba(0,0,0,0.20)',
-            maxWidth: '60%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          }}>{cardBrand}</div>
-          <div style={{
-            fontSize: 10, fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase', opacity: 0.78,
-          }}>GOLD</div>
-        </div>
-
-        {/* Middle: chip + card number - matches .wc-middle layout exactly */}
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="38" height="28" viewBox="0 0 40 30" style={{ flexShrink: 0, filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' }}>
-            <defs>
-              <linearGradient id="card-preview-chip" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#f5d76e" />
-                <stop offset="100%" stopColor="#b8860b" />
-              </linearGradient>
-            </defs>
-            <rect width="40" height="30" fill="url(#card-preview-chip)" rx="4" />
-            <path d="M10 15h20M20 5v20M15 10h10M15 20h10" stroke="rgba(0,0,0,0.45)" strokeWidth="1.5" />
-          </svg>
-          <div style={{
-            fontFamily: "'Roboto Mono', 'Menlo', 'Courier New', monospace",
-            fontSize: 17, fontWeight: 600, letterSpacing: '0.14em',
-            textShadow: '0 1px 2px rgba(0,0,0,0.30)',
-          }}>•••• •••• •••• 4242</div>
-        </div>
-
-        {/* Bottom row: holder + balance + visa logo - matches .wc-bottom */}
-        <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 14 }}>
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.65, marginBottom: 3 }}>Card Holder</div>
-            <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', textShadow: '0 1px 2px rgba(0,0,0,0.2)' }}>JANE DOE</div>
-          </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.65, marginBottom: 3 }}>Balance</div>
-            <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.01em', textShadow: '0 1px 2px rgba(0,0,0,0.2)' }}>$12,450</div>
-          </div>
-          <i className="fab fa-cc-visa" style={{ fontSize: 26, opacity: 0.95, filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))', marginLeft: 4 }} />
-        </div>
-      </div>
-
-      <p style={{ margin: '2px 2px 0', color: '#848E9C', fontSize: 11, lineHeight: 1.5 }}>
-        <i className="fas fa-bolt" style={{ marginRight: 5, color: '#F0B90B' }} />
-        Live preview - matches exactly how cards appear on the user platform.
-      </p>
     </div>
   );
 };
@@ -2462,7 +2339,7 @@ const LivePreviewModal = ({ isOpen, savedSettings, pendingSettings, onClose, onC
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: 12, background: 'rgba(240,185,11,0.06)', border: '1px solid rgba(240,185,11,0.18)', borderRadius: 10 }}>
             <i className="fas fa-info-circle" style={{ color: '#F0B90B', marginTop: 2 }} />
             <div style={{ fontSize: 12, color: '#EAECEF', lineHeight: 1.55 }}>
-              The preview reflects every branding, hero, color, and card change you've made in this session.
+              The preview reflects every branding, hero, and color change you've made in this session.
               Click <strong>Save Changes</strong> to publish them across the entire platform, or <strong>Revert to Default Design</strong> to restore the original Codex Dynamics identity.
             </div>
           </div>
@@ -2567,9 +2444,6 @@ const Settings = () => {
       setSettingsLoading(false);
     })();
   }, []);
-
-  // (Card brand name is now fully manual - admin types whatever should appear
-  // on issued cards, independent of the platform name.)
 
   const handleSettingChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -2836,11 +2710,7 @@ const Settings = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   const persistSettings = async (settingsToSave, action = 'Update Platform Settings', detail = 'Updated platform configuration, branding, and color scheme.') => {
-    const merged = mergePlatformSettings({
-      ...settingsToSave,
-      cardBrandFollowsPlatformName: false,
-      cardBrandName: (settingsToSave.cardBrandName || '').trim() || 'Codex Dynamics',
-    });
+    const merged = mergePlatformSettings(settingsToSave);
     const result = await saveSettingsToApi(merged, getAdminToken());
     if (result.ok && result.settings) {
       setTempSettings(mergePlatformSettings(result.settings));
@@ -2972,14 +2842,14 @@ const Settings = () => {
         </SettingCard>
 
         {/* ---------------------------------------------------------------- */}
-        {/* Available Deposit Assets                                         */}
+        {/* Available Deposit Currencies                                     */}
         {/* ---------------------------------------------------------------- */}
         <SettingCard
-          title="Available Deposit Assets"
-          description="Choose which cryptocurrencies clients can select when making a deposit. Only ticked assets appear in the client deposit dropdown."
+          title="Available Deposit Currencies"
+          description="Choose which currencies clients can select when making a deposit or payment. Only ticked currencies appear in the client deposit dropdown."
         >
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 20px', marginBottom: 8 }}>
-            {ALL_CRYPTO.map((c) => {
+            {SUPPORTED_FIAT_CURRENCIES.map((c) => {
               const enabled = Array.isArray(tempSettings.availableDepositAssets)
                 ? tempSettings.availableDepositAssets.includes(c.ticker)
                 : true;
@@ -3004,7 +2874,7 @@ const Settings = () => {
                       setTempSettings((prev) => {
                         const current = Array.isArray(prev.availableDepositAssets)
                           ? prev.availableDepositAssets
-                          : ALL_CRYPTO.map((x) => x.ticker);
+                          : SUPPORTED_FIAT_CURRENCIES.map((x) => x.ticker);
                         const next = enabled
                           ? current.filter((t) => t !== c.ticker)
                           : [...current, c.ticker];
@@ -3013,13 +2883,13 @@ const Settings = () => {
                     }}
                   />
                   <span style={{ fontWeight: 600 }}>{c.ticker}</span>
-                  <span style={{ color: '#848E9C', fontSize: 12 }}>{c.asset}</span>
+                  <span style={{ color: '#848E9C', fontSize: 12 }}>{c.name}</span>
                 </label>
               );
             })}
           </div>
           <small style={{ color: '#848E9C', fontSize: 12, display: 'block', marginTop: 4 }}>
-            Unticking an asset hides it from the deposit dropdown immediately after saving. Existing balances and transactions are not affected.
+            Unticking a currency hides it from the deposit dropdown immediately after saving. Existing balances and transactions are not affected.
           </small>
         </SettingCard>
 
@@ -3030,7 +2900,7 @@ const Settings = () => {
           <div className="aax-settings-subsection">
             <h4>Platform Identity</h4>
             <div className="aax-settings-grid aax-settings-grid-three">
-              <Field label="Platform Name" hint="Shows on landing page header, footer, and credit cards (when auto-follow is on).">
+              <Field label="Platform Name" hint="Shows on landing page header and footer.">
                 <input type="text" id="platform-name-branding" name="platformName" value={tempSettings.platformName || ''} onChange={handleSettingChange} />
               </Field>
               <Field label="Platform Abbreviation" hint="The letters in the logo (e.g. 'CIQ'). Updates everywhere instantly.">
@@ -3039,55 +2909,6 @@ const Settings = () => {
               <Field label="Platform Year" hint="Footer copyright year.">
                 <input type="text" id="platform-year" name="platformYear" value={tempSettings.platformYear || ''} onChange={handleSettingChange} />
               </Field>
-            </div>
-          </div>
-
-          {/* Card brand identity with auto-follow toggle */}
-          <div className="aax-settings-subsection">
-            <h4>Card Brand Name</h4>
-            <p className="aax-settings-section-description" style={{ marginTop: -4, marginBottom: 12 }}>
-              This is the brand name printed on every credit card issued to clients.
-              It is independent of the platform name - type whatever you want
-              cardholders to see, then watch the live preview on the right.
-            </p>
-            <div className="aax-settings-color-scheme-layout">
-              <div className="aax-settings-color-scheme-pickers">
-                <div className="aax-settings-grid aax-settings-grid-one">
-                  <Field
-                    label="Brand name on card"
-                    hint="Up to 24 characters. Tip: short names look best on the card face."
-                  >
-                    <input
-                      type="text"
-                      id="card-brand-name"
-                      name="cardBrandName"
-                      value={tempSettings.cardBrandName || ''}
-                      onChange={handleSettingChange}
-                      placeholder="e.g. Codex Dynamics, Acme Pay, Nexus Black"
-                      maxLength={24}
-                    />
-                  </Field>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setTempSettings((prev) => ({ ...prev, cardBrandName: prev.platformName || '' }))}
-                  style={{
-                    marginTop: 8, padding: '6px 12px', borderRadius: 8,
-                    border: '1px solid rgba(255,255,255,0.12)', background: 'transparent',
-                    color: '#EAECEF', fontSize: 11, fontWeight: 600, cursor: 'pointer',
-                    display: 'inline-flex', alignItems: 'center', gap: 6,
-                  }}
-                  title={`Copy "${tempSettings.platformName || 'platform name'}" into the card brand field`}
-                >
-                  <i className="fas fa-copy" />
-                  Copy from platform name
-                </button>
-              </div>
-              <div className="aax-settings-color-scheme-preview">
-                <div className="aax-settings-color-scheme-preview-sticky">
-                  <CardPreview settings={tempSettings} />
-                </div>
-              </div>
             </div>
           </div>
 
@@ -3318,7 +3139,7 @@ const Settings = () => {
                 </div>
                 <div className="aax-settings-grid aax-settings-grid-two">
                   <ColorField id="primary-color" label="Primary Color" value={tempSettings.primaryColor || '#000000'} onChange={(v) => handleColorChange('primaryColor', v)} hint="Main brand color for headers and primary buttons." />
-                  <ColorField id="secondary-color" label="Secondary Color" value={tempSettings.secondaryColor || '#000000'} onChange={(v) => handleColorChange('secondaryColor', v)} hint="Secondary color for cards and surfaces." />
+                  <ColorField id="secondary-color" label="Secondary Color" value={tempSettings.secondaryColor || '#000000'} onChange={(v) => handleColorChange('secondaryColor', v)} hint="Secondary color for panels and surfaces." />
                   <ColorField id="accent-color" label="Accent Color" value={tempSettings.accentColor || '#000000'} onChange={(v) => handleColorChange('accentColor', v)} hint="Accent color for highlights and calls to action." />
                   <ColorField id="button-color" label="Button Color" value={tempSettings.buttonColor || tempSettings.accentColor || '#000000'} onChange={(v) => handleColorChange('buttonColor', v)} hint="Primary button color for calls to action." />
                   <ColorField id="background-color" label="Background Color" value={tempSettings.backgroundColor || '#000000'} onChange={(v) => handleColorChange('backgroundColor', v)} hint="Main background color for the landing page." />
@@ -3362,21 +3183,12 @@ const Settings = () => {
         {/* Lead Fees                                                        */}
         {/* ---------------------------------------------------------------- */}
         <SettingCard title="Lead Fees" description="Global percentage and fixed fee rules.">
-          <div className="aax-settings-grid aax-settings-grid-four">
+          <div className="aax-settings-grid aax-settings-grid-two">
             <Field label="Deposit Fee (%)">
               <input type="number" step="0.01" id="deposit-fee" name="depositFee" value={tempUserFees.depositFee ?? ''} onChange={handleFeeChange} />
             </Field>
             <Field label="Withdrawal Fee (%)">
               <input type="number" step="0.01" id="withdrawal-fee" name="withdrawalFee" value={tempUserFees.withdrawalFee ?? ''} onChange={handleFeeChange} />
-            </Field>
-            <Field label="Trading Fee (%)">
-              <input type="number" step="0.01" id="trading-fee" name="tradingFee" value={tempUserFees.tradingFee ?? ''} onChange={handleFeeChange} />
-            </Field>
-            <Field label="Card Issuance Fee (USD)">
-              <input type="number" step="0.01" id="card-issuance-fee" name="cardIssuanceFee" value={tempUserFees.cardIssuanceFee ?? ''} onChange={handleFeeChange} />
-            </Field>
-            <Field label="Card Maintenance Fee (USD/month)" wide>
-              <input type="number" step="0.01" id="card-maintenance-fee" name="cardMaintenanceFee" value={tempUserFees.cardMaintenanceFee ?? ''} onChange={handleFeeChange} />
             </Field>
           </div>
         </SettingCard>
@@ -3398,21 +3210,12 @@ const Settings = () => {
             <div className="aax-settings-subsection aax-settings-client-fees">
               <h4>Custom Fees for {leadAccounts.find((lead) => lead.id === selectedLeadId)?.name}</h4>
               <p>Leave fields empty to use global fees. Only set values that should override defaults.</p>
-              <div className="aax-settings-grid aax-settings-grid-four">
+              <div className="aax-settings-grid aax-settings-grid-two">
                 <Field label="Deposit Fee (%)" hint={`Effective: ${getEffectiveFee('depositFee', selectedLeadId)}%`}>
                   <input type="number" step="0.01" id="lead-deposit-fee" name="depositFee" value={tempClientSpecificFees[selectedLeadId]?.depositFee ?? ''} onChange={handleClientFeeChange} placeholder={`Global: ${tempUserFees.depositFee}%`} />
                 </Field>
                 <Field label="Withdrawal Fee (%)" hint={`Effective: ${getEffectiveFee('withdrawalFee', selectedLeadId)}%`}>
                   <input type="number" step="0.01" id="lead-withdrawal-fee" name="withdrawalFee" value={tempClientSpecificFees[selectedLeadId]?.withdrawalFee ?? ''} onChange={handleClientFeeChange} placeholder={`Global: ${tempUserFees.withdrawalFee}%`} />
-                </Field>
-                <Field label="Trading Fee (%)" hint={`Effective: ${getEffectiveFee('tradingFee', selectedLeadId)}%`}>
-                  <input type="number" step="0.01" id="lead-trading-fee" name="tradingFee" value={tempClientSpecificFees[selectedLeadId]?.tradingFee ?? ''} onChange={handleClientFeeChange} placeholder={`Global: ${tempUserFees.tradingFee}%`} />
-                </Field>
-                <Field label="Card Issuance Fee (USD)" hint={`Effective: $${getEffectiveFee('cardIssuanceFee', selectedLeadId)}`}>
-                  <input type="number" step="0.01" id="lead-card-issuance-fee" name="cardIssuanceFee" value={tempClientSpecificFees[selectedLeadId]?.cardIssuanceFee ?? ''} onChange={handleClientFeeChange} placeholder={`Global: $${tempUserFees.cardIssuanceFee}`} />
-                </Field>
-                <Field label="Card Maintenance Fee (USD/month)" hint={`Effective: $${getEffectiveFee('cardMaintenanceFee', selectedLeadId)}`} wide>
-                  <input type="number" step="0.01" id="lead-card-maintenance-fee" name="cardMaintenanceFee" value={tempClientSpecificFees[selectedLeadId]?.cardMaintenanceFee ?? ''} onChange={handleClientFeeChange} placeholder={`Global: $${tempUserFees.cardMaintenanceFee}`} />
                 </Field>
               </div>
             </div>
@@ -3548,7 +3351,7 @@ const Settings = () => {
                             <summary style={{ fontSize: 11, color: '#848E9C', cursor: 'pointer', userSelect: 'none' }}>View full snapshot</summary>
                             <div style={{ marginTop: 8, padding: 10, background: 'rgba(255,255,255,0.03)', borderRadius: 8, maxHeight: 200, overflowY: 'auto' }}>
                               {Object.entries(rec.snapshot)
-                                .filter(([k]) => !['userFees','clientFees','customThemes','cardTypes'].includes(k))
+                                .filter(([k]) => !['userFees','clientFees','customThemes'].includes(k))
                                 .map(([k, v]) => (
                                   <div key={k} style={{ display: 'flex', gap: 10, fontSize: 11, marginBottom: 3 }}>
                                     <span style={{ color: '#F0B90B', minWidth: 140, fontFamily: 'monospace' }}>{k}</span>
