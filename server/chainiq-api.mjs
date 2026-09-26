@@ -75,7 +75,6 @@ import {
 const CAPS = {
   lead_upload: true,
   create_agent: true,
-  trading: true,
   balances: true,
   transactions: true,
   registrations: true,
@@ -200,8 +199,6 @@ function seed() {
     client_password: "client123",
     kyc_status: id === "usr_maya" ? "Approved" : "Not Submitted",
     status: "Active",
-    trades_enabled: true,
-    cards_enabled: true,
     assigned_office_id: office.id,
     assigned_team_id: team.id,
     assigned_agent_id: agentId,
@@ -215,10 +212,6 @@ function seed() {
     balance: {
       fiat_minor: id === "usr_maya" ? 1250000 : 0,
       fiat_currency: "USD",
-      btc_sat: id === "usr_maya" ? 15000000 : 0,
-      eth_wei_e9: 0,
-      usdt_minor: id === "usr_maya" ? 420000 : 0,
-      card_minor: id === "usr_maya" ? 80000 : 0,
     },
     comment_history: [
       { id: uid("c"), lead_id: id, text: "Intro call completed.", by_name: "Ava Agent", created_at: created },
@@ -258,30 +251,14 @@ function seed() {
         visible: true,
       },
     ],
-    cards: [
-      {
-        id: "card_1",
-        user_id: "usr_maya",
-        last4: "4242",
-        brand: "Codex Dynamics",
-        tier: "gold",
-        status: "active",
-        frozen: false,
-        created_at: created,
-      },
-    ],
     withdrawals: [],
     deposits: [],
     signupRequests: [],
     kyc: [],
-    cryptoAddresses: [
-      { id: "ca_1", asset: "BTC", network: "Bitcoin", address: "bc1qpreviewaddress000000000000000000", status: "active" },
-    ],
     audit: [],
     settings: {
       platformName: "Codex Dynamics",
       platformAbbreviation: "CD",
-      cardBrandName: "Codex Dynamics",
       platformYear: "2026",
       supportEmail: "support@codexdynamics.com",
       primaryColor: "#F0B90B",
@@ -369,8 +346,6 @@ function clientUser(lead) {
     country: lead.country,
     status: lead.status,
     kyc_status: lead.kyc_status,
-    trades_enabled: lead.trades_enabled,
-    cards_enabled: lead.cards_enabled,
     created_at: lead.created_at,
     avatar_url: null,
     password_changed_at: null,
@@ -472,8 +447,6 @@ function legacyLeadRowToChainiq(lead) {
     client_password: lead.client_password || "",
     kyc_status: lead.kyc_status || "Not Submitted",
     status: lead.status || "new",
-    trades_enabled: lead.trades_enabled !== false,
-    cards_enabled: lead.cards_enabled !== false,
     assigned_office_id: lead.assigned_office_id ?? null,
     assigned_team_id: lead.assigned_team_id ?? null,
     assigned_agent_id: lead.assigned_agent_id ?? null,
@@ -484,7 +457,7 @@ function legacyLeadRowToChainiq(lead) {
     deleted_at: lead.deleted_at || null,
     created_at: lead.created_at,
     updated_at: lead.updated_at || lead.created_at,
-    balance: lead.balance || { fiat_minor: 0, fiat_currency: "USD", btc_sat: 0, eth_wei_e9: 0, usdt_minor: 0, card_minor: 0 },
+    balance: lead.balance || { fiat_minor: 0, fiat_currency: "USD" },
     comment_history: Array.isArray(lead.comment_history) ? lead.comment_history : [],
     status_history: Array.isArray(lead.status_history) ? lead.status_history : [],
     appointments: Array.isArray(lead.appointments) ? lead.appointments : [],
@@ -758,15 +731,6 @@ export async function handleChainiqApi({ method, path, search, headers, rawBody 
   if (p === "/api/platform/settings" && method === "GET") {
     return json(200, { settings: getChainiqPlatformSettings() });
   }
-  if (p === "/api/market/tradfi" && method === "GET") {
-    return json(200, { assets: [] });
-  }
-  if (p === "/api/market/crypto" && method === "GET") {
-    return json(200, { assets: [] });
-  }
-  if (p === "/api/market/crypto-sparklines" && method === "GET") {
-    return json(200, { sparklines: {} });
-  }
 
   // ---- admin auth ----
   if (p === "/api/admin/login" && method === "POST") {
@@ -846,7 +810,6 @@ export async function handleChainiqApi({ method, path, search, headers, rawBody 
     }
     if (p === "/api/client/logout" || p === "/api/client/logout-everywhere") return json(200, { ok: true });
     if (p === "/api/client/transactions") return json(200, { transactions: getChainiqResource("transactions", []).filter((t) => t.user_id === user?.id) });
-    if (p === "/api/client/cards") return json(200, { cards: getChainiqResource("cards", []).filter((c) => c.user_id === user?.id) });
     if (p === "/api/client/notifications") return json(200, { notifications: getChainiqResource("client_notifications", []).filter((item) => item.user_id === user.id) });
     if (p === "/api/client/messages" && method === "GET") return json(200, { messages: getChainiqResource("client_messages", []).filter((item) => item.user_id === user.id) });
     if (p === "/api/client/messages" && method === "POST") {
@@ -860,7 +823,6 @@ export async function handleChainiqApi({ method, path, search, headers, rawBody 
     if (p === "/api/client/kyc/profile") return json(200, { profile: {} });
     if (p === "/api/client/preferences") return json(200, { preferences: {} });
     if (p === "/api/client/appointments") return json(200, { appointments: [] });
-    if (p === "/api/client/trades") return json(200, { trades: [], orders: [] });
     if (p === "/api/client/presence") return json(200, { ok: true });
     if (method === "GET") return json(200, { ok: true });
     return json(200, { ok: true });

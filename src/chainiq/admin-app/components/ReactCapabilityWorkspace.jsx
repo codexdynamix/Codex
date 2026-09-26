@@ -87,7 +87,7 @@ export default function ReactCapabilityWorkspace({
     leads: scopedClients, setLeads: () => {},
     users: scopedClients, setUsers: () => {},
     transactionData, setTransactionData, activityLog: [], setActivityLog: () => {},
-    cardData: [], setCardData: () => {}, withdrawalData: [], setWithdrawalData: () => {}, userFees: {}, clientSpecificFees: {},
+    withdrawalData: [], setWithdrawalData: () => {}, userFees: {}, clientSpecificFees: {},
     cryptoData: [], setCryptoData: () => {}, globalAddressData: [], setGlobalAddressData: () => {}, clientAddressData: [], setClientAddressData: () => {},
     logAdminAction: () => {}, logActivity: () => {},
   };

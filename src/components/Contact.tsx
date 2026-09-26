@@ -40,11 +40,11 @@ function isJsonResponse(res: Response) {
   return (res.headers.get("content-type") ?? "").includes("application/json");
 }
 
-async function postChainIqLead(
+async function postCrmLead(
   data: Inquiry,
 ): Promise<"sent" | "unavailable" | "rejected"> {
   try {
-    const res = await fetch("/api/chainiq/leads", {
+    const res = await fetch("/api/crm/leads", {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ kind: "enquiry", ...data, source: "website_contact_form" }),
@@ -181,7 +181,7 @@ export function Contact() {
     }
     setIsSubmitting(true);
     try {
-      const leadResponse = await fetch("/api/chainiq/leads", {
+      const leadResponse = await fetch("/api/crm/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -195,7 +195,7 @@ export function Contact() {
         }),
       });
       if (!leadResponse.ok) throw new Error("Lead capture failed");
-      const capture = await postChainIqLead(data);
+      const capture = await postCrmLead(data);
       if (capture === "rejected") {
         toast.error(
           `Could not send. Email us at ${recipientEmail} or WhatsApp ${phoneVal}.`,
@@ -315,7 +315,7 @@ export function Contact() {
             <div className="surface-lift flex flex-col justify-between overflow-hidden rounded-xl bg-card">
               {live ? (
                 <form
-                  action="/api/chainiq/leads"
+                  action="/api/crm/leads"
                   method="post"
                   onSubmit={handleSubmit}
                   className="p-2"

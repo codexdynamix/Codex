@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ROLE, normalizeStage, getTeamName, getUserName, getCountryFlag, EditLeadModal, CreateAgentModal, CreateLeadModal, AddCommentModal, TradesStatusBadge, CardsStatusBadge, stageColor, assignableAgents, assignableAgentLabel } from '../shared';
+import { ROLE, normalizeStage, getTeamName, getUserName, getCountryFlag, EditLeadModal, CreateAgentModal, CreateLeadModal, AddCommentModal, stageColor, assignableAgents, assignableAgentLabel } from '../shared';
 import { SearchAutocomplete } from '../components/UserChrome.jsx';
 import { searchAdminLeads } from '../adminApi';
 import { bulkAssignLeadsApi } from '../adminApi';
@@ -147,8 +147,6 @@ function TeamLeaderPanel({ data, setData, currentUser, createAgent, canCreateAge
   const [filterStatus, setFilterStatus] = useState('');
   const [filterCountry, setFilterCountry] = useState('');
   const [filterAgent, setFilterAgent] = useState('');
-  const [filterTrades, setFilterTrades] = useState(''); // '' | 'on' | 'off'
-  const [filterCards,  setFilterCards]  = useState(''); // '' | 'on' | 'off'
   const [filterFunnel, setFilterFunnel] = useState('');
   const [filterAffiliate, setFilterAffiliate] = useState('');
   const [filterLastComment, setFilterLastComment] = useState('');
@@ -393,16 +391,6 @@ function TeamLeaderPanel({ data, setData, currentUser, createAgent, canCreateAge
     if (filterCountry && lead.country !== filterCountry) return false;
     if (filterAgent === '__unassigned__' && lead.assignedToAgent) return false;
     if (filterAgent && filterAgent !== '__unassigned__' && lead.assignedToAgent !== filterAgent) return false;
-    if (filterTrades) {
-      const on = lead.tradesEnabled !== false;
-      if (filterTrades === 'on' && !on) return false;
-      if (filterTrades === 'off' && on) return false;
-    }
-    if (filterCards) {
-      const on = lead.cardsEnabled !== false;
-      if (filterCards === 'on' && !on) return false;
-      if (filterCards === 'off' && on) return false;
-    }
     if (filterFunnel && (lead.funnel || '') !== filterFunnel) return false;
     if (filterAffiliate && (lead.affiliate || '') !== filterAffiliate) return false;
     if (filterLastComment && (lead.lastCommentDate || '') !== filterLastComment) return false;
@@ -794,25 +782,16 @@ function TeamLeaderPanel({ data, setData, currentUser, createAgent, canCreateAge
               { label: 'Conversion', value: teamLeads.length > 0 ? ((agentStats.reduce((s, a) => s + a.successfulDeposits, 0) / teamLeads.length) * 100).toFixed(1) + '%' : '0%', color: '#F0B90B' },
               { label: 'Unassigned', value: teamLeads.filter(l => !l.assignedToAgent).length, color: '#0A84FF' },
               {
-                label: 'Forex Leads',
-                value: `${teamLeads.filter(l => l.tradesEnabled !== false).length} / ${teamLeads.length}`,
+                label: 'Active Leads',
+                value: teamLeads.filter(l => (l.stage || l.status || '').toLowerCase() === 'active').length,
                 color: '#0ECB81',
-                title: 'Forex leads - Trades feature ON',
-                onClick: () => { setActiveTab('leads'); setFilterTrades('on'); setPage(1); },
+                title: 'Active agency leads',
               },
               {
-                label: 'Recovery Leads',
-                value: `${teamLeads.filter(l => l.tradesEnabled === false).length} / ${teamLeads.length}`,
+                label: 'New Leads',
+                value: teamLeads.filter(l => (l.stage || l.status || '').toLowerCase() === 'new').length,
                 color: '#F59E0B',
-                title: 'Recovery leads - Trades feature OFF',
-                onClick: () => { setActiveTab('leads'); setFilterTrades('off'); setPage(1); },
-              },
-              {
-                label: 'Cards Feature OFF',
-                value: `${teamLeads.filter(l => l.cardsEnabled === false).length} / ${teamLeads.length}`,
-                color: '#9B6DFF',
-                title: 'Team clients with the Cards section currently disabled',
-                onClick: () => { setActiveTab('leads'); setFilterCards('off'); setPage(1); },
+                title: 'New incoming leads',
               },
               { label: 'Online / Total', value: onlineAgents + ' / ' + teamAgents.length, color: '#45d2a0' },
             ].map(s => (
@@ -956,18 +935,8 @@ function TeamLeaderPanel({ data, setData, currentUser, createAgent, canCreateAge
                 return <option key={a.id} value={a.id}>{a.name} ({stats ? stats.totalLeads : 0})</option>;
               })}
             </select>
-            <select value={filterTrades} onChange={e => { setFilterTrades(e.target.value); setPage(1); }} className="aax-super-admin-select" style={{ minWidth: 0, width: '100%' }} title="Filter by Trades Feature access">
-              <option value="">All Trades Feature</option>
-              <option value="on">Trades Feature ON</option>
-              <option value="off">Trades Feature OFF</option>
-            </select>
-            <select value={filterCards} onChange={e => { setFilterCards(e.target.value); setPage(1); }} className="aax-super-admin-select" style={{ minWidth: 0, width: '100%' }} title="Filter by Cards Feature access">
-              <option value="">All Cards Feature</option>
-              <option value="on">Cards Feature ON</option>
-              <option value="off">Cards Feature OFF</option>
-            </select>
-            {(searchQuery || filterStatus || filterCountry || filterAgent || filterTrades || filterCards) && (
-              <button className="aax-super-admin-btn" style={{ background: 'rgba(255,100,100,0.12)', border: '1px solid #ff6464', color: '#ff6464', whiteSpace: 'nowrap' }} onClick={() => { setSearchQuery(''); setFilterStatus(''); setFilterCountry(''); setFilterAgent(''); setFilterTrades(''); setFilterCards(''); setPage(1); }}>&#x2715; Clear</button>
+            {(searchQuery || filterStatus || filterCountry || filterAgent) && (
+              <button className="aax-super-admin-btn" style={{ background: 'rgba(255,100,100,0.12)', border: '1px solid #ff6464', color: '#ff6464', whiteSpace: 'nowrap' }} onClick={() => { setSearchQuery(''); setFilterStatus(''); setFilterCountry(''); setFilterAgent(''); setPage(1); }}>&#x2715; Clear</button>
             )}
             <button
               className="aax-super-admin-btn"
@@ -995,7 +964,7 @@ function TeamLeaderPanel({ data, setData, currentUser, createAgent, canCreateAge
                 <thead>
                   <tr>
                     <th style={{ width: 32 }}><input type="checkbox" checked={bulkSelectedLeads.length === filteredLeadIds.length && filteredLeadIds.length > 0} onChange={e => handleSelectAllLeads(e.target.checked)} /></th>
-                    <th>Client ID</th><th>Name</th><th>Country</th><th>Status</th><th style={{ textAlign: 'center' }}>Trades Feature</th><th style={{ textAlign: 'center' }}>Cards Feature</th><th>Agent</th><th style={{ textAlign: 'center' }}>Comments</th><th>Registered</th>
+                    <th>Client ID</th><th>Name</th><th>Country</th><th>Status</th><th>Agent</th><th style={{ textAlign: 'center' }}>Comments</th><th>Registered</th>
                     <th style={{ width: 90, textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
@@ -1015,8 +984,6 @@ function TeamLeaderPanel({ data, setData, currentUser, createAgent, canCreateAge
                         <td><div style={{ fontWeight: 600 }}>{lead.firstName} {lead.lastName}</div><div style={{ fontSize: 11, color: '#848E9C' }}>{lead.email}</div></td>
                         <td>{getCountryFlag(lead.countryCode, lead.country)} {lead.country || '-'}</td>
                         <td><span style={{ background: stagePillColor + '18', color: stagePillColor, border: '1px solid ' + stagePillColor + '40', padding: '2px 8px', borderRadius: 4, fontSize: 11 }}>{stage}</span></td>
-                        <td style={{ textAlign: 'center' }}><TradesStatusBadge enabled={lead.tradesEnabled !== false} /></td>
-                        <td style={{ textAlign: 'center' }}><CardsStatusBadge enabled={lead.cardsEnabled !== false} /></td>
                         <td style={{ fontSize: 12 }}>{getUserName(lead.assignedToAgent, data.users) || <span style={{ color: '#848E9C' }}>Unassigned</span>}</td>
                         <td style={{ textAlign: 'center', fontSize: 12 }}>{(lead.commentHistory || []).length}</td>
                         <td style={{ fontSize: 11, color: '#848E9C' }}>{lead.registeredDate || '-'}</td>

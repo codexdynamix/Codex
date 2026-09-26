@@ -14,19 +14,17 @@ export const DEFAULT_PLATFORM_SETTINGS = Object.freeze({
   // Identity
   platformName: 'Codex Dynamics',
   platformAbbreviation: 'CD',
-  cardBrandName: 'Codex Dynamics',
-  cardBrandFollowsPlatformName: false,
   platformYear: '2025',
 
   // Contact
   platformPhone: '+1 (555) 123-4567',
-  platformAddress: '123 Blockchain Street, Crypto City, CC 12345',
+  platformAddress: '100 Innovation Way, Suite 400, San Francisco, CA 94105',
   supportEmail: 'support@codexdynamics.com',
 
   // Hero (landing page)
-  heroHeader: 'The next-gen\ncrypto wallet.\nPowered by insights.',
+  heroHeader: 'High-Performance Web\n& Custom CRM Solutions.\nPowered by Engineering.',
   heroStatement:
-    'Real-time market analytics, DeFi tools, and seamless cross-chain swaps in one non-custodial wallet.',
+    'Custom web design, high-performance web applications, bespoke CRM software, and digital marketing engines.',
 
   // Currency
   baseCurrency: 'USD',
@@ -46,22 +44,10 @@ export const DEFAULT_PLATFORM_SETTINGS = Object.freeze({
   backgroundColor: '#0a0a0f',
   textColor: '#F9FAFB',
 
-  // Card tier display names
-  cardTypes: {
-    platinum: { name: 'Platinum' },
-    gold: { name: 'Gold' },
-    premium: { name: 'Premium' },
-    virtual: { name: 'Virtual' },
-    silver: { name: 'Silver' },
-  },
-
   // Fee schedule
   userFees: {
     depositFee: 0,
     withdrawalFee: 1,
-    tradingFee: 0.1,
-    cardIssuanceFee: 0,
-    cardMaintenanceFee: 0,
   },
 
   // Per-client fee overrides { [clientId]: { depositFee, ... } }
@@ -70,12 +56,9 @@ export const DEFAULT_PLATFORM_SETTINGS = Object.freeze({
   // Custom color palettes saved by the admin
   customThemes: [],
 
-  // Deposit asset whitelist - only tickers in this array appear in the client
-  // deposit dropdown. An empty array or missing key means ALL assets are shown.
-  availableDepositAssets: [
-    'BTC','ETH','USDT','TRX','BNB','USDC','SOL','XRP','ADA','DOGE','MATIC',
-    'DOT','AVAX','LINK','UNI','LTC','BCH','XLM','FIL','NEAR',
-  ],
+  // Deposit currency whitelist - only tickers in this array appear in the client
+  // deposit dropdown.
+  availableDepositAssets: ['USD', 'EUR', 'GBP', 'CAD', 'AUD'],
 });
 
 /**

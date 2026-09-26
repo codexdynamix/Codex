@@ -3,11 +3,8 @@ import { getDb } from "./shared-site-db.mjs";
 const CAPS = {
   lead_upload: true,
   create_agent: true,
-  trading: true,
   balances: true,
   transactions: true,
-  card_management: true,
-  crypto_addresses: true,
   registrations: true,
   notifications: true,
   security: true,
@@ -165,7 +162,6 @@ export function insertChainiqTeam(row) {
 const DEFAULT_PLATFORM_SETTINGS = {
   platformName: "Codex Dynamics",
   platformAbbreviation: "CD",
-  cardBrandName: "Codex Dynamics",
   platformYear: "2026",
   supportEmail: "support@codexdynamics.com",
   primaryColor: "#F0B90B",

@@ -119,8 +119,8 @@ export function ContactModal({ isOpen, onClose, defaultService }: ContactModalPr
         source: "website_contact_modal",
       };
 
-      // ChainIQ owns the shared site lead/enquiry record.
-      await fetch("/api/chainiq/leads", {
+      // Codex Dynamics CRM owns the shared site lead/enquiry record.
+      await fetch("/api/crm/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...payload, kind: "enquiry" }),

@@ -62,8 +62,8 @@ export function NewsletterSignup({
       setIsSubmitting(true);
       setError(null);
 
-      // ChainIQ owns public lead capture and writes the shared site database.
-      const res = await fetch("/api/chainiq/leads", {
+      // Codex Dynamics CRM owns public lead capture and writes the shared site database.
+      const res = await fetch("/api/crm/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

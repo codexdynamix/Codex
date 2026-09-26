@@ -1,9 +1,9 @@
-﻿import React from "react";
+import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { MemoryRouter, Route as ReactRouterRoute, Routes } from "react-router-dom";
 
-import CodexDynamicsAdminApp from "@/chainiq/admin-app/App.jsx";
-import "@/chainiq/admin-app/admin.css";
+import CodexDynamicsAdminApp from "@/crm/admin-app/App.jsx";
+import "@/crm/admin-app/admin.css";
 
 export const Route = createFileRoute("/admin")({
   component: AdminCRM,

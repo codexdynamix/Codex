@@ -75,12 +75,12 @@ export const DEPOSIT_REJECTION_REASONS = {
 
 export const DEPOSIT_APPROVAL_MESSAGES = {
   'Standard Confirmations': [
-    { code: 'STD_CREDITED', label: 'Funds credited to wallet',
-      message: 'Your deposit has been verified and the funds have been credited to your wallet. Your balance has been updated accordingly.' },
+    { code: 'STD_CREDITED', label: 'Funds credited to account',
+      message: 'Your deposit has been verified and the funds have been credited to your account. Your balance has been updated accordingly.' },
     { code: 'STD_VERIFIED_CREDITED', label: 'Transaction verified and credited',
-      message: 'We have successfully verified your transaction on the blockchain. The confirmed amount has been credited to your account balance.' },
+      message: 'We have successfully verified your transaction. The confirmed amount has been credited to your account balance.' },
     { code: 'STD_RECEIVED_CREDITED', label: 'Deposit received and processed',
-      message: 'Your deposit has been received, verified, and fully processed. The funds are now available in your account for trading and withdrawals.' },
+      message: 'Your deposit has been received, verified, and fully processed. The funds are now available in your account for agency services and withdrawals.' },
   ],
   'Compliance Cleared': [
     { code: 'COMP_AML_CLEARED', label: 'AML review completed - credited',

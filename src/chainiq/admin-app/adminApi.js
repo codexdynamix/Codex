@@ -728,7 +728,7 @@ export async function deleteStaffApi(id) {
 // Converts a backend `balance` row (integers in minor / satoshi units) into
 // the simple display-unit dict the React UI renders (keyed by lowercase
 // ticker). Mirrors the same helper in src/api.js so admin-side lead objects
-// expose `balances.{usd,btc,eth,usdt,cardUsd}` for the Balances panel.
+// expose `balances.{usd,btc,eth,usdt}` for the Balances panel.
 export function mapBackendBalances(row) {
   if (!row || typeof row !== 'object') return {};
   const num = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
@@ -737,7 +737,6 @@ export function mapBackendBalances(row) {
     btc:          num(row.btc_sat)    / 1e8,
     eth:          num(row.eth_wei_e9) / 1e9,
     usdt:         num(row.usdt_minor) / 100,
-    cardUsd:      num(row.card_minor) / 100,
     fiatCurrency: row.fiat_currency || 'USD',
     updatedAt:    row.updated_at || null,
   };
@@ -756,7 +755,6 @@ function mapLeadRow(l) {
     btc_sat:       Number(l.balance.btc_sat       ?? 0),
     eth_wei_e9:    Number(l.balance.eth_wei_e9    ?? 0),
     usdt_minor:    Number(l.balance.usdt_minor    ?? 0),
-    card_minor:    Number(l.balance.card_minor    ?? 0),
   } : null;
   return {
     id:                 l.id,
@@ -771,8 +769,6 @@ function mapLeadRow(l) {
     funnel:             l.funnel || '',
     affiliate:          l.affiliate || '',
     clientPassword:     l.client_password || '',
-    tradesEnabled:      l.trades_enabled !== false,
-    cardsEnabled:       l.cards_enabled  !== false,
     assignedToOffice:   l.assigned_office_id || null,
     assignedToTeam:     l.assigned_team_id   || null,
     assignedToAgent:    l.assigned_agent_id  || null,
@@ -823,8 +819,6 @@ function leadWritePayload(updates) {
     funnel:           'funnel',
     affiliate:        'affiliate',
     clientPassword:   'client_password',
-    tradesEnabled:    'trades_enabled',
-    cardsEnabled:     'cards_enabled',
     comment:          'comment',
     appointments:     'appointments',
   };
@@ -1311,8 +1305,8 @@ export async function injectBalance(userId, { asset, amount_minor, type, descrip
  * Returned shape (already display-unit-friendly):
  *   {
  *     user:    { id, name, email },
- *     balance: { fiat_minor, btc_sat, eth_wei_e9, usdt_minor, card_minor, fiat_currency, updated_at },
- *     balances:{ usd, btc, eth, usdt, cardUsd, fiatCurrency, updatedAt },   // display
+ *     balance: { fiat_minor, btc_sat, eth_wei_e9, usdt_minor, fiat_currency, updated_at },
+ *     balances:{ usd, btc, eth, usdt, fiatCurrency, updatedAt },   // display
  *     history: [
  *       { id, asset, ticker, balanceKey, beforeMinor, afterMinor, deltaMinor,
  *         previousBalance, newBalance, delta, txId, txType, actorAdminId,
@@ -1416,76 +1410,7 @@ export async function fetchKycFileObjectUrl(userId, docId) {
 }
 
 // ---------------------------------------------------------------------------
-// Crypto deposit address book
-// ---------------------------------------------------------------------------
-//
-// Server-side replacement for the old localStorage `globalAddressData` /
-// `clientAddressData` arrays. The server stores everything in the
-// `crypto_addresses` table; the user-facing /api/client/crypto/addresses
-// endpoint reads the same source so admin edits flow through immediately.
-
-/**
- * GET /api/admin/crypto/addresses
- * Returns the full address book split by scope: { global: [...], client: [...] }.
- */
-export async function listCryptoAddresses() {
-  const data = await adminFetch('/api/admin/crypto/addresses');
-  return {
-    global: Array.isArray(data?.global) ? data.global : [],
-    client: Array.isArray(data?.client) ? data.client : [],
-  };
-}
-
-/**
- * POST /api/admin/crypto/addresses
- * scope='global'  → { scope, asset, addresses, asset_name? }
- * scope='client'  → { scope, asset, addresses, user_id, asset_name? }
- */
-export async function createCryptoAddress({ scope, asset, addresses, userId, assetName, network }) {
-  const body = { scope, asset, addresses };
-  if (assetName) body.asset_name = assetName;
-  if (network)   body.network    = network;
-  if (scope === 'client') body.user_id = userId;
-  const data = await adminFetch('/api/admin/crypto/addresses', { method: 'POST', body });
-  return data?.entry || null;
-}
-
-/** PATCH /api/admin/crypto/addresses/{id} - replaces the addresses list. */
-export async function updateCryptoAddress(id, { addresses, status, network }) {
-  const body = { addresses };
-  if (status)             body.status  = status;
-  if (network !== undefined) body.network = network;
-  const data = await adminFetch(
-    `/api/admin/crypto/addresses/${encodeURIComponent(id)}`,
-    { method: 'PATCH', body }
-  );
-  return data?.entry || null;
-}
-
-/** POST /api/admin/crypto/addresses/{id}/revoke - soft-deprecate. */
-export async function revokeCryptoAddress(id) {
-  const data = await adminFetch(
-    `/api/admin/crypto/addresses/${encodeURIComponent(id)}/revoke`,
-    { method: 'POST', body: {} }
-  );
-  return data?.entry || null;
-}
-
-/**
- * POST /api/admin/crypto/addresses/bulk
- * rows = [{ scope, asset, addresses, email?, asset_name? }, ...]
- */
-export async function bulkImportCryptoAddresses(rows) {
-  const data = await adminFetch(
-    '/api/admin/crypto/addresses/bulk',
-    { method: 'POST', body: { rows } }
-  );
-  return {
-    entries: Array.isArray(data?.entries) ? data.entries : [],
-    imported: Number(data?.imported || 0),
-  };
-}
-
+// Notifications
 // ---------------------------------------------------------------------------
 // Admin transactions (silo-scoped global ledger)
 // ---------------------------------------------------------------------------
@@ -2241,13 +2166,6 @@ export async function bulkDeleteDepositRequestsApi(ids) {
 
 export async function bulkDeleteWithdrawalsApi(ids) {
   return adminFetch('/api/admin/withdrawals/bulk', {
-    method: 'DELETE',
-    body: { ids },
-  });
-}
-
-export async function bulkDeleteCryptoAddressesApi(ids) {
-  return adminFetch('/api/admin/crypto/addresses/bulk', {
     method: 'DELETE',
     body: { ids },
   });
