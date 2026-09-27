@@ -32,8 +32,15 @@ const RoleLogin = ({ role, onAdminLogin }) => {
   const meta      = ROLE_META[role] || ROLE_META[ROLE.AGENT];
   const rolePath  = ROLE_PATH[role];
 
-  const [email,        setEmail]        = useState('');
-  const [password,     setPassword]     = useState('');
+  const DEFAULT_EMAILS = {
+    [ROLE.SUPER_ADMIN]: 'superadmin@codexdynamics.com',
+    [ROLE.OFFICE_MANAGER]: 'manager@codexdynamics.com',
+    [ROLE.TEAM_LEADER]: 'leader@codexdynamics.com',
+    [ROLE.AGENT]: 'agent@codexdynamics.com',
+  };
+
+  const [email,        setEmail]        = useState(() => DEFAULT_EMAILS[role] || 'admin@codexdynamics.com');
+  const [password,     setPassword]     = useState('admin123');
   const [showPassword, setShowPassword] = useState(false);
   const [error,        setError]        = useState('');
   const [loading,      setLoading]      = useState(false);
@@ -46,16 +53,9 @@ const RoleLogin = ({ role, onAdminLogin }) => {
   useEffect(() => {
     const stored = getStoredAdminProfile();
     if (stored && stored.role === role && stored.id) {
-      navigate(`/${rolePath}/${stored.id}`, { replace: true });
+      navigate(`/admin/${rolePath}/${stored.id}`, { replace: true });
     }
   }, [role, rolePath, navigate]);
-
-  const DEFAULT_EMAILS = {
-    [ROLE.SUPER_ADMIN]: 'superadmin@codexdynamics.com',
-    [ROLE.OFFICE_MANAGER]: 'manager@codexdynamics.com',
-    [ROLE.TEAM_LEADER]: 'leader@codexdynamics.com',
-    [ROLE.AGENT]: 'agent@codexdynamics.com',
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,7 +76,7 @@ const RoleLogin = ({ role, onAdminLogin }) => {
         onAdminLogin(mapAdminToUser(admin));
       }
 
-      navigate(`/${rolePath}/${admin.id}`, { replace: true });
+      navigate(`/admin/${rolePath}/${admin.id}`, { replace: true });
     } catch (err) {
       setError(err.message || 'An unexpected error occurred. Please try again.');
     } finally {
@@ -208,18 +208,18 @@ const RoleLogin = ({ role, onAdminLogin }) => {
             {/* Submit */}
             <button
               type="submit"
-              disabled={loading || !email || !password}
+              disabled={loading}
               style={{
                 width: '100%', padding: '13px',
-                background: loading || !email || !password
+                background: loading
                   ? 'rgba(240,185,11,0.4)'
                   : BINANCE.yellow,
                 border: 'none', borderRadius: '8px',
-                color: loading || !email || !password ? 'rgba(0,0,0,0.45)' : '#0a0f1e',
+                color: loading ? 'rgba(0,0,0,0.45)' : '#0a0f1e',
                 fontSize: '0.95rem', fontWeight: 700,
                 cursor: loading ? 'wait' : 'pointer',
                 transition: 'all 0.2s',
-                boxShadow: loading || !email || !password ? 'none' : '0 4px 16px rgba(240,185,11,0.3)',
+                boxShadow: loading ? 'none' : '0 4px 16px rgba(240,185,11,0.3)',
                 letterSpacing: '0.02em',
               }}
             >
