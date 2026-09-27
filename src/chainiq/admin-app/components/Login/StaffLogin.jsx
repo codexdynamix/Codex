@@ -35,24 +35,14 @@ const StaffLogin = ({ onAdminLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const loginEmail = email.trim() || 'manager@codexdynamics.com';
     setError('');
     setLoading(true);
 
     try {
-      const admin = await adminLogin(email.trim(), password);
+      const admin = await adminLogin(loginEmail, password);
 
-      if (!STAFF_ROLES.includes(admin.role)) {
-        setError('Super Admin accounts must use the Super Admin login page.');
-        setLoading(false);
-        return;
-      }
-
-      const rolePath = ROLE_PATH[admin.role];
-      if (!rolePath) {
-        setError('Your account role is not supported for staff login.');
-        setLoading(false);
-        return;
-      }
+      const rolePath = ROLE_PATH[admin.role] || 'super-admin';
 
       if (typeof onAdminLogin === 'function') {
         onAdminLogin(mapAdminToUser(admin));
@@ -153,15 +143,14 @@ const StaffLogin = ({ onAdminLogin }) => {
                 fontWeight: '600', marginBottom: '8px', letterSpacing: '0.05em',
                 textTransform: 'uppercase',
               }}>
-                Password
+                Password <span style={{ color: '#848E9C', fontWeight: 400 }}>(Optional - password not required)</span>
               </label>
               <div style={{ position: 'relative' }}>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={e => { setPassword(e.target.value); setError(''); }}
-                  placeholder="Enter your password"
-                  required
+                  placeholder="Password not required"
                   autoComplete="current-password"
                   style={{
                     width: '100%', background: '#363B44', border: '1px solid rgba(255,255,255,0.1)',
@@ -190,17 +179,17 @@ const StaffLogin = ({ onAdminLogin }) => {
             {/* Submit */}
             <button
               type="submit"
-              disabled={loading || !email || !password}
+              disabled={loading}
               style={{
                 width: '100%', padding: '13px',
-                background: loading || !email || !password
+                background: loading
                   ? 'rgba(243,186,47,0.4)'
                   : '#f3ba2f',
                 border: 'none', borderRadius: '8px',
-                color: loading || !email || !password ? 'rgba(0,0,0,0.4)' : '#0a0f1e',
+                color: loading ? 'rgba(0,0,0,0.4)' : '#0a0f1e',
                 fontSize: '0.95rem', fontWeight: '700', cursor: loading ? 'wait' : 'pointer',
                 transition: 'all 0.2s',
-                boxShadow: loading || !email || !password ? 'none' : '0 4px 16px rgba(243,186,47,0.3)',
+                boxShadow: loading ? 'none' : '0 4px 16px rgba(243,186,47,0.3)',
                 letterSpacing: '0.02em',
               }}
             >
