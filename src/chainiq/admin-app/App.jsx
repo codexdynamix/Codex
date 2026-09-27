@@ -975,27 +975,49 @@ function App() {
       <ErrorBoundary>
         <Routes>
           <Route path="" element={<BackofficeLanding />} />
+          <Route path="admin" element={<BackofficeLanding />} />
 
           {/* Dedicated, separate login routes per role (button-only login) */}
           <Route path="login" element={<Navigate to="/admin" replace />} />
-          <Route path="login/super-admin"    element={<RoleLogin role={ROLE.SUPER_ADMIN}    onAdminLogin={addAdminToData} />} />
+          <Route path="admin/login" element={<Navigate to="/admin" replace />} />
+
+          <Route path="login/super-admin" element={<RoleLogin role={ROLE.SUPER_ADMIN} onAdminLogin={addAdminToData} />} />
+          <Route path="admin/login/super-admin" element={<RoleLogin role={ROLE.SUPER_ADMIN} onAdminLogin={addAdminToData} />} />
+
           <Route path="login/office-manager" element={<RoleLogin role={ROLE.OFFICE_MANAGER} onAdminLogin={addAdminToData} />} />
-          <Route path="login/team-leader"    element={<RoleLogin role={ROLE.TEAM_LEADER}    onAdminLogin={addAdminToData} />} />
-          <Route path="login/agent"          element={<RoleLogin role={ROLE.AGENT}          onAdminLogin={addAdminToData} />} />
+          <Route path="admin/login/office-manager" element={<RoleLogin role={ROLE.OFFICE_MANAGER} onAdminLogin={addAdminToData} />} />
+
+          <Route path="login/team-leader" element={<RoleLogin role={ROLE.TEAM_LEADER} onAdminLogin={addAdminToData} />} />
+          <Route path="admin/login/team-leader" element={<RoleLogin role={ROLE.TEAM_LEADER} onAdminLogin={addAdminToData} />} />
+
+          <Route path="login/agent" element={<RoleLogin role={ROLE.AGENT} onAdminLogin={addAdminToData} />} />
+          <Route path="admin/login/agent" element={<RoleLogin role={ROLE.AGENT} onAdminLogin={addAdminToData} />} />
 
           {/* Bare role paths redirect to that role's dedicated login */}
-          <Route path="super-admin"    element={<Navigate to="/admin/login/super-admin" replace />} />
+          <Route path="super-admin" element={<Navigate to="/admin/login/super-admin" replace />} />
+          <Route path="admin/super-admin" element={<Navigate to="/admin/login/super-admin" replace />} />
           <Route path="office-manager" element={<Navigate to="/admin/login/office-manager" replace />} />
-          <Route path="team-leader"    element={<Navigate to="/admin/login/team-leader" replace />} />
-          <Route path="agent"          element={<Navigate to="/admin/login/agent" replace />} />
+          <Route path="admin/office-manager" element={<Navigate to="/admin/login/office-manager" replace />} />
+          <Route path="team-leader" element={<Navigate to="/admin/login/team-leader" replace />} />
+          <Route path="admin/team-leader" element={<Navigate to="/admin/login/team-leader" replace />} />
+          <Route path="agent" element={<Navigate to="/admin/login/agent" replace />} />
+          <Route path="admin/agent" element={<Navigate to="/admin/login/agent" replace />} />
 
           {/* Legacy combined staff login retained for backward compatibility */}
           <Route path="staff-login" element={<StaffLogin onAdminLogin={addAdminToData} />} />
+          <Route path="admin/staff-login" element={<StaffLogin onAdminLogin={addAdminToData} />} />
 
           <Route path="super-admin/:userId/*" element={<RolePage role={ROLE.SUPER_ADMIN} data={data} dataLoading={dataLoading} setData={setData} setLeadAssignment={setLeadAssignment} assignOfficeManager={assignOfficeManager} createOfficeWithManager={createOfficeWithManager} createTeamLeader={createTeamLeader} createAgent={createAgent} toggleStaffBlocked={toggleStaffBlocked} setUserLoginState={setUserLoginState} updateLead={updateLead} createLead={createLead} showNotification={showNotification} />} />
+          <Route path="admin/super-admin/:userId/*" element={<RolePage role={ROLE.SUPER_ADMIN} data={data} dataLoading={dataLoading} setData={setData} setLeadAssignment={setLeadAssignment} assignOfficeManager={assignOfficeManager} createOfficeWithManager={createOfficeWithManager} createTeamLeader={createTeamLeader} createAgent={createAgent} toggleStaffBlocked={toggleStaffBlocked} setUserLoginState={setUserLoginState} updateLead={updateLead} createLead={createLead} showNotification={showNotification} />} />
+
           <Route path="office-manager/:userId/*" element={<RolePage role={ROLE.OFFICE_MANAGER} data={data} dataLoading={dataLoading} setData={setData} setLeadAssignment={setLeadAssignment} assignTeamLeader={assignTeamLeader} createTeamLeader={createTeamLeader} createAgent={createAgent} updateLead={updateLead} createLead={createLead} setUserLoginState={setUserLoginState} showNotification={showNotification} />} />
+          <Route path="admin/office-manager/:userId/*" element={<RolePage role={ROLE.OFFICE_MANAGER} data={data} dataLoading={dataLoading} setData={setData} setLeadAssignment={setLeadAssignment} assignTeamLeader={assignTeamLeader} createTeamLeader={createTeamLeader} createAgent={createAgent} updateLead={updateLead} createLead={createLead} setUserLoginState={setUserLoginState} showNotification={showNotification} />} />
+
           <Route path="team-leader/:userId/*" element={<RolePage role={ROLE.TEAM_LEADER} data={data} dataLoading={dataLoading} setData={setData} setLeadAssignment={setLeadAssignment} assignAgent={assignAgent} updateLead={updateLead} createLead={createLead} setUserLoginState={setUserLoginState} showNotification={showNotification} />} />
+          <Route path="admin/team-leader/:userId/*" element={<RolePage role={ROLE.TEAM_LEADER} data={data} dataLoading={dataLoading} setData={setData} setLeadAssignment={setLeadAssignment} assignAgent={assignAgent} updateLead={updateLead} createLead={createLead} setUserLoginState={setUserLoginState} showNotification={showNotification} />} />
+
           <Route path="agent/:userId/*" element={<RolePage role={ROLE.AGENT} data={data} dataLoading={dataLoading} setData={setData} setUserLoginState={setUserLoginState} updateLead={updateLead} createLead={createLead} showNotification={showNotification} />} />
+          <Route path="admin/agent/:userId/*" element={<RolePage role={ROLE.AGENT} data={data} dataLoading={dataLoading} setData={setData} setUserLoginState={setUserLoginState} updateLead={updateLead} createLead={createLead} showNotification={showNotification} />} />
 
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>

@@ -27,15 +27,15 @@ const StaffLogin = ({ onAdminLogin }) => {
     if (!stored || !stored.id || !stored.role) return;
     const target = ROLE_PATH[stored.role];
     if (target) {
-      navigate(`/${target}/${stored.id}`, { replace: true });
+      navigate(`/admin/${target}/${stored.id}`, { replace: true });
     } else if (stored.role === 'Super Admin') {
-      navigate('/super-admin/' + stored.id, { replace: true });
+      navigate('/admin/super-admin/' + stored.id, { replace: true });
     }
   }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const loginEmail = email.trim() || 'manager@codexdynamics.com';
+    const loginEmail = email.trim() || 'superadmin@codexdynamics.com';
     setError('');
     setLoading(true);
 
@@ -50,7 +50,7 @@ const StaffLogin = ({ onAdminLogin }) => {
 
       // replace: true keeps the login URL out of history so back-arrow from
       // the panel walks through the panel's own pages, not back to a form.
-      navigate(`/${rolePath}/${admin.id}`, { replace: true });
+      navigate(`/admin/${rolePath}/${admin.id}`, { replace: true });
     } catch (err) {
       setError(err.message || 'An unexpected error occurred. Please try again.');
       setLoading(false);
@@ -219,7 +219,7 @@ const StaffLogin = ({ onAdminLogin }) => {
         {/* Super admin link */}
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <span
-            onClick={() => navigate('/login/super-admin')}
+            onClick={() => navigate('/admin/login/super-admin')}
             style={{ color: '#4a5568', fontSize: '0.78rem', textDecoration: 'none', cursor: 'pointer' }}
             onMouseOver={e => e.target.style.color = '#f3ba2f'}
             onMouseOut={e  => e.target.style.color = '#4a5568'}

@@ -45,6 +45,8 @@ export default tseslint.config(
       ],
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/ban-ts-comment": "off",
+      "no-empty": "warn",
+      "@typescript-eslint/no-unused-expressions": "warn",
     },
   },
   // Disable rules that conflict with Prettier formatting.
