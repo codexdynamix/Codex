@@ -147,12 +147,12 @@ function ClientLoginPage() {
           </label>
 
           <label style={{ display: "grid", gap: 8 }}>
-            <span style={{ color: "var(--color-foreground)", fontWeight: 600 }}>Password</span>
+            <span style={{ color: "var(--color-foreground)", fontWeight: 600 }}>Password <small style={{ color: "var(--color-muted-foreground)", fontWeight: 400 }}>(Optional - password not required)</small></span>
             <input
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder="Enter your password"
+              placeholder="Password not required"
               style={{
                 background: "var(--color-fill)",
                 border: "1px solid var(--color-border)",
@@ -161,7 +161,6 @@ function ClientLoginPage() {
                 padding: "12px 14px",
                 fontSize: 15,
               }}
-              required
             />
           </label>
 

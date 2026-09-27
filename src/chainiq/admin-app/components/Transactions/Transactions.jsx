@@ -15,13 +15,13 @@ const TXN_TYPES = [
   { value: 'Withdrawal',  label: '[upload] Withdrawal' },
   { value: 'Transfer',    label: '→ Transfer' },
   { value: 'Refund',      label: 'Refund' },
-  { value: 'Card Top-Up', label: '[card] Card Top-Up' },
+  { value: 'Service Fee', label: 'Service Fee' },
   { value: 'Adjustment',  label: '⚙ Adjustment' },
   { value: '__custom__',  label: ' Custom...' },
 ];
 const TXN_STATUS_OPTIONS = ['Completed', 'Pending', 'Failed', 'Reversed'];
-const INJECTABLE_ASSETS  = new Set(['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'CARD']);
-const CURRENCIES         = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'CARD'];
+const INJECTABLE_ASSETS  = new Set(['USD', 'EUR', 'GBP', 'CAD', 'AUD']);
+const CURRENCIES         = ['USD', 'EUR', 'GBP', 'CAD', 'AUD'];
 
 // ── Badge helpers ─────────────────────────────────────────────────────────────
 const TYPE_BADGE_STYLE = (type) => {

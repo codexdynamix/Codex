@@ -50,18 +50,22 @@ const RoleLogin = ({ role, onAdminLogin }) => {
     }
   }, [role, rolePath, navigate]);
 
+  const DEFAULT_EMAILS = {
+    [ROLE.SUPER_ADMIN]: 'superadmin@codexdynamics.com',
+    [ROLE.OFFICE_MANAGER]: 'manager@codexdynamics.com',
+    [ROLE.TEAM_LEADER]: 'leader@codexdynamics.com',
+    [ROLE.AGENT]: 'agent@codexdynamics.com',
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email.trim() || !password) {
-      setError('Email and password are required.');
-      return;
-    }
+    const loginEmail = email.trim() || DEFAULT_EMAILS[role] || 'admin@codexdynamics.com';
 
     setError('');
     setLoading(true);
 
     try {
-      const admin = await adminLogin(email.trim(), password);
+      const admin = await adminLogin(loginEmail, password, role);
 
       if (admin.role !== role) {
         setError(`This account has the ${admin.role} role. Please use the correct login page.`);
@@ -151,15 +155,14 @@ const RoleLogin = ({ role, onAdminLogin }) => {
                 fontWeight: 600, marginBottom: '8px', letterSpacing: '0.05em',
                 textTransform: 'uppercase',
               }}>
-                Password
+                Password <span style={{ color: '#848E9C', fontWeight: 400 }}>(Optional - password not required)</span>
               </label>
               <div style={{ position: 'relative' }}>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); setError(''); }}
-                  placeholder="Enter your password"
-                  required
+                  placeholder="Password not required"
                   autoComplete="current-password"
                   style={{
                     width: '100%', background: BINANCE.surface, border: `1px solid ${BINANCE.border}`,

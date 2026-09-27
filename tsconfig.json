@@ -14,7 +14,8 @@
     "strict": false,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/crm/*": ["./src/chainiq/*"]
     }
   },
   "include": ["src", "vite.config.ts"]
