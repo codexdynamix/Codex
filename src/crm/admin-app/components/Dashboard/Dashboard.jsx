@@ -24,7 +24,7 @@ const STATUS_COLORS = {
 const colorFor = (status) => STATUS_COLORS[status] || '#F0B90B';
 
 const KpiCard = ({ label, value, sub, accent = '#F0B90B', icon }) => (
-  <div className="aax-dashboard-card" style={{ position: 'relative', overflow: 'hidden' }}>
+  <div className="crm-dashboard-card" style={{ position: 'relative', overflow: 'hidden' }}>
     <div style={{ position: 'absolute', top: 0, left: 0, width: 3, height: '100%', background: accent, opacity: 0.85 }} />
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
       <div style={{ fontSize: 12, color: '#8B94A3', fontWeight: 500, letterSpacing: 0.2 }}>{label}</div>
@@ -209,18 +209,18 @@ const Dashboard = ({ offices = [], teams = [], staffUsers = [] }) => {
   const maxOfficeLeads = officePerformance.length ? officePerformance[0].leads : 0;
 
   return (
-    <div id="analytics-section" className="aax-admin-section">
+    <div id="analytics-section" className="crm-admin-section">
       <h2>[chart] Analytics Dashboard</h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 aax-mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 crm-mb-6">
         <KpiCard label="Total Leads" value={fmt(stats.total)} sub={`${fmt(stats.online)} online now`} accent="#F0B90B" icon="[users]" />
         <KpiCard label="Offices" value={fmt(offices.length)} sub={`${fmt(stats.officeManagers)} managers`} accent="#BF5AF2" icon="[office]" />
         <KpiCard label="Teams" value={fmt(teams.length)} sub={`${fmt(stats.teamLeaders)} leaders`} accent="#64D2FF" icon="[users]" />
         <KpiCard label="Agents" value={fmt(stats.agents)} sub="Across all teams" accent="#FFB020" icon="[agent]" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 aax-mb-6">
-        <div className="aax-dashboard-card">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 crm-mb-6">
+        <div className="crm-dashboard-card">
           <h3 style={{ marginTop: 0 }}>[status] Lead Status Distribution</h3>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
             <DonutChart data={statusBreakdown.length ? statusBreakdown : [{ name: 'No data', value: 1, color: '#2B3139' }]} />
@@ -236,7 +236,7 @@ const Dashboard = ({ offices = [], teams = [], staffUsers = [] }) => {
           </div>
         </div>
 
-        <div className="aax-dashboard-card lg:col-span-2">
+        <div className="crm-dashboard-card lg:col-span-2">
           <h3 style={{ marginTop: 0 }}>[office] Office Performance</h3>
           <div style={{ marginTop: 8 }}>
             {officePerformance.length === 0 && <div style={{ color: '#8B94A3', fontSize: 12 }}>No offices yet.</div>}
@@ -254,13 +254,13 @@ const Dashboard = ({ offices = [], teams = [], staffUsers = [] }) => {
         </div>
       </div>
 
-      <div className="aax-dashboard-card aax-mb-6">
+      <div className="crm-dashboard-card crm-mb-6">
         <h3 style={{ marginTop: 0 }}>[trend] New Leads - Last 14 Days</h3>
         <Sparkline points={trend} color="#F0B90B" label="Daily registrations" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 aax-mb-6">
-        <div className="aax-dashboard-card lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 crm-mb-6">
+        <div className="crm-dashboard-card lg:col-span-2">
           <h3 style={{ marginTop: 0 }}>[top] Top Performing Teams</h3>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
@@ -291,21 +291,21 @@ const Dashboard = ({ offices = [], teams = [], staffUsers = [] }) => {
           </div>
         </div>
 
-        <div className="aax-dashboard-card">
+        <div className="crm-dashboard-card">
           <h3 style={{ marginTop: 0 }}>[users] Online Leads</h3>
-          <div className="aax-activity-feed">
+          <div className="crm-activity-feed">
             {onlineLeads.length === 0 && (
               <div style={{ color: '#8B94A3', fontSize: 12, padding: '8px 0' }}>No leads currently online.</div>
             )}
             {onlineLeads.map((lead) => (
-              <div className="aax-activity-item" key={lead.id}>
-                <div className="aax-activity-icon aax-login" style={{ position: 'relative' }}>
+              <div className="crm-activity-item" key={lead.id}>
+                <div className="crm-activity-icon crm-login" style={{ position: 'relative' }}>
                   <img src={`https://placehold.co/40x40/1e1e26/f0f0f5?text=${(lead.name || '?').charAt(0)}`} className="rounded-full w-8 h-8" alt="" />
                   <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', width: '12px', height: '12px', background: '#30D158', borderRadius: '50%', border: '2px solid #1E2026' }}></div>
                 </div>
-                <div className="aax-activity-details">
-                  <p className="aax-activity-message font-semibold">{lead.name}</p>
-                  <p className="aax-activity-timestamp">{lead.email}</p>
+                <div className="crm-activity-details">
+                  <p className="crm-activity-message font-semibold">{lead.name}</p>
+                  <p className="crm-activity-timestamp">{lead.email}</p>
                 </div>
               </div>
             ))}
@@ -313,9 +313,9 @@ const Dashboard = ({ offices = [], teams = [], staffUsers = [] }) => {
         </div>
       </div>
 
-      <div className="aax-dashboard-card">
+      <div className="crm-dashboard-card">
         <h3 style={{ marginTop: 0 }}>[list] Recent Activity</h3>
-        <div className="aax-activity-feed">
+        <div className="crm-activity-feed">
           {recentActivity.length === 0 && (
             <div style={{ color: '#8B94A3', fontSize: 12, padding: '8px 0' }}>No recent activity recorded.</div>
           )}
@@ -328,11 +328,11 @@ const Dashboard = ({ offices = [], teams = [], staffUsers = [] }) => {
               : 'fa-circle';
             const ts = item.timestamp ? new Date(item.timestamp) : null;
             return (
-              <div className="aax-activity-item" key={index}>
-                <div className={`aax-activity-icon ${item.type || ''}`}><i className={`fas ${iconCls}`}></i></div>
-                <div className="aax-activity-details">
-                  <p className="aax-activity-message"><b>{lead ? lead.name : 'Unknown'}</b> {item.details}</p>
-                  <p className="aax-activity-timestamp">{ts ? ts.toLocaleString() : ''}</p>
+              <div className="crm-activity-item" key={index}>
+                <div className={`crm-activity-icon ${item.type || ''}`}><i className={`fas ${iconCls}`}></i></div>
+                <div className="crm-activity-details">
+                  <p className="crm-activity-message"><b>{lead ? lead.name : 'Unknown'}</b> {item.details}</p>
+                  <p className="crm-activity-timestamp">{ts ? ts.toLocaleString() : ''}</p>
                 </div>
               </div>
             );

@@ -95,7 +95,7 @@ function OfficeManagerPanel({ data, currentUser, assignTeamLeader, createTeamLea
 
   return (
     <div style={{ background: '#2A2E36', minHeight: '100%', padding: 24 }}>
-      <div className="aax-super-admin-card" style={{ marginBottom: 20 }}>
+      <div className="crm-super-admin-card" style={{ marginBottom: 20 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div>
             <h2 style={{ margin: 0, marginBottom: 4, color: '#EAECEF' }}>{getOfficeName(currentUser.officeId, data.offices)}</h2>
@@ -120,10 +120,10 @@ function OfficeManagerPanel({ data, currentUser, assignTeamLeader, createTeamLea
         </div>
       </div>
 
-      <div className="aax-super-admin-header aax-role-panel-header" style={{ marginBottom: 20 }}>
-        <div className="aax-super-admin-tabs">
+      <div className="crm-super-admin-header crm-role-panel-header" style={{ marginBottom: 20 }}>
+        <div className="crm-super-admin-tabs">
           {[['overview', 'Dashboard'], ['teams', 'Teams'], ['agents', 'Agents'], ['leads', 'Lead Distribution'], ['create', 'Create']].map(([key, label]) => (
-            <button key={key} className={`aax-super-admin-tab-btn ${omTab === key ? 'aax-active' : ''}`} onClick={() => setOmTab(key)}>{label}</button>
+            <button key={key} className={`crm-super-admin-tab-btn ${omTab === key ? 'crm-active' : ''}`} onClick={() => setOmTab(key)}>{label}</button>
           ))}
         </div>
       </div>
@@ -140,10 +140,10 @@ function OfficeManagerPanel({ data, currentUser, assignTeamLeader, createTeamLea
       {omTab === 'overview' && (
         <>
           {teamsNeedingAttention.length > 0 && (
-            <div className="aax-super-admin-card" style={{ marginBottom: 20, borderColor: '#ff646440', background: 'rgba(255,100,100,0.03)' }}>
+            <div className="crm-super-admin-card" style={{ marginBottom: 20, borderColor: '#ff646440', background: 'rgba(255,100,100,0.03)' }}>
               <h3 style={{ margin: '0 0 12px 0', color: '#ff6464', fontSize: 13, fontWeight: 600 }}>⚠ Teams Needing Attention</h3>
-              <div className="aax-super-admin-table-wrapper">
-                <table className="aax-super-admin-table">
+              <div className="crm-super-admin-table-wrapper">
+                <table className="crm-super-admin-table">
                   <thead><tr><th>Team</th><th>Leader</th><th style={{ textAlign: 'center' }}>Agents</th><th style={{ textAlign: 'center' }}>Leads</th><th>Issue</th></tr></thead>
                   <tbody>
                     {teamsNeedingAttention.map(t => (
@@ -160,7 +160,7 @@ function OfficeManagerPanel({ data, currentUser, assignTeamLeader, createTeamLea
               </div>
             </div>
           )}
-          <div className="aax-super-admin-card" style={{ marginBottom: 20 }}>
+          <div className="crm-super-admin-card" style={{ marginBottom: 20 }}>
             <h3 style={{ margin: '0 0 14px 0', fontSize: 13, color: '#848E9C', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Lead Status Distribution</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 10 }}>
               {Object.entries(leadsByStatus).filter(([, count]) => count > 0).map(([status, count]) => {
@@ -175,10 +175,10 @@ function OfficeManagerPanel({ data, currentUser, assignTeamLeader, createTeamLea
               })}
             </div>
           </div>
-          <div className="aax-super-admin-card">
+          <div className="crm-super-admin-card">
             <h3 style={{ margin: '0 0 14px 0', fontSize: 13, color: '#848E9C', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Team Performance</h3>
-            <div className="aax-super-admin-table-wrapper">
-              <table className="aax-super-admin-table">
+            <div className="crm-super-admin-table-wrapper">
+              <table className="crm-super-admin-table">
                 <thead><tr><th>#</th><th>Team</th><th>Leader</th><th style={{ textAlign: 'center' }}>Leads</th><th style={{ textAlign: 'center' }}>Deposits</th><th style={{ textAlign: 'center' }}>Conversion</th><th style={{ textAlign: 'center' }}>Agents</th></tr></thead>
                 <tbody>
                   {teamMetrics.sort((a, b) => parseFloat(b.conversionRate) - parseFloat(a.conversionRate)).map((team, idx) => (
@@ -200,9 +200,9 @@ function OfficeManagerPanel({ data, currentUser, assignTeamLeader, createTeamLea
       )}
 
       {omTab === 'teams' && (
-        <div className="aax-super-admin-card">
-          <div className="aax-super-admin-table-wrapper">
-            <table className="aax-super-admin-table">
+        <div className="crm-super-admin-card">
+          <div className="crm-super-admin-table-wrapper">
+            <table className="crm-super-admin-table">
               <thead><tr><th>ID</th><th>Team</th><th>Leader</th><th style={{ textAlign: 'center' }}>Agents</th><th style={{ textAlign: 'center' }}>Cap.</th><th style={{ textAlign: 'center' }}>Leads</th><th style={{ textAlign: 'center' }}>Deposits</th><th style={{ textAlign: 'center' }}>Conv.</th><th>Actions</th></tr></thead>
               <tbody>
                 {teamsForOffice.length === 0 ? (
@@ -245,9 +245,9 @@ function OfficeManagerPanel({ data, currentUser, assignTeamLeader, createTeamLea
       )}
 
       {omTab === 'agents' && (
-        <div className="aax-super-admin-card">
-          <div className="aax-super-admin-table-wrapper">
-            <table className="aax-super-admin-table">
+        <div className="crm-super-admin-card">
+          <div className="crm-super-admin-table-wrapper">
+            <table className="crm-super-admin-table">
               <thead><tr><th>ID</th><th>Agent</th><th>Team</th><th style={{ textAlign: 'center' }}>Leads</th><th>Status</th><th>Last Login</th><th>Actions</th></tr></thead>
               <tbody>
                 {agentMetrics.length === 0 ? (
@@ -269,7 +269,7 @@ function OfficeManagerPanel({ data, currentUser, assignTeamLeader, createTeamLea
                       <td style={{ color: '#848E9C', fontSize: 12 }}>{fullAgent?.lastLoginAt ? new Date(fullAgent.lastLoginAt).toLocaleString() : '-'}</td>
                       <td>
                         <button
-                          className="aax-staff-action-btn btn-impersonate"
+                          className="crm-staff-action-btn btn-impersonate"
                           title={`View ${agent.name}'s panel`}
                           onClick={() => navigate(`/admin/agent/${agent.id}`, {
                             state: {
@@ -297,14 +297,14 @@ function OfficeManagerPanel({ data, currentUser, assignTeamLeader, createTeamLea
 
       {omTab === 'create' && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-          <div className="aax-super-admin-card">
+          <div className="crm-super-admin-card">
             <h3 style={{ margin: '0 0 16px 0', fontSize: 14, color: '#EAECEF' }}>New Team &amp; Leader</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Team Name</div><input value={newTeamName} onChange={e => setNewTeamName(e.target.value)} placeholder="Team name..." autoComplete="off" className="aax-super-admin-input" /></div>
-              <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Max Size</div><input value={newTeamSize} onChange={e => setNewTeamSize(e.target.value)} placeholder="e.g. 10" type="number" autoComplete="off" className="aax-super-admin-input" /></div>
-              <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Leader Name</div><input value={newLeaderName} onChange={e => setNewLeaderName(e.target.value)} placeholder="Leader name..." autoComplete="off" className="aax-super-admin-input" /></div>
-              <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Leader Password</div><input value={newLeaderPassword} onChange={e => setNewLeaderPassword(e.target.value)} placeholder="Password..." type="password" autoComplete="new-password" className="aax-super-admin-input" /></div>
-              <button className="aax-super-admin-btn" style={{ width: '100%', justifyContent: 'center', marginTop: 4 }} disabled={!newTeamName || !newTeamSize || !newLeaderName || !newLeaderPassword} onClick={async () => {
+              <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Team Name</div><input value={newTeamName} onChange={e => setNewTeamName(e.target.value)} placeholder="Team name..." autoComplete="off" className="crm-super-admin-input" /></div>
+              <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Max Size</div><input value={newTeamSize} onChange={e => setNewTeamSize(e.target.value)} placeholder="e.g. 10" type="number" autoComplete="off" className="crm-super-admin-input" /></div>
+              <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Leader Name</div><input value={newLeaderName} onChange={e => setNewLeaderName(e.target.value)} placeholder="Leader name..." autoComplete="off" className="crm-super-admin-input" /></div>
+              <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Leader Password</div><input value={newLeaderPassword} onChange={e => setNewLeaderPassword(e.target.value)} placeholder="Password..." type="password" autoComplete="new-password" className="crm-super-admin-input" /></div>
+              <button className="crm-super-admin-btn" style={{ width: '100%', justifyContent: 'center', marginTop: 4 }} disabled={!newTeamName || !newTeamSize || !newLeaderName || !newLeaderPassword} onClick={async () => {
                 const r = await createTeamLeader(currentUser.officeId, newTeamName, newLeaderName, newLeaderPassword, newTeamSize);
                 if (!r) return;
                 if (r.loginLink) setNewLeaderLink(r.loginLink);
@@ -314,24 +314,24 @@ function OfficeManagerPanel({ data, currentUser, assignTeamLeader, createTeamLea
               {newLeaderLink && (
                 <div style={{ background: 'rgba(69,210,160,0.06)', border: '1px solid #45d2a030', borderRadius: 8, padding: 12 }}>
                   <div style={{ fontSize: 11, color: '#848E9C', marginBottom: 6 }}>Leader Login Link</div>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}><input value={newLeaderLink} readOnly className="aax-super-admin-input" style={{ flex: 1, fontSize: 11 }} /><button className="aax-link-copy-btn" onClick={() => copyToClipboard(newLeaderLink)}>[list]</button></div>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}><input value={newLeaderLink} readOnly className="crm-super-admin-input" style={{ flex: 1, fontSize: 11 }} /><button className="crm-link-copy-btn" onClick={() => copyToClipboard(newLeaderLink)}>[list]</button></div>
                 </div>
               )}
             </div>
           </div>
-          <div className="aax-super-admin-card">
+          <div className="crm-super-admin-card">
             <h3 style={{ margin: '0 0 16px 0', fontSize: 14, color: '#EAECEF' }}>New Agent</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div>
                 <div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Assign to Team</div>
-                <select value={teamId} onChange={e => setTeamId(e.target.value)} className="aax-super-admin-select">
+                <select value={teamId} onChange={e => setTeamId(e.target.value)} className="crm-super-admin-select">
                   <option value="">Select team...</option>
                   {teamsForOffice.map(t => <option key={t.id} value={t.id}>{t.name} ({getTeamAgentCount(t.id, data.users)}/{t.maxSize})</option>)}
                 </select>
               </div>
-              <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Agent Name</div><input value={newAgentName} onChange={e => setNewAgentName(e.target.value)} placeholder="Agent name..." autoComplete="off" className="aax-super-admin-input" /></div>
-              <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Agent Password</div><input value={newAgentPassword} onChange={e => setNewAgentPassword(e.target.value)} placeholder="Password..." type="password" autoComplete="new-password" className="aax-super-admin-input" /></div>
-              <button className="aax-super-admin-btn" style={{ width: '100%', justifyContent: 'center', marginTop: 4 }} disabled={!teamId || !newAgentName || !newAgentPassword} onClick={async () => {
+              <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Agent Name</div><input value={newAgentName} onChange={e => setNewAgentName(e.target.value)} placeholder="Agent name..." autoComplete="off" className="crm-super-admin-input" /></div>
+              <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Agent Password</div><input value={newAgentPassword} onChange={e => setNewAgentPassword(e.target.value)} placeholder="Password..." type="password" autoComplete="new-password" className="crm-super-admin-input" /></div>
+              <button className="crm-super-admin-btn" style={{ width: '100%', justifyContent: 'center', marginTop: 4 }} disabled={!teamId || !newAgentName || !newAgentPassword} onClick={async () => {
                 const r = await createAgent(teamId, newAgentName, newAgentPassword);
                 if (!r) return;
                 if (r.loginLink) setNewAgentLink(r.loginLink);
@@ -341,7 +341,7 @@ function OfficeManagerPanel({ data, currentUser, assignTeamLeader, createTeamLea
               {newAgentLink && (
                 <div style={{ background: 'rgba(69,210,160,0.06)', border: '1px solid #45d2a030', borderRadius: 8, padding: 12 }}>
                   <div style={{ fontSize: 11, color: '#848E9C', marginBottom: 6 }}>Agent Login Link</div>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}><input value={newAgentLink} readOnly className="aax-super-admin-input" style={{ flex: 1, fontSize: 11 }} /><button className="aax-link-copy-btn" onClick={() => copyToClipboard(newAgentLink)}>[list]</button></div>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}><input value={newAgentLink} readOnly className="crm-super-admin-input" style={{ flex: 1, fontSize: 11 }} /><button className="crm-link-copy-btn" onClick={() => copyToClipboard(newAgentLink)}>[list]</button></div>
                 </div>
               )}
             </div>
@@ -478,7 +478,7 @@ function OfficeLeadsTable({ data, currentUser, teamsForOffice, agents, setLeadAs
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
         <SearchAutocomplete
-          className="aax-super-admin-input"
+          className="crm-super-admin-input"
           placeholder="Search by name, email, phone..."
           value={search}
           onChange={(v) => { setSearch(v); setPage(1); }}
@@ -588,8 +588,8 @@ function OfficeLeadsTable({ data, currentUser, teamsForOffice, agents, setLeadAs
         {filtered.length} leads  /  page {page}/{totalPages}
       </div>
 
-      <div className="aax-admin-table-container">
-        <table className="aax-admin-table">
+      <div className="crm-admin-table-container">
+        <table className="crm-admin-table">
           <thead>
             <tr>
               <th><input type="checkbox" checked={allPageSelected} onChange={toggleAll} /></th>
@@ -624,7 +624,7 @@ function OfficeLeadsTable({ data, currentUser, teamsForOffice, agents, setLeadAs
                   <div style={{ fontSize: 11, color: '#848E9C' }}>{lead.phone}</div>
                 </td>
                 <td style={{ fontSize: 12 }}>{getCountryFlag(lead.countryCode, lead.country)} {lead.country}</td>
-                <td><span className={`aax-status-badge ${statusClass(lead.stage)}`}>{normalizeStage(lead.stage)}</span></td>
+                <td><span className={`crm-status-badge ${statusClass(lead.stage)}`}>{normalizeStage(lead.stage)}</span></td>
                 <td style={{ color: lead.assignedToTeam ? '#EAECEF' : '#F0B90B', fontSize: 12 }}>
                   {lead.assignedToTeam ? getTeamName(lead.assignedToTeam, data.teams) : 'Unassigned'}
                 </td>

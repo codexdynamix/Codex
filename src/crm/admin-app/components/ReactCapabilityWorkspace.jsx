@@ -69,24 +69,24 @@ export default function ReactCapabilityWorkspace({
     clientUsers: scopedClients,
     leads: scopedClients, setLeads: () => {},
     users: scopedClients, setUsers: () => {},
-    transactionData: [], setTransactionData: () => {}, activityLog: [], setActivityLog: () => {},
+    activityLog: [], setActivityLog: () => {},
     logAdminAction: () => {}, logActivity: () => {},
   };
 
   return (
     <DataContext.Provider value={contextValue}>
       <NotificationContext.Provider value={showNotification || (() => {})}>
-        <section className="aax-react-capability-workspace">
-          <div className="aax-super-admin-header aax-role-panel-header aax-react-capability-header">
-            <nav className="aax-super-admin-tabs aax-react-capability-tabs" aria-label="Granted tools">
+        <section className="crm-react-capability-workspace">
+          <div className="crm-super-admin-header crm-role-panel-header crm-react-capability-header">
+            <nav className="crm-super-admin-tabs crm-react-capability-tabs" aria-label="Granted tools">
               {visibleTools.map(([key, label]) => (
-                <button key={key} type="button" className={`aax-super-admin-tab-btn ${selectedKey === key ? 'aax-active' : ''}`} onClick={() => { setInternalActive(key); onActiveChange?.(key); }}>
+                <button key={key} type="button" className={`crm-super-admin-tab-btn ${selectedKey === key ? 'crm-active' : ''}`} onClick={() => { setInternalActive(key); onActiveChange?.(key); }}>
                   {label}
                 </button>
               ))}
             </nav>
           </div>
-          {showPanel && current && <div className="aax-react-capability-panel"><Component {...props} /></div>}
+          {showPanel && current && <div className="crm-react-capability-panel"><Component {...props} /></div>}
         </section>
       </NotificationContext.Provider>
     </DataContext.Provider>
