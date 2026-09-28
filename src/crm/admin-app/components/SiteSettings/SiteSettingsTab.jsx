@@ -39,6 +39,108 @@ import {
   Sparkles,
   MapPin
 } from 'lucide-react';
+import {
+  WhatsAppLogo,
+  TelegramLogo,
+  GmailLogo,
+  PhoneLogo,
+  ViberLogo,
+  InstagramLogo,
+  FacebookLogo,
+  LinkedInLogo,
+  TwitterXLogo,
+  MapsLogo
+} from '../../../../components/BrandMarks';
+
+export const PROTOCOL_OPTIONS = [
+  { id: 'whatsapp', name: 'WhatsApp', Logo: WhatsAppLogo, placeholder: '+44 7911 123456', hint: 'WhatsApp phone with country code', color: '#25D366' },
+  { id: 'telegram', name: 'Telegram', Logo: TelegramLogo, placeholder: '@CodexDynamics or https://t.me/...', hint: 'Telegram handle or direct link', color: '#26A5E4' },
+  { id: 'phone', name: 'Phone Line', Logo: PhoneLogo, placeholder: '+1 (555) 019-2834', hint: 'Direct telephone line or call center', color: '#34C759' },
+  { id: 'email', name: 'Gmail / Email', Logo: GmailLogo, placeholder: 'hello@codexdynamics.com', hint: 'Inbound email inbox', color: '#EA4335' },
+  { id: 'viber', name: 'Viber', Logo: ViberLogo, placeholder: '+380 99 123 4567', hint: 'Viber phone number or chat link', color: '#9B8DF8' },
+  { id: 'instagram', name: 'Instagram', Logo: InstagramLogo, placeholder: '@codexdynamics', hint: 'Instagram handle or profile link', color: '#FD5949' },
+  { id: 'facebook', name: 'Facebook', Logo: FacebookLogo, placeholder: 'https://facebook.com/...', hint: 'Facebook page or Messenger', color: '#1877F2' },
+  { id: 'linkedin', name: 'LinkedIn', Logo: LinkedInLogo, placeholder: 'https://linkedin.com/company/...', hint: 'LinkedIn company page', color: '#388BFD' },
+  { id: 'twitter', name: 'X (Twitter)', Logo: TwitterXLogo, placeholder: '@CodexDynamics', hint: 'X / Twitter handle', color: '#FFFFFF' },
+  { id: 'custom', name: 'Office / Custom', Logo: MapsLogo, placeholder: 'Sportyvna Square, 1A, Kyiv, Ukraine', hint: 'Physical location or office address', color: '#F0B90B' },
+];
+
+export function OfficialProtocolBadge({ type }) {
+  const normType = (type || 'custom').toLowerCase();
+
+  switch (normType) {
+    case 'whatsapp':
+      return (
+        <div className="crm-protocol-item">
+          <WhatsAppLogo className="crm-protocol-logo" />
+          <span style={{ color: '#25D366' }}>WhatsApp</span>
+        </div>
+      );
+    case 'telegram':
+      return (
+        <div className="crm-protocol-item">
+          <TelegramLogo className="crm-protocol-logo" />
+          <span style={{ color: '#26A5E4' }}>Telegram</span>
+        </div>
+      );
+    case 'phone':
+      return (
+        <div className="crm-protocol-item">
+          <PhoneLogo className="crm-protocol-logo" />
+          <span style={{ color: '#34C759' }}>Phone Line</span>
+        </div>
+      );
+    case 'email':
+      return (
+        <div className="crm-protocol-item">
+          <GmailLogo className="crm-protocol-logo" />
+          <span style={{ color: '#EA4335' }}>Gmail / Email</span>
+        </div>
+      );
+    case 'viber':
+      return (
+        <div className="crm-protocol-item">
+          <ViberLogo className="crm-protocol-logo" />
+          <span style={{ color: '#9B8DF8' }}>Viber</span>
+        </div>
+      );
+    case 'instagram':
+      return (
+        <div className="crm-protocol-item">
+          <InstagramLogo className="crm-protocol-logo" />
+          <span style={{ color: '#FD5949' }}>Instagram</span>
+        </div>
+      );
+    case 'facebook':
+      return (
+        <div className="crm-protocol-item">
+          <FacebookLogo className="crm-protocol-logo" />
+          <span style={{ color: '#1877F2' }}>Facebook</span>
+        </div>
+      );
+    case 'linkedin':
+      return (
+        <div className="crm-protocol-item">
+          <LinkedInLogo className="crm-protocol-logo" />
+          <span style={{ color: '#388BFD' }}>LinkedIn</span>
+        </div>
+      );
+    case 'twitter':
+      return (
+        <div className="crm-protocol-item">
+          <TwitterXLogo className="crm-protocol-logo" />
+          <span style={{ color: '#EAECEF' }}>X (Twitter)</span>
+        </div>
+      );
+    default:
+      return (
+        <div className="crm-protocol-item">
+          <MapsLogo className="crm-protocol-logo" />
+          <span style={{ color: '#F0B90B' }}>Office / Custom</span>
+        </div>
+      );
+  }
+}
 
 const SUB_TABS = [
   { id: 'branding', label: 'Branding & Identity', icon: Palette },
@@ -121,6 +223,7 @@ export default function SiteSettingsTab({ showNotification = () => {} }) {
   // Contact Modal & Form State
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [editingContactId, setEditingContactId] = useState(null);
+  const [confirmDeleteContactId, setConfirmDeleteContactId] = useState(null);
   const [contactForm, setContactForm] = useState({
     type: 'phone',
     label: '',
@@ -337,6 +440,29 @@ export default function SiteSettingsTab({ showNotification = () => {} }) {
     setContactModalOpen(true);
   };
 
+  const handleAddModalExtraValue = () => {
+    setContactForm(prev => ({
+      ...prev,
+      extraValues: [...(Array.isArray(prev.extraValues) ? prev.extraValues : []), ''],
+    }));
+  };
+
+  const handleUpdateModalExtraValue = (index, val) => {
+    setContactForm(prev => {
+      const updated = [...(Array.isArray(prev.extraValues) ? prev.extraValues : [])];
+      updated[index] = val;
+      return { ...prev, extraValues: updated };
+    });
+  };
+
+  const handleRemoveModalExtraValue = (index) => {
+    setContactForm(prev => {
+      const updated = [...(Array.isArray(prev.extraValues) ? prev.extraValues : [])];
+      updated.splice(index, 1);
+      return { ...prev, extraValues: updated };
+    });
+  };
+
   const handleSaveContactSubmit = (e) => {
     e.preventDefault();
     if (!contactForm.value.trim()) {
@@ -390,28 +516,28 @@ export default function SiteSettingsTab({ showNotification = () => {} }) {
     setContactModalOpen(false);
   };
 
-  const handleDeleteContact = (id) => {
+  const executeDeleteContact = (id) => {
     const contact = siteConfig.socialContacts.find(c => c.id === id);
-    if (!window.confirm(`Delete contact channel "${contact?.label || 'this item'}"?`)) return;
     setSiteConfig(prev => ({
       ...prev,
       socialContacts: prev.socialContacts.filter(c => c.id !== id),
     }));
     setSelectedContactIds(prev => prev.filter(x => x !== id));
+    setConfirmDeleteContactId(null);
     setHasUnsavedChanges(true);
-    showNotification('Contact channel deleted.');
+    showNotification(`Deleted contact channel "${contact?.label || 'item'}".`);
   };
 
   const handleBulkDeleteContacts = () => {
     if (selectedContactIds.length === 0) return;
-    if (!window.confirm(`Delete ${selectedContactIds.length} selected contact channel(s)?`)) return;
+    const count = selectedContactIds.length;
     setSiteConfig(prev => ({
       ...prev,
       socialContacts: prev.socialContacts.filter(c => !selectedContactIds.includes(c.id)),
     }));
     setSelectedContactIds([]);
     setHasUnsavedChanges(true);
-    showNotification('Selected channels deleted.');
+    showNotification(`Deleted ${count} contact channel(s).`);
   };
 
   const handleToggleSelectContact = (id) => {
@@ -426,24 +552,6 @@ export default function SiteSettingsTab({ showNotification = () => {} }) {
     } else {
       setSelectedContactIds([]);
     }
-  };
-
-  const handleAddExtraValueToContact = (contactId) => {
-    const val = window.prompt('Enter additional phone number, handle, or email to add to this item:');
-    if (!val || !val.trim()) return;
-    setSiteConfig(prev => ({
-      ...prev,
-      socialContacts: prev.socialContacts.map(c => {
-        if (c.id !== contactId) return c;
-        const current = Array.isArray(c.extraValues) ? c.extraValues : [];
-        return {
-          ...c,
-          extraValues: [...current, val.trim()]
-        };
-      })
-    }));
-    setHasUnsavedChanges(true);
-    showNotification('Additional endpoint added.');
   };
 
   const handleRemoveExtraValueFromContact = (contactId, idx) => {
@@ -1098,73 +1206,129 @@ export default function SiteSettingsTab({ showNotification = () => {} }) {
             <button
               type="button"
               className="crm-btn-primary"
-              onClick={() => setContactModalOpen(true)}
+              onClick={openAddContactModal}
             >
               <Plus size={14} />
               <span>Add Channel</span>
             </button>
           </div>
 
+          {selectedContactIds.length > 0 && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '8px 14px',
+              background: '#2B313A',
+              border: '1px solid #444A55',
+              borderRadius: 6,
+              marginBottom: 10
+            }}>
+              <span style={{ fontSize: 12, color: '#EAECEF', fontWeight: 600 }}>
+                {selectedContactIds.length} contact channel(s) selected
+              </span>
+              <button
+                type="button"
+                className="crm-super-admin-btn crm-super-admin-btn-small"
+                style={{ background: '#c0392b', color: '#fff' }}
+                onClick={handleBulkDeleteContacts}
+              >
+                ✕ Delete Selected ({selectedContactIds.length})
+              </button>
+            </div>
+          )}
+
           {/* Contact Channels Table - Designed exactly like Leads Table in Leads Management */}
           <div className="crm-admin-table-container">
             <table className="crm-admin-table">
               <thead>
                 <tr>
-                  <th style={{ width: 130 }}>Protocol</th>
-                  <th>Channel Name</th>
-                  <th>Contact Endpoint / Value</th>
-                  <th style={{ width: 120 }}>Status</th>
-                  <th style={{ width: 140, textAlign: 'right' }}>Actions</th>
+                  <th style={{ width: 40, textAlign: 'center' }}>
+                    <input
+                      type="checkbox"
+                      checked={siteConfig.socialContacts.length > 0 && selectedContactIds.length === siteConfig.socialContacts.length}
+                      onChange={handleSelectAllContacts}
+                      title="Select all channels"
+                    />
+                  </th>
+                  <th style={{ width: 170 }}>Protocol</th>
+                  <th style={{ width: 180 }}>Channel Name</th>
+                  <th>Contact Endpoint(s)</th>
+                  <th style={{ width: 120, textAlign: 'center' }}>Status</th>
+                  <th style={{ width: 170, textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {siteConfig.socialContacts.map(contact => {
                   const isCopied = copiedKey === `contact-${contact.id}`;
+                  const isSelected = selectedContactIds.includes(contact.id);
+                  const hasExtras = Array.isArray(contact.extraValues) && contact.extraValues.length > 0;
+                  const isConfirmingDelete = confirmDeleteContactId === contact.id;
+
                   return (
-                    <tr key={contact.id}>
-                      <td>
-                        <span className={`crm-status-badge ${contact.type === 'whatsapp' ? 'crm-status-deposit' : contact.type === 'phone' ? 'crm-status-new' : 'crm-status-pending'}`}>
-                          {contact.type}
-                        </span>
+                    <tr key={contact.id} className={isSelected ? 'crm-row-selected' : ''}>
+                      <td style={{ textAlign: 'center' }}>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleToggleSelectContact(contact.id)}
+                        />
                       </td>
                       <td>
-                        <div style={{ fontWeight: 600, color: '#EAECEF' }}>{contact.label}</div>
+                        <OfficialProtocolBadge type={contact.type} />
                       </td>
                       <td>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                          <span style={{ fontFamily: 'monospace', fontSize: 13, color: '#EAECEF' }}>
-                            {contact.value}
-                          </span>
-                          <button
-                            title={contact.value}
-                            onClick={() => handleCopyValue(contact.value, `contact-${contact.id}`, contact.label)}
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              cursor: 'pointer',
-                              color: isCopied ? '#0ECB81' : '#848E9C',
-                              padding: '2px 4px',
-                              lineHeight: 1,
-                              borderRadius: 3,
-                              display: 'inline-flex',
-                              alignItems: 'center'
-                            }}
-                            onMouseEnter={e => { if (!isCopied) e.currentTarget.style.color = '#F0B90B'; }}
-                            onMouseLeave={e => { if (!isCopied) e.currentTarget.style.color = isCopied ? '#0ECB81' : '#848E9C'; }}
-                          >
-                            {isCopied ? <Check size={12} color="#0ECB81" /> : <i className="fas fa-copy" style={{ fontSize: 11 }}></i>}
-                          </button>
+                        <div className="crm-channel-name-cell">
+                          <strong className="crm-channel-title">{contact.label}</strong>
+                          <span className="crm-channel-sub">{contact.id}</span>
                         </div>
                       </td>
                       <td>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                          <div className="crm-endpoint-primary-row">
+                            <span className="crm-endpoint-val-text">{contact.value}</span>
+                            <button
+                              type="button"
+                              className="crm-endpoint-copy-icon-btn"
+                              title={`Copy ${contact.value}`}
+                              onClick={() => handleCopyValue(contact.value, `contact-${contact.id}`, contact.label)}
+                            >
+                              {isCopied ? <Check size={11} color="#0ECB81" /> : <Copy size={11} />}
+                            </button>
+                          </div>
+
+                          {hasExtras && (
+                            <div className="crm-endpoint-extra-list">
+                              {contact.extraValues.map((extraVal, exIdx) => {
+                                const exCopied = copiedKey === `contact-${contact.id}-extra-${exIdx}`;
+                                return (
+                                  <div key={exIdx} className="crm-endpoint-extra-row">
+                                    <span className="crm-endpoint-extra-bullet">•</span>
+                                    <span className="crm-endpoint-extra-val-text">{extraVal}</span>
+                                    <button
+                                      type="button"
+                                      className="crm-endpoint-copy-icon-btn"
+                                      onClick={() => handleCopyValue(extraVal, `contact-${contact.id}-extra-${exIdx}`, `${contact.label} (#${exIdx + 2})`)}
+                                      title="Copy additional value"
+                                    >
+                                      {exCopied ? <Check size={10} color="#0ECB81" /> : <Copy size={10} />}
+                                    </button>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
                         {contact.isPrimary ? (
-                          <span className="crm-status-badge crm-status-deposit">
+                          <span className="crm-status-primary-badge">
                             ★ Primary
                           </span>
                         ) : (
                           <button
                             type="button"
-                            className="crm-super-admin-btn crm-super-admin-btn-small"
+                            className="crm-btn-set-primary"
                             onClick={() => handleSetPrimaryContact(contact.id, contact.type)}
                             title="Designate as primary channel"
                           >
@@ -1173,15 +1337,46 @@ export default function SiteSettingsTab({ showNotification = () => {} }) {
                         )}
                       </td>
                       <td style={{ textAlign: 'right' }}>
-                        <button
-                          type="button"
-                          className="crm-super-admin-btn crm-super-admin-btn-small"
-                          style={{ background: '#c0392b', color: '#fff' }}
-                          onClick={() => handleDeleteContact(contact.id)}
-                          title="Delete channel"
-                        >
-                          ✕ Delete
-                        </button>
+                        {isConfirmingDelete ? (
+                          <div className="crm-inline-confirm-del-box">
+                            <span className="crm-del-prompt">Delete?</span>
+                            <button
+                              type="button"
+                              className="crm-del-btn-confirm"
+                              onClick={() => executeDeleteContact(contact.id)}
+                            >
+                              Yes
+                            </button>
+                            <button
+                              type="button"
+                              className="crm-del-btn-cancel"
+                              onClick={() => setConfirmDeleteContactId(null)}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="crm-actions-cluster">
+                            <button
+                              type="button"
+                              className="crm-action-btn crm-action-change"
+                              onClick={() => openEditContactModal(contact)}
+                              title="Change channel details, protocol, or endpoints"
+                            >
+                              <Edit size={12} />
+                              <span>Change</span>
+                            </button>
+                            <button
+                              type="button"
+                              className="crm-action-btn crm-action-delete"
+                              onClick={() => setConfirmDeleteContactId(contact.id)}
+                              title="Delete this contact channel"
+                            >
+                              <Trash2 size={12} />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   );
@@ -1801,83 +1996,258 @@ export default function SiteSettingsTab({ showNotification = () => {} }) {
         </div>
       )}
 
-      {/* ── Add Contact Modal ──────────────────────────────────── */}
+      {/* ── Add / Edit Contact Modal ──────────────────────────── */}
       {contactModalOpen && (
         <div className="crm-settings-modal-backdrop" onClick={() => setContactModalOpen(false)}>
           <div className="crm-settings-modal-card" onClick={e => e.stopPropagation()}>
+            {/* Modal Header */}
             <div className="crm-settings-modal-header">
-              <h3>+ Add Communication Channel</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 8,
+                  background: 'rgba(14, 203, 129, 0.15)',
+                  border: '1px solid rgba(14, 203, 129, 0.35)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {editingContactId ? <Edit size={16} color="#0ECB81" /> : <Plus size={16} color="#0ECB81" />}
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#EAECEF' }}>
+                    {editingContactId ? 'Change Communication Channel' : '+ Add Communication Channel'}
+                  </h3>
+                  <p style={{ margin: '2px 0 0', fontSize: 11.5, color: '#848E9C' }}>
+                    Configure protocol, official badge, and multiple endpoints on this item
+                  </p>
+                </div>
+              </div>
               <button
                 type="button"
                 className="crm-icon-btn"
                 onClick={() => setContactModalOpen(false)}
+                title="Close modal"
               >
-                <X size={15} />
+                <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleAddContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 14 }}>
-              <div className="crm-settings-field">
-                <label>Channel Protocol</label>
-                <select
-                  className="crm-settings-select"
-                  value={newContact.type}
-                  onChange={e => setNewContact(prev => ({ ...prev, type: e.target.value }))}
-                >
-                  <option value="phone">📞 Phone Line</option>
-                  <option value="whatsapp">💬 WhatsApp</option>
-                  <option value="telegram">✈️ Telegram</option>
-                  <option value="viber">🟣 Viber</option>
-                  <option value="email">✉️ Email Inbox</option>
-                </select>
-              </div>
+            {/* Modal Form with scrollable body and fixed sticky footer */}
+            <form
+              onSubmit={handleSaveContactSubmit}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1,
+                minHeight: 0,
+                overflow: 'hidden'
+              }}
+            >
+              <div className="crm-settings-modal-body">
+                {/* 1. Protocol Visual Grid */}
+                <div className="crm-settings-field">
+                  <label style={{ marginBottom: 6, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span>Official Channel Protocol</span>
+                    <span style={{ fontSize: 11, color: '#848E9C', fontWeight: 'normal' }}>
+                      Selected: <strong style={{ color: '#EAECEF' }}>{PROTOCOL_OPTIONS.find(p => p.id === contactForm.type)?.name || contactForm.type}</strong>
+                    </span>
+                  </label>
+                  <div className="crm-protocol-chips-grid">
+                    {PROTOCOL_OPTIONS.map(proto => {
+                      const isActive = contactForm.type === proto.id;
+                      const LogoComponent = proto.Logo;
+                      return (
+                        <button
+                          key={proto.id}
+                          type="button"
+                          className={`crm-protocol-chip-btn ${isActive ? 'active' : ''}`}
+                          style={isActive ? { borderColor: proto.color, color: '#EAECEF' } : {}}
+                          onClick={() => {
+                            setContactForm(prev => ({
+                              ...prev,
+                              type: proto.id,
+                              label: prev.label ? prev.label : `${proto.name} Support`
+                            }));
+                          }}
+                        >
+                          <LogoComponent className="crm-chip-logo" />
+                          <span>{proto.name}</span>
+                          {isActive && <Check size={12} color={proto.color} style={{ marginLeft: 'auto' }} />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
-              <div className="crm-settings-field">
-                <label>Descriptive Label</label>
-                <input
-                  type="text"
-                  className="crm-settings-input"
-                  placeholder="e.g. London Office Direct"
-                  value={newContact.label}
-                  onChange={e => setNewContact(prev => ({ ...prev, label: e.target.value }))}
-                />
-              </div>
-
-              <div className="crm-settings-field">
-                <label>Contact Value / Address / Handle</label>
-                <input
-                  type="text"
-                  className="crm-settings-input"
-                  placeholder="e.g. +44 20 7946 0991 or @handle"
-                  value={newContact.value}
-                  onChange={e => setNewContact(prev => ({ ...prev, value: e.target.value }))}
-                  required
-                />
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', background: '#21252D', borderRadius: 6, border: '1px solid #444A55' }}>
-                <span style={{ fontSize: 12, color: '#EAECEF' }}>Designate as Primary {newContact.type} channel</span>
-                <label className="crm-toggle-switch">
+                {/* 2. Descriptive Label */}
+                <div className="crm-settings-field">
+                  <label>Descriptive Label</label>
                   <input
-                    type="checkbox"
-                    checked={newContact.isPrimary}
-                    onChange={e => setNewContact(prev => ({ ...prev, isPrimary: e.target.checked }))}
+                    type="text"
+                    className="crm-settings-input"
+                    placeholder="e.g. London Office Direct, VIP Customer Desk, Sales Line"
+                    value={contactForm.label}
+                    onChange={e => setContactForm(prev => ({ ...prev, label: e.target.value }))}
                   />
-                  <span className="crm-toggle-slider" />
-                </label>
+                  <span style={{ fontSize: 11, color: '#6C7584', marginTop: 3 }}>
+                    Internal and public name for this communication line.
+                  </span>
+                </div>
+
+                {/* 3. Primary Contact Value */}
+                {(() => {
+                  const currentProto = PROTOCOL_OPTIONS.find(p => p.id === contactForm.type) || PROTOCOL_OPTIONS[0];
+                  return (
+                    <div className="crm-settings-field">
+                      <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span>Primary {currentProto.name} Endpoint / Value *</span>
+                        <span style={{ fontSize: 11, color: '#848E9C', fontWeight: 'normal' }}>{currentProto.hint}</span>
+                      </label>
+                      <input
+                        type="text"
+                        className="crm-settings-input"
+                        placeholder={`e.g. ${currentProto.placeholder}`}
+                        value={contactForm.value}
+                        onChange={e => setContactForm(prev => ({ ...prev, value: e.target.value }))}
+                        required
+                      />
+                    </div>
+                  );
+                })()}
+
+                {/* 4. Multiple Endpoints / Numbers on this Item (Add More) */}
+                <div className="crm-modal-extras-card">
+                  <div className="crm-modal-extras-header">
+                    <div>
+                      <h4 className="crm-modal-extras-title">
+                        Multiple Endpoints / Numbers
+                        <span className="crm-modal-extras-count">
+                          {(contactForm.extraValues?.length || 0) + 1} total
+                        </span>
+                      </h4>
+                      <p className="crm-modal-extras-desc">
+                        Add extra telephone numbers, WhatsApp lines, backup email inboxes, or handles to this single contact item.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="crm-btn-add-extra-val"
+                      onClick={handleAddModalExtraValue}
+                    >
+                      <Plus size={13} />
+                      <span>+ Add More</span>
+                    </button>
+                  </div>
+
+                  {contactForm.extraValues && contactForm.extraValues.length > 0 ? (
+                    <div className="crm-modal-extras-list">
+                      {contactForm.extraValues.map((val, idx) => (
+                        <div key={idx} className="crm-modal-extra-item">
+                          <span className="crm-modal-extra-tag">#{idx + 2}</span>
+                          <input
+                            type="text"
+                            className="crm-settings-input"
+                            style={{ flex: 1 }}
+                            placeholder={`Additional ${PROTOCOL_OPTIONS.find(p => p.id === contactForm.type)?.name || ''} endpoint #${idx + 2}`}
+                            value={val}
+                            onChange={e => handleUpdateModalExtraValue(idx, e.target.value)}
+                          />
+                          <button
+                            type="button"
+                            className="crm-modal-extra-del-btn"
+                            onClick={() => handleRemoveModalExtraValue(idx)}
+                            title="Remove this additional value"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="crm-modal-extras-empty">
+                      Currently 1 endpoint. Click <strong style={{ color: '#F0B90B' }}>"+ Add More"</strong> above to attach additional telephone numbers, WhatsApp lines, or inboxes to this channel.
+                    </div>
+                  )}
+                </div>
+
+                {/* 5. Primary Designation Switch */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '12px 14px',
+                  background: '#2B313A',
+                  borderRadius: 8,
+                  border: '1px solid #444A55'
+                }}>
+                  <div>
+                    <span style={{ fontSize: 12.5, fontWeight: 600, color: '#EAECEF', display: 'block' }}>
+                      Designate as Primary {PROTOCOL_OPTIONS.find(p => p.id === contactForm.type)?.name || contactForm.type} Channel
+                    </span>
+                    <span style={{ fontSize: 11, color: '#848E9C' }}>
+                      Features prominently across header CTA buttons, hero section, and quick dials.
+                    </span>
+                  </div>
+                  <label className="crm-toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={contactForm.isPrimary}
+                      onChange={e => setContactForm(prev => ({ ...prev, isPrimary: e.target.checked }))}
+                    />
+                    <span className="crm-toggle-slider" />
+                  </label>
+                </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
-                <button
-                  type="button"
-                  className="crm-btn-secondary"
-                  onClick={() => setContactModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="crm-btn-primary">
-                  Add Channel
-                </button>
+              {/* Fixed Sticky Footer - Guaranteed to fit on any screen */}
+              <div className="crm-settings-modal-footer">
+                {editingContactId ? (
+                  <button
+                    type="button"
+                    className="crm-action-btn crm-action-delete"
+                    style={{ padding: '8px 14px' }}
+                    onClick={() => {
+                      executeDeleteContact(editingContactId);
+                      setContactModalOpen(false);
+                    }}
+                    title="Delete this contact channel"
+                  >
+                    <Trash2 size={13} />
+                    <span>Delete Channel</span>
+                  </button>
+                ) : <div />}
+
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    className="crm-btn-secondary"
+                    style={{ padding: '8px 16px', borderRadius: 8 }}
+                    onClick={() => setContactModalOpen(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="crm-btn-primary"
+                    style={{
+                      padding: '8px 20px',
+                      borderRadius: 8,
+                      background: '#0ECB81',
+                      color: '#0B111A',
+                      fontWeight: 700,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Check size={15} strokeWidth={2.5} />
+                    <span>{editingContactId ? 'Save Changes' : 'Add Channel'}</span>
+                  </button>
+                </div>
               </div>
             </form>
           </div>

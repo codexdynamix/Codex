@@ -7,6 +7,7 @@ export interface SocialContact {
   isPrimary?: boolean;
   platform?: string;
   isVisible?: boolean;
+  extraValues?: string[];
 }
 
 export interface AddressItem {
