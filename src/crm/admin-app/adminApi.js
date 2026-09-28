@@ -370,9 +370,9 @@ function mapAdminMessage(m) {
     readAt:    m.read_at || null,
     agentId:   m.agent_id || null,
     attachment: m.attachment_path ? {
-      name: m.attachment_name || 'ID card photo',
+      name: m.attachment_name || 'Attachment',
       mime: m.attachment_mime || 'image/*',
-      kind: m.attachment_kind || 'ID_CARD',
+      kind: m.attachment_kind || 'ATTACHMENT',
       url: `/api/admin/messages/${encodeURIComponent(m.id)}/attachment`,
     } : null,
   };
@@ -1086,7 +1086,6 @@ function mapClientUserRow(u) {
     agentName:      u.agent_name ?? null,
     createdAt:      u.created_at,
     updatedAt:      u.updated_at,
-    balances:       u.balances || null,
   };
 }
 

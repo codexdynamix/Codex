@@ -113,7 +113,7 @@ function useCrmTextNormalization() {
     let observer;
 
     const normalize = () => {
-      const root = document.querySelector('.aax-admin-app');
+      const root = document.querySelector('.crm-admin-app');
       if (!root) return;
 
       observer?.disconnect();
@@ -178,9 +178,9 @@ function AdminBrand() {
   const [first, ...rest] = (name || 'Codex Dynamics').split(/[- / \s]+/);
   const second = rest.join(' ') || 'Dynamics';
   return (
-    <div className="aax-brand">
-      <span className="aax-brand-mark">{abbreviation || 'CD'}</span>
-      <span className="aax-brand-text">{first}<span className="aax-brand-dot"> / </span>{second}<span className="aax-brand-tag">CRM</span></span>
+    <div className="crm-brand">
+      <span className="crm-brand-mark">{abbreviation || 'CD'}</span>
+      <span className="crm-brand-text">{first}<span className="crm-brand-dot"> / </span>{second}<span className="crm-brand-tag">CRM</span></span>
     </div>
   );
 }
@@ -210,18 +210,18 @@ function RolePage({ data, dataLoading, role, setLeadAssignment, assignOfficeMana
   }
   if (user.role !== role) {
     return (
-      <div className="aax-app-shell">
-        <header className="aax-topbar">
+      <div className="crm-app-shell">
+        <header className="crm-topbar">
           <AdminBrand />
-          <div className="aax-top-actions">Role mismatch</div>
+          <div className="crm-top-actions">Role mismatch</div>
         </header>
-        <div className="aax-body-grid">
-          <aside className="aax-sidebar">
+        <div className="crm-body-grid">
+          <aside className="crm-sidebar">
             <h2>Dashboard</h2>
-            <Link className="aax-nav-link" to="">Home</Link>
+            <Link className="crm-nav-link" to="">Home</Link>
           </aside>
-          <main className="aax-main-content">
-            <div className="aax-card"><h3>Access Denied</h3><p>Client role mismatch for this route.</p><Link className="aax-link-item" to="">Back Home</Link></div>
+          <main className="crm-main-content">
+            <div className="crm-card"><h3>Access Denied</h3><p>Client role mismatch for this route.</p><Link className="crm-link-item" to="">Back Home</Link></div>
           </main>
         </div>
       </div>
@@ -229,27 +229,27 @@ function RolePage({ data, dataLoading, role, setLeadAssignment, assignOfficeMana
   }
 
   return (
-    <div className="aax-app-shell">
-      <header className="aax-topbar">
+    <div className="crm-app-shell">
+      <header className="crm-topbar">
         <AdminBrand />
-        <div className="aax-top-actions">
+        <div className="crm-top-actions">
           <UserChrome user={user} data={data} setData={setData} />
         </div>
       </header>
 
-      <div className={`aax-body-grid ${user.role === ROLE.AGENT ? 'aax-agent-view' : ''} ${user.role === ROLE.TEAM_LEADER ? 'aax-no-sidebar' : ''} ${user.role === ROLE.OFFICE_MANAGER ? 'aax-no-sidebar' : ''} ${user.role === ROLE.SUPER_ADMIN ? 'aax-no-sidebar' : ''}`}>
+      <div className={`crm-body-grid ${user.role === ROLE.AGENT ? 'crm-agent-view' : ''} ${user.role === ROLE.TEAM_LEADER ? 'crm-no-sidebar' : ''} ${user.role === ROLE.OFFICE_MANAGER ? 'crm-no-sidebar' : ''} ${user.role === ROLE.SUPER_ADMIN ? 'crm-no-sidebar' : ''}`}>
         {user.role === ROLE.SUPER_ADMIN && (
-          <aside className="aax-sidebar">
+          <aside className="crm-sidebar">
             <h2>Menu</h2>
-            <Link className="aax-nav-link" to="/admin">Home</Link>
-            <Link className="aax-nav-link" to={`/admin/super-admin/${user.id}`}>Workspace</Link>
+            <Link className="crm-nav-link" to="/admin">Home</Link>
+            <Link className="crm-nav-link" to={`/admin/super-admin/${user.id}`}>Workspace</Link>
 
-            <div className="aax-sidebar-subhead">Office Managers</div>
+            <div className="crm-sidebar-subhead">Office Managers</div>
             {data.users.filter((u) => u.role === ROLE.OFFICE_MANAGER).map((mgr) => (
-              <Link key={mgr.id} className="aax-nav-link" to={`/admin/office-manager/${mgr.id}`}>{mgr.name}</Link>
+              <Link key={mgr.id} className="crm-nav-link" to={`/admin/office-manager/${mgr.id}`}>{mgr.name}</Link>
             ))}
 
-            <div className="aax-sidebar-note">
+            <div className="crm-sidebar-note">
               <strong>Current</strong>
               <div>{user.name}</div>
               <div>Office: {getOfficeName(user.officeId, data.offices)}</div>
@@ -258,7 +258,7 @@ function RolePage({ data, dataLoading, role, setLeadAssignment, assignOfficeMana
           </aside>
         )}
 
-        <main className="aax-main-content">
+        <main className="crm-main-content">
           <Routes>
             <Route
               path="lead/:leadId"
@@ -367,14 +367,13 @@ function injectAdminUser(users, adminUser) {
   return [...filtered, adminUser];
 }
 
-// The admin app is fully backend-driven: offices, teams, leads, staff users
-// and transactions all hydrate from SQLite via `loadBackendAdminData()` and
-// the per-panel APIs. Two earlier localStorage snapshots used to cache the
-// entire `data` object client-side; both are removed on mount because they
-// caused balance edits and lead history to look "saved" in the same browser
-// while silently being lost across browsers and admins. Only the admin's
-// own profile is rehydrated synchronously (via `getStoredAdminProfile`) so
-// panel routes can find the user in `data.users` before the network returns.
+// The admin app is backend-driven: offices, teams, leads, and staff users
+// hydrate via `loadBackendAdminData()` and the per-panel APIs. Earlier
+// localStorage snapshots that cached the entire `data` object client-side
+// are removed on mount so lead history and assignments stay consistent across
+// sessions and admins. Only the admin's own profile is rehydrated synchronously
+// (via `getStoredAdminProfile`) so panel routes can find the user in
+// `data.users` before the network returns.
 const LEGACY_ADMIN_CACHE_KEYS = ['codex_admin_data_legacy'];
 
 function App() {
@@ -382,7 +381,7 @@ function App() {
 
   const [data, setData] = useState(() => {
     try {
-      // Best-effort: nuke the legacy data caches so stale balances / leads
+      // Best-effort: clear any legacy data caches so stale lead snapshots
       // never resurface from a previous session.
       LEGACY_ADMIN_CACHE_KEYS.forEach((k) => {
         try { localStorage.removeItem(k); } catch (_) {}
@@ -532,7 +531,7 @@ function App() {
 
   if (!appLoaded) {
     return (
-      <div className="aax-admin-app" style={{ padding: 30, minHeight: '100vh' }}>
+      <div className="crm-admin-app" style={{ padding: 30, minHeight: '100vh' }}>
         <h1>Loading application...</h1>
       </div>
     );
@@ -874,7 +873,7 @@ function App() {
    * The backend assigns a canonical ULID, auto-defaults office/team to the
    * caller's scope when omitted (so OM/TL can't accidentally create leads
    * outside their silo), seeds an initial status_history row for the
-   * starting stage, and writes an audit_log entry - all in one transaction.
+   * starting stage, and writes an audit_log entry - all in one atomic operation.
    *
    * Returns the canonical server lead (already shape-mapped to camelCase)
    * or null on failure. Surfaces errors via showNotification rather than
@@ -952,9 +951,9 @@ function App() {
   };
 
   return (
-    <div className="aax-admin-app">
+    <div className="crm-admin-app">
       {notification && (
-        <div className="aax-toast-notification">
+        <div className="crm-toast-notification">
           {notification}
         </div>
       )}

@@ -41,39 +41,39 @@ function FilterPopover({ label, value, options, open, onToggle, onSelect, onClos
     <>
       <button
         type="button"
-        className="aax-column-filter-btn"
+        className="crm-column-filter-btn"
         onClick={(e) => { e.stopPropagation(); onToggle(); }}
         aria-label={`Filter ${label}`}
         title={`Filter ${label}`}
       />
       {open && (
-        <div ref={popRef} className="aax-mac-popover" onClick={(e) => e.stopPropagation()}>
+        <div ref={popRef} className="crm-mac-popover" onClick={(e) => e.stopPropagation()}>
           <input
             type="text"
             autoFocus
-            className="aax-mac-popover-search"
+            className="crm-mac-popover-search"
             placeholder={`Filter ${label.toLowerCase()}...`}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <div className="aax-mac-popover-list">
+          <div className="crm-mac-popover-list">
             <div
-              className={`aax-mac-popover-item ${value === '' ? 'aax-selected' : ''}`}
+              className={`crm-mac-popover-item ${value === '' ? 'crm-selected' : ''}`}
               onClick={() => onSelect('')}
             >
-              <span className="aax-mac-popover-check">{value === '' ? '✓' : ''}</span>
+              <span className="crm-mac-popover-check">{value === '' ? '✓' : ''}</span>
               <span>All</span>
             </div>
             {filtered.length === 0 ? (
-              <div className="aax-mac-popover-empty">No matches</div>
+              <div className="crm-mac-popover-empty">No matches</div>
             ) : (
               filtered.map((opt) => (
                 <div
                   key={String(opt)}
-                  className={`aax-mac-popover-item ${value === opt ? 'aax-selected' : ''}`}
+                  className={`crm-mac-popover-item ${value === opt ? 'crm-selected' : ''}`}
                   onClick={() => onSelect(opt)}
                 >
-                  <span className="aax-mac-popover-check">{value === opt ? '✓' : ''}</span>
+                  <span className="crm-mac-popover-check">{value === opt ? '✓' : ''}</span>
                   <span>{display(opt)}</span>
                 </div>
               ))
@@ -81,8 +81,8 @@ function FilterPopover({ label, value, options, open, onToggle, onSelect, onClos
           </div>
           {value !== '' && (
             <>
-              <div className="aax-mac-popover-divider" />
-              <div className="aax-mac-popover-footer">
+              <div className="crm-mac-popover-divider" />
+              <div className="crm-mac-popover-footer">
                 <button type="button" onClick={() => onSelect('')}>Clear filter</button>
               </div>
             </>
@@ -95,16 +95,6 @@ function FilterPopover({ label, value, options, open, onToggle, onSelect, onClos
 
 // Inline SVG icons for the lead-profile action buttons.
 const PA_ICONS = {
-  deposit: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 3v12" /><path d="M7 10l5 5 5-5" /><path d="M5 21h14" />
-    </svg>
-  ),
-  withdraw: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 21V9" /><path d="M7 14l5-5 5 5" /><path d="M5 3h14" />
-    </svg>
-  ),
   activity: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M3 12h4l3 8 4-16 3 8h4" />
@@ -131,7 +121,7 @@ const PA_ICONS = {
     </svg>
   ),
 };
-const PaIcon = ({ name }) => <span className="aax-pa-icon">{PA_ICONS[name]}</span>;
+const PaIcon = ({ name }) => <span className="crm-pa-icon">{PA_ICONS[name]}</span>;
 
 function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead, showNotification }) {
   const navigate = useNavigate();
@@ -312,7 +302,7 @@ function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead,
 
   if (!currentUser) {
     return (
-      <div className="aax-card">
+      <div className="crm-card">
         <h2>Agent Portfolio</h2>
         <p>No agent data found. Please select or login as an Agent.</p>
       </div>
@@ -320,33 +310,33 @@ function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead,
   }
 
   return (
-    <div className="aax-card aax-agent-portfolio">
-      <div className="aax-agent-hero">
+    <div className="crm-card crm-agent-portfolio">
+      <div className="crm-agent-hero">
         <div>
           <h2>Agent Portfolio</h2>
           <p>{currentUser.name} - {getTeamName(currentUser.teamId, data.teams)} / {getOfficeName(currentUser.officeId, data.offices)}</p>
         </div>
-        <div className="aax-agent-hero-actions">
+        <div className="crm-agent-hero-actions">
           {returnTo && (
-            <button className="aax-small-btn" onClick={() => navigate(returnTo)}>
+            <button className="crm-small-btn" onClick={() => navigate(returnTo)}>
               Back: {returnLabel}
             </button>
           )}
           {!leadUploadLoading && leadUploadEnabled && createLead && (
-            <button className="aax-small-btn aax-pagination-btn-gold" onClick={() => setShowCreateLead(true)}>
+            <button className="crm-small-btn crm-pagination-btn-gold" onClick={() => setShowCreateLead(true)}>
               + New Lead
             </button>
           )}
-          <div className="aax-agent-status-chip">{currentUser.isLoggedIn ? 'Online' : 'Offline'}</div>
+          <div className="crm-agent-status-chip">{currentUser.isLoggedIn ? 'Online' : 'Offline'}</div>
         </div>
       </div>
 
-      <div className="aax-super-admin-header aax-role-panel-header" style={{ marginBottom: 14 }}>
-        <div className="aax-super-admin-tabs">
+      <div className="crm-super-admin-header crm-role-panel-header" style={{ marginBottom: 14 }}>
+        <div className="crm-super-admin-tabs">
           {['leads', 'notifications'].map((tab) => (
             <button
               key={tab}
-              className={`aax-super-admin-tab-btn ${activeTab === tab ? 'aax-active' : ''}`}
+              className={`crm-super-admin-tab-btn ${activeTab === tab ? 'crm-active' : ''}`}
               onClick={() => setActiveTab(tab)}
               aria-label={`Switch to ${tab}`}
             >
@@ -366,9 +356,9 @@ function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead,
         showPanel={!nativeTabActive}
       />
       {nativeTabActive && pendingAppointments.length > 0 && (
-        <div className="aax-card" style={{ background: '#363B44', marginBottom: 12 }}>
+        <div className="crm-card" style={{ background: '#363B44', marginBottom: 12 }}>
           <h3>Pending Appointments</h3>
-          <ul className="aax-pending-appointments-list">
+          <ul className="crm-pending-appointments-list">
             {pendingAppointments.slice(0, 8).map((appt) => (
               <li key={`${appt.id}-${appt.leadId}`}>
                 <strong>{appt.date} {appt.time}</strong> - {appt.title || 'Untitled'} for {appt.leadName}
@@ -380,10 +370,10 @@ function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead,
       )}
 
       {nativeTabActive && activeTab === 'leads' && (
-        <div className="aax-agent-leads-content">
+        <div className="crm-agent-leads-content">
           <div className="agent-tools-row" style={{ marginBottom: 12 }}>
             <SearchAutocomplete
-              className="aax-input"
+              className="crm-input"
               placeholder="Search leads..."
               value={search}
               onChange={(v) => setSearch(v)}
@@ -420,24 +410,24 @@ function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead,
                 {[25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
               </select>
             </label>
-            <button className="aax-small-btn" onClick={handleClearAll}>Clear All Filters</button>
+            <button className="crm-small-btn" onClick={handleClearAll}>Clear All Filters</button>
           </div>
 
-          <div className="aax-lead-table-wrapper">
-            <table className="aax-table aax-lead-table">
+          <div className="crm-lead-table-wrapper">
+            <table className="crm-table crm-lead-table">
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th onClick={() => handleSort('firstName')} className="aax-sortable">
+                  <th onClick={() => handleSort('firstName')} className="crm-sortable">
                     First {sortColumn === 'firstName' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'}
                   </th>
-                  <th onClick={() => handleSort('lastName')} className="aax-sortable">
+                  <th onClick={() => handleSort('lastName')} className="crm-sortable">
                     Last {sortColumn === 'lastName' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'}
                   </th>
                   <th>Online</th>
                   <th>Phone</th>
                   <th>Email</th>
-                  <th className={`aax-filter-column ${filterCountry ? 'aax-filtered' : ''}`}>
+                  <th className={`crm-filter-column ${filterCountry ? 'crm-filtered' : ''}`}>
                     Country
                     <FilterPopover
                       label="Country"
@@ -449,7 +439,7 @@ function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead,
                       onClose={() => setActiveFilterDropdown('')}
                     />
                   </th>
-                  <th className={`aax-filter-column ${filterStatus ? 'aax-filtered' : ''}`}>
+                  <th className={`crm-filter-column ${filterStatus ? 'crm-filtered' : ''}`}>
                     Status
                     <FilterPopover
                       label="Status"
@@ -461,7 +451,7 @@ function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead,
                       onClose={() => setActiveFilterDropdown('')}
                     />
                   </th>
-                  <th className={`aax-filter-column ${filterFunnel ? 'aax-filtered' : ''}`}>
+                  <th className={`crm-filter-column ${filterFunnel ? 'crm-filtered' : ''}`}>
                     Funnel
                     <FilterPopover
                       label="Funnel"
@@ -473,7 +463,7 @@ function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead,
                       onClose={() => setActiveFilterDropdown('')}
                     />
                   </th>
-                  <th className={`aax-filter-column ${filterAffiliate ? 'aax-filtered' : ''}`}>
+                  <th className={`crm-filter-column ${filterAffiliate ? 'crm-filtered' : ''}`}>
                     Affiliate
                     <FilterPopover
                       label="Affiliate"
@@ -485,7 +475,7 @@ function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead,
                       onClose={() => setActiveFilterDropdown('')}
                     />
                   </th>
-                  <th className={`aax-filter-column ${filterLastComment ? 'aax-filtered' : ''}`}>
+                  <th className={`crm-filter-column ${filterLastComment ? 'crm-filtered' : ''}`}>
                     Last Comment
                     <FilterPopover
                       label="Last comment"
@@ -497,7 +487,7 @@ function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead,
                       onClose={() => setActiveFilterDropdown('')}
                     />
                   </th>
-                  <th className={`aax-filter-column ${filterRegistered ? 'aax-filtered' : ''}`}>
+                  <th className={`crm-filter-column ${filterRegistered ? 'crm-filtered' : ''}`}>
                     Registered
                     <FilterPopover
                       label="Registered"
@@ -545,12 +535,12 @@ function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead,
                     <td>{lead.firstName}</td>
                     <td>{lead.lastName}</td>
                     <td>
-                      <span className={`aax-online-dot ${lead.isOnline ? 'aax-online' : 'aax-offline'}`} title={lead.isOnline ? 'Online' : 'Offline'}></span>
+                      <span className={`crm-online-dot ${lead.isOnline ? 'crm-online' : 'crm-offline'}`} title={lead.isOnline ? 'Online' : 'Offline'}></span>
                     </td>
                     <td>{lead.phone}</td>
                     <td>{lead.email}</td>
                     <td>{getCountryFlag(lead.countryCode, lead.country)}</td>
-                    <td><span className={`aax-status-chip ${statusClass(normalizeStage(lead.stage))}`}>{normalizeStage(lead.stage)}</span></td>
+                    <td><span className={`crm-status-chip ${statusClass(normalizeStage(lead.stage))}`}>{normalizeStage(lead.stage)}</span></td>
                     <td>{lead.funnel || '-'}</td>
                     <td>{lead.affiliate || '-'}</td>
                     <td>{lead.lastCommentDate || '-'}</td>
@@ -560,57 +550,24 @@ function AgentPanel({ data, currentUser, setData, setUserLoginState, createLead,
                 })}
               </tbody>
             </table>
-            {filteredLeads.length === 0 && <div className="aax-empty-state">No assigned leads</div>}
+            {filteredLeads.length === 0 && <div className="crm-empty-state">No assigned leads</div>}
           </div>
 
-          <div className="aax-table-controls" style={{ marginTop: 0 }}>
+          <div className="crm-table-controls" style={{ marginTop: 0 }}>
             <span>Showing {pagedLeads.length} of {sortedLeads.length} leads</span>
-            <button className="aax-small-btn aax-pagination-btn-gold" disabled={page <= 1} onClick={() => setPage(page - 1)}>Prev</button>
+            <button className="crm-small-btn crm-pagination-btn-gold" disabled={page <= 1} onClick={() => setPage(page - 1)}>Prev</button>
             <span>Page {page}/{totalPages}</span>
-            <button className="aax-small-btn aax-pagination-btn-gold" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>Next →</button>
+            <button className="crm-small-btn crm-pagination-btn-gold" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>Next →</button>
           </div>
         </div>
       )}
 
       {nativeTabActive && activeTab === 'notifications' && (
-        <div className="aax-card">
+        <div className="crm-card">
           <h3>Notifications</h3>
           <AdminNotificationsInbox pollMs={30000} />
         </div>
       )}
-
-      {nativeTabActive && activeTab === 'deposits' && (() => {
-        const depositLeads = myLeads.filter((lead) => ['Deposit', 'Failed Deposit'].includes(lead.stage));
-        return (
-          <div className="aax-card">
-            <h3>Deposits</h3>
-            {depositLeads.length === 0 ? (
-              <p>No leads have reached the Deposit or Failed Deposit stage yet.</p>
-            ) : (
-              <div className="deposit-list">
-                <table className="aax-table">
-                  <thead>
-                    <tr>
-                      <th>Lead</th>
-                      <th>Stage</th>
-                      <th>Last Updated</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {depositLeads.map((lead) => (
-                      <tr key={lead.id}>
-                        <td>{lead.firstName} {lead.lastName}</td>
-                        <td>{lead.stage}</td>
-                        <td>{lead.lastCommentDate || '-'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        );
-      })()}
 
       {showCreateLead && createLead && (
         <CreateLeadModal
@@ -860,10 +817,10 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
 
   if (!lead) {
     return (
-      <div className="aax-card">
+      <div className="crm-card">
         <h2>Lead Not Found</h2>
         <p>This lead either does not exist or is not available to this admin.</p>
-        <button className="aax-small-btn" onClick={() => navigate(workspacePath)}>Back to leads</button>
+        <button className="crm-small-btn" onClick={() => navigate(workspacePath)}>Back to leads</button>
       </div>
     );
   }
@@ -964,17 +921,17 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
   return (
     <>
     {confirmDialog}
-    <div className="aax-card aax-agent-profile-full">
-      <div className="aax-panel-header">
-        <div className="aax-nav-left">
-          <button className="aax-small-btn" onClick={() => navigate(workspacePath)}>Back to leads</button>
+    <div className="crm-card crm-agent-profile-full">
+      <div className="crm-panel-header">
+        <div className="crm-nav-left">
+          <button className="crm-small-btn" onClick={() => navigate(workspacePath)}>Back to leads</button>
         </div>
-        <div className="aax-nav-right">
-          <button className="aax-small-btn" onClick={() => prevLead && navigate(getLeadProfilePath(role, currentUser.id, prevLead.id))} disabled={!prevLead}>◀ Prev</button>
-          <button className="aax-small-btn" onClick={() => nextLead && navigate(getLeadProfilePath(role, currentUser.id, nextLead.id))} disabled={!nextLead}>Next ▶</button>
+        <div className="crm-nav-right">
+          <button className="crm-small-btn" onClick={() => prevLead && navigate(getLeadProfilePath(role, currentUser.id, prevLead.id))} disabled={!prevLead}>◀ Prev</button>
+          <button className="crm-small-btn" onClick={() => nextLead && navigate(getLeadProfilePath(role, currentUser.id, nextLead.id))} disabled={!nextLead}>Next ▶</button>
         </div>
       </div>
-      <div className="aax-section-title" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+      <div className="crm-section-title" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
         <div style={{ minWidth: 0, flex: '1 1 240px' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: lead.isOnline ? '#0ECB81' : '#848E9C', display: 'inline-block' }} />
@@ -986,7 +943,7 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
         </div>
         <div style={{ flex: '0 0 auto', marginLeft: 'auto' }}>
           <button
-            className="aax-small-btn aax-action-btn aax-login-btn"
+            className="crm-small-btn crm-action-btn crm-login-btn"
             style={{ whiteSpace: 'nowrap' }}
             onClick={async () => {
               if (!lead || !lead.id) return;
@@ -1001,33 +958,33 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
             Enter Lead Account
           </button>
         </div>
-        <div className="aax-profile-action-buttons">
-          <button type="button" className="aax-action-btn aax-activity-btn" onClick={() => setShowActivityModal(true)} title="View client activity"><PaIcon name="activity" />Activity</button>
-          <button type="button" className="aax-action-btn aax-appointment-btn" onClick={() => setShowAppointmentModal(true)} title="Schedule appointment"><PaIcon name="appointment" />Appointments</button>
-          <button type="button" className="aax-action-btn aax-security-btn" onClick={() => setShowSecurityModal(true)} title="Lead security settings"><PaIcon name="security" />Lead Security</button>
-          <button type="button" className="aax-action-btn aax-support-btn" onClick={() => setShowChatModal(true)} title="Open support chat"><PaIcon name="support" />Lead Support</button>
+        <div className="crm-profile-action-buttons">
+          <button type="button" className="crm-action-btn crm-activity-btn" onClick={() => setShowActivityModal(true)} title="View client activity"><PaIcon name="activity" />Activity</button>
+          <button type="button" className="crm-action-btn crm-appointment-btn" onClick={() => setShowAppointmentModal(true)} title="Schedule appointment"><PaIcon name="appointment" />Appointments</button>
+          <button type="button" className="crm-action-btn crm-security-btn" onClick={() => setShowSecurityModal(true)} title="Lead security settings"><PaIcon name="security" />Lead Security</button>
+          <button type="button" className="crm-action-btn crm-support-btn" onClick={() => setShowChatModal(true)} title="Open support chat"><PaIcon name="support" />Lead Support</button>
         </div>
       </div>
 
-      <div className="aax-detail-grid aax-detail-grid-three">
-        <div className="aax-detail-column">
-          <div className="aax-detail-row"><span className="aax-label">ID</span><span className="aax-value">{formatLeadId(lead.id)}</span></div>
-          <div className="aax-detail-row"><span className="aax-label">Name</span><span className="aax-value">{lead.firstName} {lead.lastName}</span></div>
-          <div className="aax-detail-row"><span className="aax-label">Phone</span><span className="aax-value">{lead.phone} <button type="button" className="aax-copy-icon" onClick={() => { navigator.clipboard.writeText(lead.phone); showNotification('Phone copied to clipboard'); }} aria-label="Copy phone"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"/></svg></button></span></div>
-          <div className="aax-detail-row"><span className="aax-label">Email</span><span className="aax-value">{lead.email} <button type="button" className="aax-copy-icon" onClick={() => { navigator.clipboard.writeText(lead.email); showNotification('Email copied to clipboard'); }} aria-label="Copy email"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"/></svg></button></span></div>
-          <div className="aax-detail-row"><span className="aax-label">Country</span><span className="aax-value aax-country-value">{getCountryFlag(lead.countryCode, lead.country)}<span className="aax-country-name">{lead.country || '-'}</span></span></div>
+      <div className="crm-detail-grid crm-detail-grid-three">
+        <div className="crm-detail-column">
+          <div className="crm-detail-row"><span className="crm-label">ID</span><span className="crm-value">{formatLeadId(lead.id)}</span></div>
+          <div className="crm-detail-row"><span className="crm-label">Name</span><span className="crm-value">{lead.firstName} {lead.lastName}</span></div>
+          <div className="crm-detail-row"><span className="crm-label">Phone</span><span className="crm-value">{lead.phone} <button type="button" className="crm-copy-icon" onClick={() => { navigator.clipboard.writeText(lead.phone); showNotification('Phone copied to clipboard'); }} aria-label="Copy phone"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"/></svg></button></span></div>
+          <div className="crm-detail-row"><span className="crm-label">Email</span><span className="crm-value">{lead.email} <button type="button" className="crm-copy-icon" onClick={() => { navigator.clipboard.writeText(lead.email); showNotification('Email copied to clipboard'); }} aria-label="Copy email"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"/></svg></button></span></div>
+          <div className="crm-detail-row"><span className="crm-label">Country</span><span className="crm-value crm-country-value">{getCountryFlag(lead.countryCode, lead.country)}<span className="crm-country-name">{lead.country || '-'}</span></span></div>
         </div>
-        <div className="aax-detail-column">
-          <div className="aax-detail-row"><span className="aax-label">Office</span><span className="aax-value">{getOfficeName(lead.assignedToOffice, data.offices)}</span></div>
-          <div className="aax-detail-row"><span className="aax-label">Team</span><span className="aax-value">{getTeamName(lead.assignedToTeam, data.teams)}</span></div>
-          <div className="aax-detail-row"><span className="aax-label">Assigned To</span><span className="aax-value">{getUserName(lead.assignedToAgent, data.users)}</span></div>
-          <div className="aax-detail-row"><span className="aax-label">Assigned By</span><span className="aax-value" style={{ color: '#F0B90B', fontWeight: 600 }}>{assignedByDisplay}</span></div>
-          <div className="aax-detail-row"><span className="aax-label">Funnel</span><span className="aax-value">{lead.funnel || '-'}</span></div>
-          <div className="aax-detail-row"><span className="aax-label">Affiliate</span><span className="aax-value">{lead.affiliate || '-'}</span></div>
+        <div className="crm-detail-column">
+          <div className="crm-detail-row"><span className="crm-label">Office</span><span className="crm-value">{getOfficeName(lead.assignedToOffice, data.offices)}</span></div>
+          <div className="crm-detail-row"><span className="crm-label">Team</span><span className="crm-value">{getTeamName(lead.assignedToTeam, data.teams)}</span></div>
+          <div className="crm-detail-row"><span className="crm-label">Assigned To</span><span className="crm-value">{getUserName(lead.assignedToAgent, data.users)}</span></div>
+          <div className="crm-detail-row"><span className="crm-label">Assigned By</span><span className="crm-value" style={{ color: '#F0B90B', fontWeight: 600 }}>{assignedByDisplay}</span></div>
+          <div className="crm-detail-row"><span className="crm-label">Funnel</span><span className="crm-value">{lead.funnel || '-'}</span></div>
+          <div className="crm-detail-row"><span className="crm-label">Affiliate</span><span className="crm-value">{lead.affiliate || '-'}</span></div>
         </div>
-        <div className="aax-detail-column">
-          <div className="aax-detail-row"><span className="aax-label">Status</span><span className={`aax-status-chip ${statusClass(status)}`}>{status}</span></div>
-          <div className="aax-field-group aax-status-dropdown-right">
+        <div className="crm-detail-column">
+          <div className="crm-detail-row"><span className="crm-label">Status</span><span className={`crm-status-chip ${statusClass(status)}`}>{status}</span></div>
+          <div className="crm-field-group crm-status-dropdown-right">
             <label>Select Status</label>
             <select value={status} onChange={(e) => handleStatusChange(e.target.value)}>
               {LEAD_STATUSES.map((option) => (
@@ -1036,7 +993,7 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
             </select>
             <button
               type="button"
-              className="aax-post-comment-btn"
+              className="crm-post-comment-btn"
               style={{ marginTop: 8, alignSelf: 'flex-start' }}
               onClick={() => {
                 if (status === lead.stage) {
@@ -1048,35 +1005,35 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
               }}
             >Save Status</button>
           </div>
-          <div className="aax-detail-row"><span className="aax-label">Last Comment</span><span className="aax-value">{lead.lastCommentDate || '-'}</span></div>
-          <div className="aax-detail-row"><span className="aax-label">Registered</span><span className="aax-value">{lead.registeredDate || '-'}</span></div>
+          <div className="crm-detail-row"><span className="crm-label">Last Comment</span><span className="crm-value">{lead.lastCommentDate || '-'}</span></div>
+          <div className="crm-detail-row"><span className="crm-label">Registered</span><span className="crm-value">{lead.registeredDate || '-'}</span></div>
         </div>
       </div>
 
-      <div className="aax-profile-grid">
-        <div className="aax-profile-column aax-comment-column">
-          <div className="aax-comment-card">
+      <div className="crm-profile-grid">
+        <div className="crm-profile-column crm-comment-column">
+          <div className="crm-comment-card">
             <h3>Comment</h3>
-            <div className="aax-comment-input-area">
+            <div className="crm-comment-input-area">
               <textarea rows={10} value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Add a note about this lead..." />
-              <div className="aax-comment-input-actions">
-                <button className="aax-post-comment-btn" onClick={handleAddComment} disabled={!comment.trim()}>Save</button>
+              <div className="crm-comment-input-actions">
+                <button className="crm-post-comment-btn" onClick={handleAddComment} disabled={!comment.trim()}>Save</button>
               </div>
             </div>
           </div>
 
-          <div className="aax-comment-history-card">
+          <div className="crm-comment-history-card">
             <h3>Comment History</h3>
             {commentHistory.length === 0 ? (
               <p>No comments yet. Please add client interaction notes.</p>
             ) : (
-              <div className="aax-comment-history-container">
-                <ul className="aax-comment-history-list">
+              <div className="crm-comment-history-container">
+                <ul className="crm-comment-history-list">
                   {commentHistory.map((entry, idx) => (
-                    <li key={entry.date + '-' + idx} className="aax-comment-history-item">
-                      <div className="aax-comment-meta">
-                        <span className="aax-comment-author">{entry.by || 'Unknown'}</span>
-                        <span className="aax-comment-date">
+                    <li key={entry.date + '-' + idx} className="crm-comment-history-item">
+                      <div className="crm-comment-meta">
+                        <span className="crm-comment-author">{entry.by || 'Unknown'}</span>
+                        <span className="crm-comment-date">
                           {entry.date}
                           {isSuperAdmin && (
                             <button
@@ -1088,7 +1045,7 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
                           )}
                         </span>
                       </div>
-                      <div className="aax-comment-text">{entry.text}</div>
+                      <div className="crm-comment-text">{entry.text}</div>
                     </li>
                   ))}
                 </ul>
@@ -1097,28 +1054,28 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
           </div>
         </div>
 
-        <div className="aax-status-workflow-column">
-          <div className="aax-status-workflow-card">
+        <div className="crm-status-workflow-column">
+          <div className="crm-status-workflow-card">
             <h3>Status Workflow</h3>
-            <div className="aax-status-timeline">
+            <div className="crm-status-timeline">
               {statusHistory.length === 0 ? (
-                <div className="aax-status-timeline-empty">No status changes recorded yet. Update the status to start tracking the workflow.</div>
+                <div className="crm-status-timeline-empty">No status changes recorded yet. Update the status to start tracking the workflow.</div>
               ) : (
                 statusHistory.map((entry, idx) => {
                   return (
-                    <div key={idx} className="aax-status-timeline-row">
-                      <div className="aax-status-timeline-arrow">
-                        <span className="aax-status-pill" style={{ color: stageColor(entry.from), border: `1px solid ${stageColor(entry.from)}`, padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 600, background: 'transparent' }}>{entry.from}</span>
-                        <span className="aax-status-pill-arrow">→</span>
-                        <span className="aax-status-pill" style={{ color: stageColor(entry.to), border: `1px solid ${stageColor(entry.to)}`, padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 600, background: 'transparent' }}>{entry.to}</span>
+                    <div key={idx} className="crm-status-timeline-row">
+                      <div className="crm-status-timeline-arrow">
+                        <span className="crm-status-pill" style={{ color: stageColor(entry.from), border: `1px solid ${stageColor(entry.from)}`, padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 600, background: 'transparent' }}>{entry.from}</span>
+                        <span className="crm-status-pill-arrow">→</span>
+                        <span className="crm-status-pill" style={{ color: stageColor(entry.to), border: `1px solid ${stageColor(entry.to)}`, padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 600, background: 'transparent' }}>{entry.to}</span>
                       </div>
-                      <div className="aax-status-timeline-meta">
-                      <span>By <span className="aax-by">{entry.byName || 'Unknown'}</span></span>
+                      <div className="crm-status-timeline-meta">
+                      <span>By <span className="crm-by">{entry.byName || 'Unknown'}</span></span>
                       <span>{entry.at ? new Date(entry.at).toLocaleString() : ''}</span>
                     </div>
                     {isSuperAdmin && (
                       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <button type="button" className="aax-delete-entry-btn" onClick={() => handleDeleteStatusEntry(idx)}>✕ Delete entry</button>
+                        <button type="button" className="crm-delete-entry-btn" onClick={() => handleDeleteStatusEntry(idx)}>✕ Delete entry</button>
                       </div>
                     )}
                   </div>
@@ -1131,47 +1088,47 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
       </div>
 
       {showAppointmentModal && (
-        <div className="aax-modal-overlay" onClick={() => setShowAppointmentModal(false)}>
-          <div className="aax-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="aax-modal-header">
+        <div className="crm-modal-overlay" onClick={() => setShowAppointmentModal(false)}>
+          <div className="crm-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="crm-modal-header">
               <h3>Schedule Appointment for {lead.firstName} {lead.lastName}</h3>
-              <button className="aax-small-btn" onClick={() => setShowAppointmentModal(false)}>Close</button>
+              <button className="crm-small-btn" onClick={() => setShowAppointmentModal(false)}>Close</button>
             </div>
-            <div className="aax-field-group">
+            <div className="crm-field-group">
               <label>Title</label>
-              <input className="aax-input" type="text" value={appointmentTitle} placeholder="e.g., Proposal meeting" onChange={(e) => setAppointmentTitle(e.target.value)} />
+              <input className="crm-input" type="text" value={appointmentTitle} placeholder="e.g., Proposal meeting" onChange={(e) => setAppointmentTitle(e.target.value)} />
             </div>
-            <div className="aax-field-group">
+            <div className="crm-field-group">
               <label>Date</label>
-              <input className="aax-input" type="date" value={appointmentDate} onChange={(e) => setAppointmentDate(e.target.value)} />
+              <input className="crm-input" type="date" value={appointmentDate} onChange={(e) => setAppointmentDate(e.target.value)} />
             </div>
-            <div className="aax-field-group">
+            <div className="crm-field-group">
               <label>Time</label>
-              <input className="aax-input" type="time" value={appointmentTime} onChange={(e) => setAppointmentTime(e.target.value)} />
+              <input className="crm-input" type="time" value={appointmentTime} onChange={(e) => setAppointmentTime(e.target.value)} />
             </div>
-            <div className="aax-field-group">
+            <div className="crm-field-group">
               <label>Notes</label>
-              <textarea className="aax-input" rows={4} value={appointmentNotes} placeholder="Optional notes" onChange={(e) => setAppointmentNotes(e.target.value)} />
+              <textarea className="crm-input" rows={4} value={appointmentNotes} placeholder="Optional notes" onChange={(e) => setAppointmentNotes(e.target.value)} />
             </div>
-            <div className="aax-comment-input-actions" style={{ justifyContent: 'flex-end', marginTop: 8 }}>
-              <button className="aax-post-comment-btn" onClick={handleAddAppointment} disabled={!appointmentDate || !appointmentTime || !appointmentTitle.trim()}>Save Appointment</button>
+            <div className="crm-comment-input-actions" style={{ justifyContent: 'flex-end', marginTop: 8 }}>
+              <button className="crm-post-comment-btn" onClick={handleAddAppointment} disabled={!appointmentDate || !appointmentTime || !appointmentTitle.trim()}>Save Appointment</button>
             </div>
           </div>
         </div>
       )}
 
       {showSecurityModal && (
-        <div className="aax-modal-overlay" onClick={() => setShowSecurityModal(false)}>
-          <div className="aax-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="aax-modal-header">
+        <div className="crm-modal-overlay" onClick={() => setShowSecurityModal(false)}>
+          <div className="crm-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="crm-modal-header">
               <h3>Lead Security - {lead.firstName} {lead.lastName}</h3>
-              <button className="aax-small-btn" onClick={() => setShowSecurityModal(false)}>Close</button>
+              <button className="crm-small-btn" onClick={() => setShowSecurityModal(false)}>Close</button>
             </div>
-            <div className="aax-field-group" style={{ marginBottom: 12 }}>
+            <div className="crm-field-group" style={{ marginBottom: 12 }}>
               <label>Current Password</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <input
-                  className="aax-input"
+                  className="crm-input"
                   type={showClientPassword ? 'text' : 'password'}
                   value={liveClientPassword}
                   readOnly
@@ -1179,7 +1136,7 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
                   style={{ flex: 1 }}
                 />
                 <button
-                  className="aax-small-btn"
+                  className="crm-small-btn"
                   type="button"
                   onClick={() => setShowClientPassword((prev) => !prev)}
                 >
@@ -1187,25 +1144,25 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
                 </button>
               </div>
             </div>
-            <div className="aax-field-group" style={{ marginBottom: 12 }}>
+            <div className="crm-field-group" style={{ marginBottom: 12 }}>
               <label>New Password</label>
-              <input className="aax-input" type="text" value={passwordInput} placeholder="Enter new password" onChange={(e) => setPasswordInput(e.target.value)} autoComplete="off" />
+              <input className="crm-input" type="text" value={passwordInput} placeholder="Enter new password" onChange={(e) => setPasswordInput(e.target.value)} autoComplete="off" />
             </div>
-            <div className="aax-row" style={{ gap: 8, marginBottom: 12 }}>
-              <button className="aax-small-btn" onClick={handleSetLeadPassword} disabled={!passwordInput.trim()}>Save Password</button>
+            <div className="crm-row" style={{ gap: 8, marginBottom: 12 }}>
+              <button className="crm-small-btn" onClick={handleSetLeadPassword} disabled={!passwordInput.trim()}>Save Password</button>
             </div>
           </div>
         </div>
       )}
 
       {showChatModal && (
-        <div className="aax-modal-overlay" onClick={() => setShowChatModal(false)}>
-          <div className="aax-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="aax-modal-header">
+        <div className="crm-modal-overlay" onClick={() => setShowChatModal(false)}>
+          <div className="crm-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="crm-modal-header">
               <h3>Support Chat with {lead.firstName}</h3>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
-                  className="aax-small-btn"
+                  className="crm-small-btn"
                   onClick={handleClearChat}
                   disabled={clientChat.length === 0}
                   style={{
@@ -1218,47 +1175,47 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
                 >
                   <i className="fas fa-trash" style={{ marginRight: 4 }} /> Clear chat
                 </button>
-                <button className="aax-small-btn" onClick={() => setShowChatModal(false)}>Close</button>
+                <button className="crm-small-btn" onClick={() => setShowChatModal(false)}>Close</button>
               </div>
             </div>
-            <div className="aax-chat-window">
-              <div className="aax-chat-header">
+            <div className="crm-chat-window">
+              <div className="crm-chat-header">
                 <span>{lead.firstName} {lead.lastName}</span>
-                <span className={`aax-online-dot ${lead.isOnline ? 'aax-online' : 'aax-offline'}`} />
+                <span className={`crm-online-dot ${lead.isOnline ? 'crm-online' : 'crm-offline'}`} />
               </div>
-              <div className="aax-chat-box">
-                {clientChat.length === 0 && <div className="aax-chat-empty">No messages yet. Start the chat below.</div>}
+              <div className="crm-chat-box">
+                {clientChat.length === 0 && <div className="crm-chat-empty">No messages yet. Start the chat below.</div>}
                 {clientChat.map((msg) => {
                   const canDelete = !msg.pending && !String(msg.id).startsWith('tmp-');
                   return (
-                  <div key={msg.id} className={`aax-chat-message ${msg.sender === 'agent' ? 'aax-chat-agent' : 'aax-chat-client'}`}>
+                  <div key={msg.id} className={`crm-chat-message ${msg.sender === 'agent' ? 'crm-chat-agent' : 'crm-chat-client'}`}>
                     {canDelete && msg.sender === 'agent' && (
                       <button
                         type="button"
                         onClick={() => handleDeleteMessage(msg.id)}
                         title="Delete message for both sides"
                         aria-label="Delete message"
-                        className="aax-chat-delete-btn"
+                        className="crm-chat-delete-btn"
                       >
                         <i className="fas fa-trash-alt" />
                       </button>
                     )}
-                    <div className="aax-chat-msg-col">
-                      <div className="aax-chat-sender-label">
+                    <div className="crm-chat-msg-col">
+                      <div className="crm-chat-sender-label">
                         {msg.sender === 'agent'
                           ? (msg.name || currentUser?.name || 'Agent')
                           : `${lead.firstName} ${lead.lastName}`}
                       </div>
-                      <div className="aax-chat-bubble">
+                      <div className="crm-chat-bubble">
                         <span>{msg.text}{msg.pending ? '  /  sending...' : ''}</span>
                         {msg.attachment && (attachmentUrls[msg.id]
                           ? (
-                            <div className="aax-chat-attachment">
+                            <div className="crm-chat-attachment">
                               <img src={attachmentUrls[msg.id]} alt={msg.attachment.name || 'Client attached photo'} />
                               <a
                                 href={attachmentUrls[msg.id]}
                                 download={msg.attachment.name || 'client-photo'}
-                                className="aax-chat-attachment-download"
+                                className="crm-chat-attachment-download"
                               >
                                 <i className="fas fa-download" /> Download photo
                               </a>
@@ -1274,7 +1231,7 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
                         onClick={() => handleDeleteMessage(msg.id)}
                         title="Delete message for both sides"
                         aria-label="Delete message"
-                        className="aax-chat-delete-btn"
+                        className="crm-chat-delete-btn"
                       >
                         <i className="fas fa-trash-alt" />
                       </button>
@@ -1285,12 +1242,12 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
                 <div ref={chatEndRef} />
               </div>
               {chatError && (
-                <div className="aax-chat-empty" role="alert" style={{ color: 'var(--danger, #c0392b)' }}>{chatError}</div>
+                <div className="crm-chat-empty" role="alert" style={{ color: 'var(--danger, #c0392b)' }}>{chatError}</div>
               )}
-              <div className="aax-chat-input-row">
+              <div className="crm-chat-input-row">
                 <input
                   type="text"
-                  className="aax-input"
+                  className="crm-input"
                   placeholder="Type a message (Enter to send)"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
@@ -1303,7 +1260,7 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
                   disabled={chatSending}
                   autoComplete="off"
                 />
-                <button className="aax-small-btn" onClick={handleSendClientMessage} disabled={chatSending || !chatInput.trim()}>
+                <button className="crm-small-btn" onClick={handleSendClientMessage} disabled={chatSending || !chatInput.trim()}>
                   {chatSending ? 'Sending...' : 'Send'}
                 </button>
               </div>
@@ -1314,56 +1271,56 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
 
       {/* Activity Modal */}
       {showActivityModal && (
-        <div className="aax-modal-overlay" onClick={() => setShowActivityModal(false)}>
-          <div className="aax-modal-content aax-extra-large-modal">
-            <div className="aax-modal-header">
+        <div className="crm-modal-overlay" onClick={() => setShowActivityModal(false)}>
+          <div className="crm-modal-content crm-extra-large-modal">
+            <div className="crm-modal-header">
               <h3>[chart] Lead Activity - {lead.firstName} {lead.lastName}</h3>
-              <button className="aax-close-btn" onClick={() => setShowActivityModal(false)}>×</button>
+              <button className="crm-close-btn" onClick={() => setShowActivityModal(false)}>×</button>
             </div>
-            <div className="aax-modal-body">
-              <div className="aax-activity-container">
-                <div className="aax-activity-overview">
-                  <div className="aax-activity-card">
-                    <div className="aax-activity-icon">View</div>
-                    <div className="aax-activity-value">{lead.activityRecord?.pageViews || 0}</div>
-                    <div className="aax-activity-label">Page Views</div>
+            <div className="crm-modal-body">
+              <div className="crm-activity-container">
+                <div className="crm-activity-overview">
+                  <div className="crm-activity-card">
+                    <div className="crm-activity-icon">View</div>
+                    <div className="crm-activity-value">{lead.activityRecord?.pageViews || 0}</div>
+                    <div className="crm-activity-label">Page Views</div>
                   </div>
-                  <div className="aax-activity-card">
-                    <div className="aax-activity-icon">🔄</div>
-                    <div className="aax-activity-value">{lead.activityRecord?.sessions || 0}</div>
-                    <div className="aax-activity-label">Sessions</div>
+                  <div className="crm-activity-card">
+                    <div className="crm-activity-icon">🔄</div>
+                    <div className="crm-activity-value">{lead.activityRecord?.sessions || 0}</div>
+                    <div className="crm-activity-label">Sessions</div>
                   </div>
-                  <div className="aax-activity-card">
-                    <div className="aax-activity-icon">📅</div>
-                    <div className="aax-activity-value">
+                  <div className="crm-activity-card">
+                    <div className="crm-activity-icon">📅</div>
+                    <div className="crm-activity-value">
                       {lead.activityRecord?.lastLogin ?
                         Math.floor((new Date() - new Date(lead.activityRecord.lastLogin)) / (1000 * 60 * 60 * 24)) : 0
                       }
                     </div>
-                    <div className="aax-activity-label">Days Since Login</div>
+                    <div className="crm-activity-label">Days Since Login</div>
                   </div>
-                  <div className="aax-activity-card">
-                    <div className="aax-activity-icon">⚡</div>
-                    <div className="aax-activity-value">
+                  <div className="crm-activity-card">
+                    <div className="crm-activity-icon">⚡</div>
+                    <div className="crm-activity-value">
                       {lead.activityRecord?.pageViews && lead.activityRecord?.sessions ?
                         Math.round(lead.activityRecord.pageViews / lead.activityRecord.sessions) : 0
                       }
                     </div>
-                    <div className="aax-activity-label">Avg Pages/Session</div>
+                    <div className="crm-activity-label">Avg Pages/Session</div>
                   </div>
                 </div>
 
-                <div className="aax-activity-chart">
+                <div className="crm-activity-chart">
                   <h4>Activity Timeline</h4>
-                  <div className="aax-activity-timeline">
+                  <div className="crm-activity-timeline">
                     {lead.activityRecord ? (
                       <>
-                        <div className="aax-timeline-item">
-                          <div className="aax-timeline-icon">🔑</div>
-                          <div className="aax-timeline-content">
-                            <div className="aax-timeline-title">Last Login</div>
-                            <div className="aax-timeline-description">Lead last accessed their account</div>
-                            <div className="aax-timeline-time">{new Date(lead.activityRecord.lastLogin).toLocaleDateString('en-US', {
+                        <div className="crm-timeline-item">
+                          <div className="crm-timeline-icon">🔑</div>
+                          <div className="crm-timeline-content">
+                            <div className="crm-timeline-title">Last Login</div>
+                            <div className="crm-timeline-description">Lead last accessed their account</div>
+                            <div className="crm-timeline-time">{new Date(lead.activityRecord.lastLogin).toLocaleDateString('en-US', {
                               weekday: 'long',
                               year: 'numeric',
                               month: 'long',
@@ -1373,38 +1330,38 @@ function LeadProfilePage({ role, viewingUser, data, updateLead, showNotification
                             })}</div>
                           </div>
                         </div>
-                        <div className="aax-timeline-item">
-                          <div className="aax-timeline-icon">[chart]</div>
-                          <div className="aax-timeline-content">
-                            <div className="aax-timeline-title">Session Activity</div>
-                            <div className="aax-timeline-description">{lead.activityRecord.sessions} sessions recorded</div>
-                            <div className="aax-timeline-time">Total page views: {lead.activityRecord.pageViews}</div>
+                        <div className="crm-timeline-item">
+                          <div className="crm-timeline-icon">[chart]</div>
+                          <div className="crm-timeline-content">
+                            <div className="crm-timeline-title">Session Activity</div>
+                            <div className="crm-timeline-description">{lead.activityRecord.sessions} sessions recorded</div>
+                            <div className="crm-timeline-time">Total page views: {lead.activityRecord.pageViews}</div>
                           </div>
                         </div>
-                        <div className="aax-timeline-item">
-                          <div className="aax-timeline-icon">[agent]</div>
-                          <div className="aax-timeline-content">
-                            <div className="aax-timeline-title">Engagement Metrics</div>
-                            <div className="aax-timeline-description">Lead engagement and platform usage</div>
-                            <div className="aax-timeline-time">Average {Math.round(lead.activityRecord.pageViews / lead.activityRecord.sessions) || 0} pages per session</div>
+                        <div className="crm-timeline-item">
+                          <div className="crm-timeline-icon">[agent]</div>
+                          <div className="crm-timeline-content">
+                            <div className="crm-timeline-title">Engagement Metrics</div>
+                            <div className="crm-timeline-description">Lead engagement and platform usage</div>
+                            <div className="crm-timeline-time">Average {Math.round(lead.activityRecord.pageViews / lead.activityRecord.sessions) || 0} pages per session</div>
                           </div>
                         </div>
                       </>
                     ) : (
-                      <div className="aax-timeline-item">
-                        <div className="aax-timeline-icon"></div>
-                        <div className="aax-timeline-content">
-                          <div className="aax-timeline-title">No Activity Recorded</div>
-                          <div className="aax-timeline-description">Activity data will appear here once the client starts using the platform</div>
-                          <div className="aax-timeline-time">Monitoring started: {new Date().toLocaleDateString()}</div>
+                      <div className="crm-timeline-item">
+                        <div className="crm-timeline-icon"></div>
+                        <div className="crm-timeline-content">
+                          <div className="crm-timeline-title">No Activity Recorded</div>
+                          <div className="crm-timeline-description">Activity data will appear here once the client starts using the platform</div>
+                          <div className="crm-timeline-time">Monitoring started: {new Date().toLocaleDateString()}</div>
                         </div>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div className="aax-export-section">
-                  <button className="aax-export-btn" onClick={() => {
+                <div className="crm-export-section">
+                  <button className="crm-export-btn" onClick={() => {
                     const data = lead.activityRecord ? [{
                       lastLogin: lead.activityRecord.lastLogin,
                       pageViews: lead.activityRecord.pageViews,

@@ -4,8 +4,6 @@ import { DEFAULT_PLATFORM_SETTINGS } from '../../platformDefaults';
 // Clients are managed through the CRM leads system (data.leads in App.jsx).
 export const users = [];
 
-export const transactionData = [];
-
 // Activity log entries are generated from lead actions at runtime.
 export const activityLog = [];
 

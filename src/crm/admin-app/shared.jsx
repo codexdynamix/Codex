@@ -119,9 +119,9 @@ export const makeLoginLink = (userId, role) => {
 /**
  * initialData
  *
- * Empty bootstrap state. The admin app is now backend-driven: offices, teams,
- * staff (admins/agents) and leads come from the SQLite database via the admin
- * API on every mount. We intentionally do NOT seed any mock offices, teams,
+ * Empty bootstrap state. The admin app is backend-driven: offices, teams,
+ * staff (admins/agents) and leads come from the CRM API on every mount.
+ * We intentionally do NOT seed any mock offices, teams,
  * agents, or leads here - those would otherwise drown out the real records
  * the user creates and persists through the CRM panels.
  */
@@ -368,11 +368,11 @@ export const normalizeLeadAssignment = (lead, users, teams) => {
 export const getCountryFlag = (code, countryName) => {
   const countryCode = code || getCountryByName(countryName)?.code || '';
   if (!countryCode || typeof countryCode !== 'string') {
-    return <span className="aax-flag-fallback" title={countryName || 'Unknown'}>[unknown]</span>;
+    return <span className="crm-flag-fallback" title={countryName || 'Unknown'}>[unknown]</span>;
   }
   const normalized = countryCode.trim().toUpperCase();
   if (!/^[A-Z]{2}$/.test(normalized)) {
-    return <span className="aax-flag-fallback" title={countryName || countryCode}>{countryCode}</span>;
+    return <span className="crm-flag-fallback" title={countryName || countryCode}>{countryCode}</span>;
   }
   const emoji = normalized
     .split('')
@@ -380,10 +380,10 @@ export const getCountryFlag = (code, countryName) => {
     .join('');
   const url = `https://flagcdn.com/24x18/${normalized.toLowerCase()}.png`;
   return (
-    <span className="aax-country-flag-wrapper" title={countryName || normalized}>
-      <span className="aax-flag-emoji" aria-label={`Flag of ${countryName || normalized}`} role="img">{emoji}</span>
+    <span className="crm-country-flag-wrapper" title={countryName || normalized}>
+      <span className="crm-flag-emoji" aria-label={`Flag of ${countryName || normalized}`} role="img">{emoji}</span>
       <img
-        className="aax-flag-image"
+        className="crm-flag-image"
         src={url}
         alt={countryName || normalized}
         onError={(e) => { e.currentTarget.style.display = 'none'; }}
@@ -408,7 +408,7 @@ export const statusClass = (stage) => {
     ?.toLowerCase()
     ?.replace(/[^a-z0-9]+/g, '-')
     ?.replace(/^-+|-+$/g, '') || 'unknown';
-  return `aax-status-${key}`;
+  return `crm-status-${key}`;
 };
 
 
@@ -569,14 +569,14 @@ export function EditLeadModal({ lead, onClose, onSave }) {
             number={phoneNumber}
             onNumberChange={setPhoneNumber}
           />
-          <div className="aax-pw-field" style={{ marginTop: 16 }}>
-            <div className="aax-pw-field-head">
-              <label className="aax-pw-field-label" htmlFor="aax-lead-pw-input">
+          <div className="crm-pw-field" style={{ marginTop: 16 }}>
+            <div className="crm-pw-field-head">
+              <label className="crm-pw-field-label" htmlFor="crm-lead-pw-input">
                 Account password
               </label>
               <button
                 type="button"
-                className="aax-pw-generate"
+                className="crm-pw-generate"
                 onClick={() => { setClientPassword(generateLeadPassword()); setShowPwd(true); }}
                 title="Generate a strong password"
               >
@@ -588,10 +588,10 @@ export function EditLeadModal({ lead, onClose, onSave }) {
                 Generate
               </button>
             </div>
-            <div className="aax-pw-input-wrap">
+            <div className="crm-pw-input-wrap">
               <input
-                id="aax-lead-pw-input"
-                className="aax-pw-input"
+                id="crm-lead-pw-input"
+                className="crm-pw-input"
                 type={showPwd ? 'text' : 'password'}
                 value={clientPassword}
                 onChange={(e) => setClientPassword(e.target.value)}
@@ -600,7 +600,7 @@ export function EditLeadModal({ lead, onClose, onSave }) {
               />
               <button
                 type="button"
-                className="aax-pw-toggle"
+                className="crm-pw-toggle"
                 onClick={() => setShowPwd(s => !s)}
                 title={showPwd ? 'Hide password' : 'Show password'}
                 aria-label={showPwd ? 'Hide password' : 'Show password'}
@@ -620,16 +620,16 @@ export function EditLeadModal({ lead, onClose, onSave }) {
                 )}
               </button>
             </div>
-            <div className="aax-pw-meta">
-              <div className="aax-pw-strength" data-level={pwStrength.level}>
+            <div className="crm-pw-meta">
+              <div className="crm-pw-strength" data-level={pwStrength.level}>
                 {[0, 1, 2, 3, 4].map((i) => (
                   <span
                     key={i}
-                    className={'aax-pw-bar' + (i < pwStrength.level ? ' is-on' : '')}
+                    className={'crm-pw-bar' + (i < pwStrength.level ? ' is-on' : '')}
                   />
                 ))}
               </div>
-              <span className="aax-pw-hint" style={passwordChanged ? { color: '#F0B90B' } : {}}>
+              <span className="crm-pw-hint" style={passwordChanged ? { color: '#F0B90B' } : {}}>
                 {pwFetching
                   ? 'Loading current password...'
                   : passwordChanged
@@ -790,14 +790,14 @@ export function EditOfficeModal({ office, officeManager, isManagerBlocked, onBlo
   };
 
   return (
-    <div className="aax-modal-overlay" onClick={onClose}>
-      <div className="aax-modal-content" style={{ maxWidth: 390 }} onClick={e => e.stopPropagation()}>
-        <div className="aax-modal-header">
-          <span className="aax-modal-title">Edit Office</span>
-          <button type="button" className="aax-modal-close-btn" onClick={onClose} title="Close">✕</button>
+    <div className="crm-modal-overlay" onClick={onClose}>
+      <div className="crm-modal-content" style={{ maxWidth: 390 }} onClick={e => e.stopPropagation()}>
+        <div className="crm-modal-header">
+          <span className="crm-modal-title">Edit Office</span>
+          <button type="button" className="crm-modal-close-btn" onClick={onClose} title="Close">✕</button>
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="aax-modal-body" style={{ padding: '14px 18px' }}>
+          <div className="crm-modal-body" style={{ padding: '14px 18px' }}>
             {error && <div style={_errBox}>{error}</div>}
             <div style={_fg}>
               <label style={_lbl}>Office Name</label>
@@ -835,9 +835,9 @@ export function EditOfficeModal({ office, officeManager, isManagerBlocked, onBlo
               <p style={{ margin: '8px 0 0', color: '#848E9C', fontSize: 12 }}>No manager assigned yet.</p>
             )}
           </div>
-          <div className="aax-modal-footer">
-            <button type="button" className="aax-modal-btn-secondary" onClick={onClose}>Cancel</button>
-            <button type="submit" className="aax-modal-btn-primary">Save</button>
+          <div className="crm-modal-footer">
+            <button type="button" className="crm-modal-btn-secondary" onClick={onClose}>Cancel</button>
+            <button type="submit" className="crm-modal-btn-primary">Save</button>
           </div>
         </form>
       </div>
@@ -876,14 +876,14 @@ export function EditTeamModal({ team, offices, teamLeader, isLeaderBlocked, onBl
   };
 
   return (
-    <div className="aax-modal-overlay" onClick={onClose}>
-      <div className="aax-modal-content" style={{ maxWidth: 390 }} onClick={e => e.stopPropagation()}>
-        <div className="aax-modal-header">
-          <span className="aax-modal-title">Edit Team</span>
-          <button type="button" className="aax-modal-close-btn" onClick={onClose} title="Close">✕</button>
+    <div className="crm-modal-overlay" onClick={onClose}>
+      <div className="crm-modal-content" style={{ maxWidth: 390 }} onClick={e => e.stopPropagation()}>
+        <div className="crm-modal-header">
+          <span className="crm-modal-title">Edit Team</span>
+          <button type="button" className="crm-modal-close-btn" onClick={onClose} title="Close">✕</button>
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="aax-modal-body" style={{ padding: '14px 18px' }}>
+          <div className="crm-modal-body" style={{ padding: '14px 18px' }}>
             {error && <div style={_errBox}>{error}</div>}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 8 }}>
               <div>
@@ -936,9 +936,9 @@ export function EditTeamModal({ team, offices, teamLeader, isLeaderBlocked, onBl
               <p style={{ margin: '8px 0 0', color: '#848E9C', fontSize: 12 }}>No leader assigned yet.</p>
             )}
           </div>
-          <div className="aax-modal-footer">
-            <button type="button" className="aax-modal-btn-secondary" onClick={onClose}>Cancel</button>
-            <button type="submit" className="aax-modal-btn-primary">Save</button>
+          <div className="crm-modal-footer">
+            <button type="button" className="crm-modal-btn-secondary" onClick={onClose}>Cancel</button>
+            <button type="submit" className="crm-modal-btn-primary">Save</button>
           </div>
         </form>
       </div>
@@ -973,14 +973,14 @@ export function EditAgentModal({ agent, teams, isBlocked, onBlock, onClose, onSa
   };
 
   return (
-    <div className="aax-modal-overlay" onClick={onClose}>
-      <div className="aax-modal-content" style={{ maxWidth: 390 }} onClick={e => e.stopPropagation()}>
-        <div className="aax-modal-header">
-          <span className="aax-modal-title">Edit Agent</span>
-          <button type="button" className="aax-modal-close-btn" onClick={onClose} title="Close">✕</button>
+    <div className="crm-modal-overlay" onClick={onClose}>
+      <div className="crm-modal-content" style={{ maxWidth: 390 }} onClick={e => e.stopPropagation()}>
+        <div className="crm-modal-header">
+          <span className="crm-modal-title">Edit Agent</span>
+          <button type="button" className="crm-modal-close-btn" onClick={onClose} title="Close">✕</button>
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="aax-modal-body" style={{ padding: '14px 18px' }}>
+          <div className="crm-modal-body" style={{ padding: '14px 18px' }}>
             {error && <div style={_errBox}>{error}</div>}
             <div style={{ ...(_fg), display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -1015,9 +1015,9 @@ export function EditAgentModal({ agent, teams, isBlocked, onBlock, onClose, onSa
               </div>
             )}
           </div>
-          <div className="aax-modal-footer">
-            <button type="button" className="aax-modal-btn-secondary" onClick={onClose}>Cancel</button>
-            <button type="submit" className="aax-modal-btn-primary">Save</button>
+          <div className="crm-modal-footer">
+            <button type="button" className="crm-modal-btn-secondary" onClick={onClose}>Cancel</button>
+            <button type="submit" className="crm-modal-btn-primary">Save</button>
           </div>
         </form>
       </div>
@@ -1052,14 +1052,14 @@ export function CreateAgentModal({ team, onClose, onCreate }) {
   };
 
   return (
-    <div className="aax-modal-overlay" onClick={onClose}>
-      <div className="aax-modal-content" style={{ maxWidth: 390 }} onClick={event => event.stopPropagation()}>
-        <div className="aax-modal-header">
-          <span className="aax-modal-title">Add Agent</span>
-          <button type="button" className="aax-modal-close-btn" onClick={onClose} title="Close">✕</button>
+    <div className="crm-modal-overlay" onClick={onClose}>
+      <div className="crm-modal-content" style={{ maxWidth: 390 }} onClick={event => event.stopPropagation()}>
+        <div className="crm-modal-header">
+          <span className="crm-modal-title">Add Agent</span>
+          <button type="button" className="crm-modal-close-btn" onClick={onClose} title="Close">✕</button>
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="aax-modal-body" style={{ padding: '14px 18px' }}>
+          <div className="crm-modal-body" style={{ padding: '14px 18px' }}>
             {error && <div style={_errBox}>{error}</div>}
             <div style={_fg}>
               <label style={_lbl}>Team</label>
@@ -1074,9 +1074,9 @@ export function CreateAgentModal({ team, onClose, onCreate }) {
               <input type="password" value={password} onChange={event => setPassword(event.target.value)} required autoComplete="new-password" />
             </div>
           </div>
-          <div className="aax-modal-footer">
-            <button type="button" className="aax-modal-btn-secondary" onClick={onClose} disabled={saving}>Cancel</button>
-            <button type="submit" className="aax-modal-btn-primary" disabled={saving}>{saving ? 'Creating...' : 'Create Agent'}</button>
+          <div className="crm-modal-footer">
+            <button type="button" className="crm-modal-btn-secondary" onClick={onClose} disabled={saving}>Cancel</button>
+            <button type="submit" className="crm-modal-btn-primary" disabled={saving}>{saving ? 'Creating...' : 'Create Agent'}</button>
           </div>
         </form>
       </div>

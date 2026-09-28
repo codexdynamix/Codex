@@ -136,7 +136,7 @@ function LogoutIcon({ size = 14 }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      className="aax-logout-svg"
+      className="crm-logout-svg"
     >
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
       <polyline points="16 17 21 12 16 7" />
@@ -214,78 +214,78 @@ function NotificationBell({ user }) {
   if (!isAuthed) return null;
 
   return (
-    <div className="aax-notif-bell-wrap" ref={ref}>
+    <div className="crm-notif-bell-wrap" ref={ref}>
       <button
         type="button"
-        className={`aax-notif-bell-btn${ring ? ' aax-notif-bell-ring' : ''}`}
+        className={`crm-notif-bell-btn${ring ? ' crm-notif-bell-ring' : ''}`}
         onClick={() => setOpen((o) => !o)}
         title="Notifications"
         aria-label={total > 0 ? `${total} unread` : 'Notifications'}
       >
         <BellIcon size={15} />
         {total > 0 && (
-          <span className="aax-notif-badge" aria-hidden="true">
+          <span className="crm-notif-badge" aria-hidden="true">
             {total > 99 ? '99+' : total}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="aax-notif-dropdown" role="dialog" aria-label="Notifications summary">
-          <div className="aax-notif-dropdown-header">
-            <span className="aax-notif-dropdown-title">Activity</span>
-            {total > 0 && <span className="aax-notif-dropdown-count">{total} unread</span>}
+        <div className="crm-notif-dropdown" role="dialog" aria-label="Notifications summary">
+          <div className="crm-notif-dropdown-header">
+            <span className="crm-notif-dropdown-title">Activity</span>
+            {total > 0 && <span className="crm-notif-dropdown-count">{total} unread</span>}
           </div>
-          <div className="aax-notif-dropdown-body">
+          <div className="crm-notif-dropdown-body">
             <div
-              className={`aax-notif-row${counts.messages > 0 ? ' is-unread' : ''}`}
+              className={`crm-notif-row${counts.messages > 0 ? ' is-unread' : ''}`}
               onClick={() => gotoTab('messages')}
               style={{ cursor: 'pointer' }}
               title="Go to messages"
             >
-              <span className="aax-notif-row-icon">💬</span>
-              <span className="aax-notif-row-label">Client messages</span>
-              <span className="aax-notif-row-val">
+              <span className="crm-notif-row-icon">💬</span>
+              <span className="crm-notif-row-label">Client messages</span>
+              <span className="crm-notif-row-val">
                 {counts.messages > 0 ? (
-                  <span className="aax-notif-pill">{counts.messages}</span>
+                  <span className="crm-notif-pill">{counts.messages}</span>
                 ) : (
-                  <span className="aax-notif-row-clear">All read</span>
+                  <span className="crm-notif-row-clear">All read</span>
                 )}
               </span>
               <span style={{ marginLeft: 6, color: '#848E9C', fontSize: 10 }}>›</span>
             </div>
             <div
-              className={`aax-notif-row${counts.notifications > 0 ? ' is-unread' : ''}`}
+              className={`crm-notif-row${counts.notifications > 0 ? ' is-unread' : ''}`}
               onClick={() => gotoTab('alerts')}
               style={{ cursor: 'pointer' }}
               title="Go to notifications"
             >
-              <span className="aax-notif-row-icon">🔔</span>
-              <span className="aax-notif-row-label">System alerts</span>
-              <span className="aax-notif-row-val">
+              <span className="crm-notif-row-icon">🔔</span>
+              <span className="crm-notif-row-label">System alerts</span>
+              <span className="crm-notif-row-val">
                 {counts.notifications > 0 ? (
-                  <span className="aax-notif-pill">{counts.notifications}</span>
+                  <span className="crm-notif-pill">{counts.notifications}</span>
                 ) : (
-                  <span className="aax-notif-row-clear">All read</span>
+                  <span className="crm-notif-row-clear">All read</span>
                 )}
               </span>
               <span style={{ marginLeft: 6, color: '#848E9C', fontSize: 10 }}>›</span>
             </div>
           </div>
-          <div className="aax-notif-dropdown-footer">
+          <div className="crm-notif-dropdown-footer">
             {total > 0 ? (
               <button
                 type="button"
-                className="aax-notif-mark-all-btn"
+                className="crm-notif-mark-all-btn"
                 onClick={markAllRead}
                 disabled={marking}
               >
                 {marking ? 'Clearing...' : 'Mark all as read'}
               </button>
             ) : (
-              <span className="aax-notif-all-clear">All caught up</span>
+              <span className="crm-notif-all-clear">All caught up</span>
             )}
-            <span className="aax-notif-refresh-hint">Refreshes every 30 s</span>
+            <span className="crm-notif-refresh-hint">Refreshes every 30 s</span>
           </div>
         </div>
       )}
@@ -412,55 +412,55 @@ export function UserChrome({ user, data, setData }) {
   return (
     <>
       <NotificationBell user={user} />
-      <div className="aax-user-chrome">
+      <div className="crm-user-chrome">
         <button
           type="button"
-          className="aax-user-chip"
+          className="crm-user-chip"
           onClick={() => setOpen(true)}
           title="View profile"
         >
-          <span className="aax-user-chip-avatar" aria-hidden="true">{initials}</span>
-          <span className="aax-user-chip-text">
-            <span className="aax-user-chip-name">{user.name}</span>
-            <span className="aax-user-chip-role">{user.role}</span>
+          <span className="crm-user-chip-avatar" aria-hidden="true">{initials}</span>
+          <span className="crm-user-chip-text">
+            <span className="crm-user-chip-name">{user.name}</span>
+            <span className="crm-user-chip-role">{user.role}</span>
           </span>
         </button>
         <button
           type="button"
           onClick={handleLogout}
           disabled={signingOut}
-          className="aax-logout-btn"
+          className="crm-logout-btn"
           title="Sign out"
         >
-          <span className="aax-logout-icon" aria-hidden="true">
+          <span className="crm-logout-icon" aria-hidden="true">
             <LogoutIcon size={14} />
           </span>
-          <span className="aax-logout-label">{signingOut ? 'Signing out...' : 'Logout'}</span>
+          <span className="crm-logout-label">{signingOut ? 'Signing out...' : 'Logout'}</span>
         </button>
       </div>
 
       {open && (
         <div
-          className="aax-profile-overlay"
+          className="crm-profile-overlay"
           onClick={closeModal}
           role="presentation"
         >
           <div
-            className="aax-profile-modal"
+            className="crm-profile-modal"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-label={`${user.name} profile`}
           >
-            <div className="aax-profile-header">
-              <div className="aax-profile-avatar">{initials}</div>
-              <div className="aax-profile-id">
+            <div className="crm-profile-header">
+              <div className="crm-profile-avatar">{initials}</div>
+              <div className="crm-profile-id">
                 <h3>{user.name}</h3>
-                <span className="aax-profile-role">{user.role}</span>
+                <span className="crm-profile-role">{user.role}</span>
               </div>
               <button
                 type="button"
-                className="aax-profile-close"
+                className="crm-profile-close"
                 onClick={closeModal}
                 aria-label="Close profile"
               >
@@ -468,12 +468,12 @@ export function UserChrome({ user, data, setData }) {
               </button>
             </div>
 
-            <div className="aax-profile-body">
+            <div className="crm-profile-body">
               <ProfileRow label="Email" value={user.email || '-'}>
                 {user.email && (
                   <button
                     type="button"
-                    className="aax-profile-copy"
+                    className="crm-profile-copy"
                     onClick={() => copy(user.email, 'email')}
                     title="Copy email"
                     aria-label="Copy email"
@@ -497,7 +497,7 @@ export function UserChrome({ user, data, setData }) {
               >
                 <button
                   type="button"
-                  className="aax-profile-copy"
+                  className="crm-profile-copy"
                   onClick={() => setShowPwd((v) => !v)}
                   title={showPwd ? 'Hide password' : 'Show password'}
                   aria-label={showPwd ? 'Hide password' : 'Show password'}
@@ -507,7 +507,7 @@ export function UserChrome({ user, data, setData }) {
                 {user.password && (
                   <button
                     type="button"
-                    className="aax-profile-copy"
+                    className="crm-profile-copy"
                     onClick={() => copy(user.password, 'pwd')}
                     title="Copy password"
                     aria-label="Copy password"
@@ -521,7 +521,7 @@ export function UserChrome({ user, data, setData }) {
                 <ProfileRow label="Login link" value={user.loginLink} mono link>
                   <button
                     type="button"
-                    className="aax-profile-copy"
+                    className="crm-profile-copy"
                     onClick={() => copy(user.loginLink, 'link')}
                     title="Copy login link"
                     aria-label="Copy login link"
@@ -537,7 +537,7 @@ export function UserChrome({ user, data, setData }) {
                   <>
                     <span
                       className={
-                        'aax-profile-status ' + (user.isLoggedIn ? 'is-online' : 'is-offline')
+                        'crm-profile-status ' + (user.isLoggedIn ? 'is-online' : 'is-offline')
                       }
                     />
                     {user.isLoggedIn ? 'Online' : 'Offline'}
@@ -547,20 +547,20 @@ export function UserChrome({ user, data, setData }) {
             </div>
 
             {isSuperAdmin && (
-              <div className="aax-profile-edit-section">
-                <div className="aax-profile-edit-heading">Edit Account</div>
+              <div className="crm-profile-edit-section">
+                <div className="crm-profile-edit-heading">Edit Account</div>
 
                 {editError && (
-                  <div className="aax-profile-edit-banner aax-profile-edit-error">{editError}</div>
+                  <div className="crm-profile-edit-banner crm-profile-edit-error">{editError}</div>
                 )}
                 {editSuccess && (
-                  <div className="aax-profile-edit-banner aax-profile-edit-success">{editSuccess}</div>
+                  <div className="crm-profile-edit-banner crm-profile-edit-success">{editSuccess}</div>
                 )}
 
-                <div className="aax-profile-edit-field">
-                  <label className="aax-profile-edit-label">Display Name</label>
+                <div className="crm-profile-edit-field">
+                  <label className="crm-profile-edit-label">Display Name</label>
                   <input
-                    className="aax-super-admin-input"
+                    className="crm-super-admin-input"
                     type="text"
                     value={editName}
                     onChange={e => { setEditName(e.target.value); setEditError(''); setEditSuccess(''); }}
@@ -569,10 +569,10 @@ export function UserChrome({ user, data, setData }) {
                   />
                 </div>
 
-                <div className="aax-profile-edit-field">
-                  <label className="aax-profile-edit-label">Login Email</label>
+                <div className="crm-profile-edit-field">
+                  <label className="crm-profile-edit-label">Login Email</label>
                   <input
-                    className="aax-super-admin-input"
+                    className="crm-super-admin-input"
                     type="email"
                     value={editEmail}
                     onChange={e => { setEditEmail(e.target.value); setEditError(''); setEditSuccess(''); }}
@@ -581,11 +581,11 @@ export function UserChrome({ user, data, setData }) {
                   />
                 </div>
 
-                <div className="aax-profile-edit-field">
-                  <label className="aax-profile-edit-label">New Password <span className="aax-profile-edit-hint">(leave blank to keep current)</span></label>
-                  <div className="aax-pw-input-wrap">
+                <div className="crm-profile-edit-field">
+                  <label className="crm-profile-edit-label">New Password <span className="crm-profile-edit-hint">(leave blank to keep current)</span></label>
+                  <div className="crm-pw-input-wrap">
                     <input
-                      className="aax-pw-input"
+                      className="crm-pw-input"
                       type={editPwShown ? 'text' : 'password'}
                       value={editPassword}
                       onChange={e => { setEditPassword(e.target.value); setEditError(''); setEditSuccess(''); }}
@@ -594,7 +594,7 @@ export function UserChrome({ user, data, setData }) {
                     />
                     <button
                       type="button"
-                      className="aax-pw-toggle"
+                      className="crm-pw-toggle"
                       onClick={() => setEditPwShown(v => !v)}
                       aria-label={editPwShown ? 'Hide password' : 'Show password'}
                       title={editPwShown ? 'Hide password' : 'Show password'}
@@ -617,11 +617,11 @@ export function UserChrome({ user, data, setData }) {
                 </div>
 
                 {editPassword && (
-                  <div className="aax-profile-edit-field">
-                    <label className="aax-profile-edit-label">Confirm New Password</label>
-                    <div className="aax-pw-input-wrap">
+                  <div className="crm-profile-edit-field">
+                    <label className="crm-profile-edit-label">Confirm New Password</label>
+                    <div className="crm-pw-input-wrap">
                       <input
-                        className="aax-pw-input"
+                        className="crm-pw-input"
                         type={editConfirmShown ? 'text' : 'password'}
                         value={editConfirm}
                         onChange={e => { setEditConfirm(e.target.value); setEditError(''); setEditSuccess(''); }}
@@ -630,7 +630,7 @@ export function UserChrome({ user, data, setData }) {
                       />
                       <button
                         type="button"
-                        className="aax-pw-toggle"
+                        className="crm-pw-toggle"
                         onClick={() => setEditConfirmShown(v => !v)}
                         aria-label={editConfirmShown ? 'Hide password' : 'Show password'}
                         title={editConfirmShown ? 'Hide password' : 'Show password'}
@@ -651,14 +651,14 @@ export function UserChrome({ user, data, setData }) {
                       </button>
                     </div>
                     {editConfirm && editPassword !== editConfirm && (
-                      <span className="aax-profile-edit-mismatch">Passwords do not match</span>
+                      <span className="crm-profile-edit-mismatch">Passwords do not match</span>
                     )}
                   </div>
                 )}
 
                 <button
                   type="button"
-                  className="aax-profile-edit-save"
+                  className="crm-profile-edit-save"
                   onClick={saveAccountDetails}
                   disabled={editSaving || (editPassword && editPassword !== editConfirm)}
                 >
@@ -667,17 +667,17 @@ export function UserChrome({ user, data, setData }) {
               </div>
             )}
 
-            <div className="aax-profile-footer">
+            <div className="crm-profile-footer">
               <button
                 type="button"
-                className="aax-profile-secondary"
+                className="crm-profile-secondary"
                 onClick={closeModal}
               >
                 Close
               </button>
               <button
                 type="button"
-                className="aax-profile-logout"
+                className="crm-profile-logout"
                 onClick={handleLogout}
                 disabled={signingOut}
               >
@@ -694,13 +694,13 @@ export function UserChrome({ user, data, setData }) {
 
 function ProfileRow({ label, value, mono, link, children }) {
   return (
-    <div className="aax-profile-row">
-      <span className="aax-profile-label">{label}</span>
+    <div className="crm-profile-row">
+      <span className="crm-profile-label">{label}</span>
       <span
         className={
-          'aax-profile-value' +
-          (mono ? ' aax-profile-mono' : '') +
-          (link ? ' aax-profile-link' : '')
+          'crm-profile-value' +
+          (mono ? ' crm-profile-mono' : '') +
+          (link ? ' crm-profile-link' : '')
         }
       >
         {value}
@@ -729,7 +729,7 @@ export function SearchAutocomplete({
   value,
   onChange,
   placeholder,
-  className = 'aax-super-admin-input',
+  className = 'crm-super-admin-input',
   style,
   autoComplete = 'off',
   buildSuggestions,
@@ -816,7 +816,7 @@ export function SearchAutocomplete({
   return (
     <div
       ref={wrapRef}
-      className="aax-search-autocomplete"
+      className="crm-search-autocomplete"
       style={{
         position: 'relative',
         flex: style?.flex,
@@ -858,7 +858,7 @@ export function SearchAutocomplete({
         style={{ ...style, width: '100%' }}
       />
       {showDropdown && (
-        <div className="aax-search-suggest" role="listbox">
+        <div className="crm-search-suggest" role="listbox">
           {suggestions.map((s, i) => (
             <button
               type="button"
@@ -866,7 +866,7 @@ export function SearchAutocomplete({
               role="option"
               aria-selected={i === highlight}
               className={
-                'aax-search-suggest-item' + (i === highlight ? ' is-active' : '')
+                'crm-search-suggest-item' + (i === highlight ? ' is-active' : '')
               }
               onMouseEnter={() => setHighlight(i)}
               onMouseDown={(e) => {
@@ -874,9 +874,9 @@ export function SearchAutocomplete({
                 pick(s);
               }}
             >
-              <span className="aax-search-suggest-label">{s.label}</span>
+              <span className="crm-search-suggest-label">{s.label}</span>
               {s.meta != null && s.meta !== '' && (
-                <span className="aax-search-suggest-meta">{s.meta}</span>
+                <span className="crm-search-suggest-meta">{s.meta}</span>
               )}
             </button>
           ))}

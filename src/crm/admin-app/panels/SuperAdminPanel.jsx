@@ -842,7 +842,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
     <div>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
         <button
-          className="aax-super-admin-btn"
+          className="crm-super-admin-btn"
           onClick={handleExportAllLeadsCsv}
           disabled={data.leads.length === 0}
           title="Download every active lead, not just the current page"
@@ -854,13 +854,13 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
       {/* View toggle: Active | Bin */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         <button
-          className={`aax-super-admin-btn aax-super-admin-btn-small${view === 'aax-active' ? '' : ' aax-super-admin-btn-secondary'}`}
+          className={`crm-super-admin-btn crm-super-admin-btn-small${view === 'crm-active' ? '' : ' crm-super-admin-btn-secondary'}`}
           onClick={() => setView('active')}
         >
           [list] Active Leads ({data.leads.length})
         </button>
         <button
-          className={`aax-super-admin-btn aax-super-admin-btn-small${view === 'bin' ? '' : ' aax-super-admin-btn-secondary'}`}
+          className={`crm-super-admin-btn crm-super-admin-btn-small${view === 'bin' ? '' : ' crm-super-admin-btn-secondary'}`}
           onClick={() => setView('bin')}
         >
           🗑 Bin ({deletedLeads.length})
@@ -872,7 +872,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#363B44', border: '1px solid ' + (idLookupQuery.trim().length >= 3 ? '#F0B90B' : '#444A55'), borderRadius: 8, padding: '8px 14px', transition: 'border-color 0.2s' }}>
           <i className="fas fa-fingerprint" style={{ color: idLookupQuery.trim().length >= 3 ? '#F0B90B' : '#848E9C', fontSize: 15, flexShrink: 0, transition: 'color 0.2s' }} />
           <input
-            className="aax-super-admin-input"
+            className="crm-super-admin-input"
             style={{ flex: 1, background: 'transparent', border: 'none', padding: 0, fontFamily: 'monospace', fontSize: 13, outline: 'none', color: '#EAECEF' }}
             placeholder="Find client by ID - paste or type any part of the ID..."
             value={idLookupQuery}
@@ -934,13 +934,13 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                   </div>
                   <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                     <button
-                      className="aax-super-admin-btn aax-super-admin-btn-small"
+                      className="crm-super-admin-btn crm-super-admin-btn-small"
                       style={{ fontSize: 11, padding: '4px 10px' }}
                       onClick={() => { openProfile(lead); setIdLookupQuery(''); }}
                     >Quick View</button>
                     {!isDeleted && (
                       <button
-                        className="aax-super-admin-btn aax-super-admin-btn-small"
+                        className="crm-super-admin-btn crm-super-admin-btn-small"
                         style={{ fontSize: 11, padding: '4px 10px', background: '#3a7bd5', color: '#fff' }}
                         onClick={() => navigate(getLeadProfilePath(ROLE.SUPER_ADMIN, currentUser.id, lead.id))}
                       >Open Profile</button>
@@ -975,7 +975,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                 {[7, 14, 30, 60, 90].map(d => <option key={d} value={d}>{d} days</option>)}
               </select>
               <button
-                className="aax-super-admin-btn aax-super-admin-btn-small"
+                className="crm-super-admin-btn crm-super-admin-btn-small"
                 style={{ background: 'rgba(246,70,93,0.15)', color: '#F6465D', border: '1px solid #F6465D40' }}
                 onClick={handleBinCleanup}
                 disabled={binCleanupBusy}
@@ -987,16 +987,16 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
           {binSelected.length > 0 && (
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 10, padding: '8px 12px', background: '#363B44', borderRadius: 6, border: '1px solid #F0B90B', flexWrap: 'wrap' }}>
               <span style={{ color: '#F0B90B', fontSize: 12, fontWeight: 600 }}>{binSelected.length} selected</span>
-              <button className="aax-super-admin-btn aax-super-admin-btn-small" onClick={handleBinBulkRestore}>Restore Selected</button>
-              <button className="aax-super-admin-btn aax-super-admin-btn-small" style={{ background: '#c0392b', color: '#fff' }} onClick={handleBinBulkPermanentDelete}>✕ Delete Selected Forever</button>
+              <button className="crm-super-admin-btn crm-super-admin-btn-small" onClick={handleBinBulkRestore}>Restore Selected</button>
+              <button className="crm-super-admin-btn crm-super-admin-btn-small" style={{ background: '#c0392b', color: '#fff' }} onClick={handleBinBulkPermanentDelete}>✕ Delete Selected Forever</button>
               <button onClick={() => setBinSelected([])} style={{ marginLeft: 'auto', background: 'transparent', border: '1px solid #444A55', color: '#848E9C', fontSize: 11, padding: '3px 8px', borderRadius: 4, cursor: 'pointer' }}>Clear</button>
             </div>
           )}
           {pagedBin.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 40, color: '#848E9C' }}>The bin is empty.</div>
           ) : (
-            <div className="aax-admin-table-container">
-              <table className="aax-admin-table">
+            <div className="crm-admin-table-container">
+              <table className="crm-admin-table">
                 <thead>
                   <tr>
                     <th style={{ width: 28 }}>
@@ -1054,8 +1054,8 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                       </td>
                       <td style={{ fontSize: 11, color: '#848E9C' }}>{lead.deletedAt ? new Date(lead.deletedAt).toLocaleDateString() : '-'}</td>
                       <td style={{ display: 'flex', gap: 6 }}>
-                        <button className="aax-super-admin-btn aax-super-admin-btn-small" onClick={() => restoreLead(lead)}>Restore</button>
-                        <button className="aax-super-admin-btn aax-super-admin-btn-small" style={{ background: '#c0392b', color: '#fff' }} onClick={() => permanentDelete(lead)}>✕ Delete</button>
+                        <button className="crm-super-admin-btn crm-super-admin-btn-small" onClick={() => restoreLead(lead)}>Restore</button>
+                        <button className="crm-super-admin-btn crm-super-admin-btn-small" style={{ background: '#c0392b', color: '#fff' }} onClick={() => permanentDelete(lead)}>✕ Delete</button>
                       </td>
                     </tr>
                   ))}
@@ -1065,11 +1065,11 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
           )}
           {binTotalPages > 1 && (
             <div style={{ display: 'flex', gap: 8, marginTop: 12, alignItems: 'center' }}>
-              <button className="aax-super-admin-btn aax-super-admin-btn-small aax-pagination-btn-gold" disabled={binPage === 1} onClick={() => setBinPage(1)}>«</button>
-              <button className="aax-super-admin-btn aax-super-admin-btn-small aax-pagination-btn-gold" disabled={binPage === 1} onClick={() => setBinPage(p => p - 1)}>‹ Prev</button>
+              <button className="crm-super-admin-btn crm-super-admin-btn-small crm-pagination-btn-gold" disabled={binPage === 1} onClick={() => setBinPage(1)}>«</button>
+              <button className="crm-super-admin-btn crm-super-admin-btn-small crm-pagination-btn-gold" disabled={binPage === 1} onClick={() => setBinPage(p => p - 1)}>‹ Prev</button>
               <span style={{ color: '#848E9C', fontSize: 12 }}>Page {binPage} of {binTotalPages}</span>
-              <button className="aax-super-admin-btn aax-super-admin-btn-small aax-pagination-btn-gold" disabled={binPage >= binTotalPages} onClick={() => setBinPage(p => p + 1)}>Next ›</button>
-              <button className="aax-super-admin-btn aax-super-admin-btn-small aax-pagination-btn-gold" disabled={binPage >= binTotalPages} onClick={() => setBinPage(binTotalPages)}>»</button>
+              <button className="crm-super-admin-btn crm-super-admin-btn-small crm-pagination-btn-gold" disabled={binPage >= binTotalPages} onClick={() => setBinPage(p => p + 1)}>Next ›</button>
+              <button className="crm-super-admin-btn crm-super-admin-btn-small crm-pagination-btn-gold" disabled={binPage >= binTotalPages} onClick={() => setBinPage(binTotalPages)}>»</button>
             </div>
           )}
         </div>
@@ -1104,7 +1104,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
             <SearchAutocomplete
-              className="aax-super-admin-input"
+              className="crm-super-admin-input"
               placeholder="Search name, email, phone, country..."
               value={search}
               onChange={(v) => { setSearch(v); setPage(1); }}
@@ -1131,50 +1131,50 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                   }));
               }}
             />
-            <select className="aax-super-admin-select" value={filterOffice} onChange={e => { setFilterOffice(e.target.value); setFilterTeam(''); setFilterAgent(''); setPage(1); }} style={{ flex: 1, minWidth: 120 }}>
+            <select className="crm-super-admin-select" value={filterOffice} onChange={e => { setFilterOffice(e.target.value); setFilterTeam(''); setFilterAgent(''); setPage(1); }} style={{ flex: 1, minWidth: 120 }}>
               <option value="">All Offices</option>
               {data.offices.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
             </select>
-            <select className="aax-super-admin-select" value={filterTeam} onChange={e => { setFilterTeam(e.target.value); setFilterAgent(''); setPage(1); }} style={{ flex: 1, minWidth: 120 }}>
+            <select className="crm-super-admin-select" value={filterTeam} onChange={e => { setFilterTeam(e.target.value); setFilterAgent(''); setPage(1); }} style={{ flex: 1, minWidth: 120 }}>
               <option value="">All Teams</option>
               {teamsForFilter.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
-            <select className="aax-super-admin-select" value={filterAgent} onChange={e => { setFilterAgent(e.target.value); setPage(1); }} style={{ flex: 1, minWidth: 120 }}>
+            <select className="crm-super-admin-select" value={filterAgent} onChange={e => { setFilterAgent(e.target.value); setPage(1); }} style={{ flex: 1, minWidth: 120 }}>
               <option value="">All Agents</option>
               {agentsForFilter.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
             </select>
-            <select className="aax-super-admin-select" value={filterStatus} onChange={e => { setFilterStatus(e.target.value); setPage(1); }} style={{ flex: 1, minWidth: 120 }}>
+            <select className="crm-super-admin-select" value={filterStatus} onChange={e => { setFilterStatus(e.target.value); setPage(1); }} style={{ flex: 1, minWidth: 120 }}>
               <option value="">All Statuses</option>
               {LEAD_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
             {(search || filterOffice || filterTeam || filterAgent || filterStatus) && (
-              <button className="aax-super-admin-btn aax-super-admin-btn-small" onClick={() => { setSearch(''); setFilterOffice(''); setFilterTeam(''); setFilterAgent(''); setFilterStatus(''); setPage(1); }}>Clear</button>
+              <button className="crm-super-admin-btn crm-super-admin-btn-small" onClick={() => { setSearch(''); setFilterOffice(''); setFilterTeam(''); setFilterAgent(''); setFilterStatus(''); setPage(1); }}>Clear</button>
             )}
           </div>
 
           {/* Quick action toolbar: Unassigned filter + bulk / shuffle entry */}
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10, alignItems: 'center' }}>
             <button
-              className={`aax-super-admin-btn aax-super-admin-btn-small${showUnassignedOnly ? '' : ' aax-super-admin-btn-secondary'}`}
+              className={`crm-super-admin-btn crm-super-admin-btn-small${showUnassignedOnly ? '' : ' crm-super-admin-btn-secondary'}`}
               onClick={() => { setShowUnassignedOnly(v => !v); setPage(1); }}
               style={showUnassignedOnly ? { background: '#F0B90B', color: '#2A2E36' } : {}}
             >
               {showUnassignedOnly ? '✓ Showing Unassigned' : '[user] Show Unassigned Only'}
             </button>
             <button
-              className={`aax-super-admin-btn aax-super-admin-btn-small${bulkMode === 'assign' ? '' : ' aax-super-admin-btn-secondary'}`}
+              className={`crm-super-admin-btn crm-super-admin-btn-small${bulkMode === 'assign' ? '' : ' crm-super-admin-btn-secondary'}`}
               onClick={() => setBulkMode(bulkMode === 'assign' ? null : 'assign')}
             >
               📌 Bulk Assign / Reassign
             </button>
             <button
-              className={`aax-super-admin-btn aax-super-admin-btn-small${bulkMode === 'shuffle' ? '' : ' aax-super-admin-btn-secondary'}`}
+              className={`crm-super-admin-btn crm-super-admin-btn-small${bulkMode === 'shuffle' ? '' : ' crm-super-admin-btn-secondary'}`}
               onClick={() => setBulkMode(bulkMode === 'shuffle' ? null : 'shuffle')}
             >
               🔀 Shuffle / Distribute
             </button>
             <button
-              className="aax-super-admin-btn aax-super-admin-btn-small aax-super-admin-btn-secondary"
+              className="crm-super-admin-btn crm-super-admin-btn-small crm-super-admin-btn-secondary"
               onClick={() => { setCsvImportOpen(true); setCsvRawText(''); setCsvFile(null); setCsvParsed([]); setCsvParseError(''); }}
             >
               [upload] Import CSV
@@ -1187,7 +1187,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                 </span>
                 <span style={{ width: 1, height: 22, background: '#444A55' }} />
                 <button
-                  className="aax-super-admin-btn aax-super-admin-btn-small"
+                  className="crm-super-admin-btn crm-super-admin-btn-small"
                   style={{ background: 'rgba(246,70,93,0.15)', color: '#F6465D', border: '1px solid #F6465D40' }}
                   onClick={handleBulkDelete}
                   title={`Move ${selected.length} lead(s) to bin`}
@@ -1195,7 +1195,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                   🗑 Move to Bin
                 </button>
                 <button
-                  className="aax-super-admin-btn aax-super-admin-btn-small"
+                  className="crm-super-admin-btn crm-super-admin-btn-small"
                   style={{ background: '#c0392b', color: '#fff' }}
                   onClick={handleBulkPermanentDelete}
                   title={`Permanently delete ${selected.length} lead(s) - cannot be undone`}
@@ -1204,7 +1204,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                 </button>
                 <span style={{ width: 1, height: 22, background: '#444A55' }} />
                 <button
-                  className="aax-super-admin-btn aax-super-admin-btn-small"
+                  className="crm-super-admin-btn crm-super-admin-btn-small"
                   style={{ background: 'rgba(246,70,93,0.15)', color: '#F6465D', border: '1px solid #F6465D40' }}
                   onClick={handleBulkSuspend}
                   title={`Suspend ${selected.length} lead(s)`}
@@ -1212,7 +1212,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                   🔒 Suspend
                 </button>
                 <button
-                  className="aax-super-admin-btn aax-super-admin-btn-small"
+                  className="crm-super-admin-btn crm-super-admin-btn-small"
                   style={{ background: 'rgba(14,203,129,0.12)', color: '#0ECB81', border: '1px solid #0ECB8140' }}
                   onClick={handleBulkActivate}
                   title={`Re-activate ${selected.length} lead(s)`}
@@ -1235,7 +1235,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                 <div style={{ fontSize: 11, color: '#848E9C', marginBottom: 4 }}>Quick assign to Agent (auto-fills office & team)</div>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                   <select
-                    className="aax-super-admin-select"
+                    className="crm-super-admin-select"
                     style={{ flex: 1 }}
                     value={bulkAgentId}
                     onChange={e => {
@@ -1266,7 +1266,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                       <option key={agent.id} value={agent.id}>{agent.name} (unassigned)</option>
                     ))}
                   </select>
-                  <button className="aax-super-admin-btn" onClick={handleBulkAssign} disabled={selected.length === 0}>Apply</button>
+                  <button className="crm-super-admin-btn" onClick={handleBulkAssign} disabled={selected.length === 0}>Apply</button>
                 </div>
               </div>
 
@@ -1276,19 +1276,19 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
                   <div style={{ flex: '1 1 160px' }}>
                     <div style={{ fontSize: 11, color: '#848E9C', marginBottom: 4 }}>Office</div>
-                    <select className="aax-super-admin-select" style={{ width: '100%' }} value={bulkOfficeId} onChange={e => { setBulkOfficeId(e.target.value); setBulkTeamId(''); setBulkAgentId(''); }}>
+                    <select className="crm-super-admin-select" style={{ width: '100%' }} value={bulkOfficeId} onChange={e => { setBulkOfficeId(e.target.value); setBulkTeamId(''); setBulkAgentId(''); }}>
                       <option value="">- None (Pool) -</option>
                       {data.offices.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
                     </select>
                   </div>
                   <div style={{ flex: '1 1 160px' }}>
                     <div style={{ fontSize: 11, color: '#848E9C', marginBottom: 4 }}>Team</div>
-                    <select className="aax-super-admin-select" style={{ width: '100%' }} value={bulkTeamId} onChange={e => { setBulkTeamId(e.target.value); setBulkAgentId(''); }} disabled={!bulkOfficeId}>
+                    <select className="crm-super-admin-select" style={{ width: '100%' }} value={bulkTeamId} onChange={e => { setBulkTeamId(e.target.value); setBulkAgentId(''); }} disabled={!bulkOfficeId}>
                       <option value="">- None -</option>
                       {data.teams.filter(t => t.officeId === bulkOfficeId).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                     </select>
                   </div>
-                  <button className="aax-super-admin-btn" onClick={handleBulkAssign} disabled={selected.length === 0}>Apply</button>
+                  <button className="crm-super-admin-btn" onClick={handleBulkAssign} disabled={selected.length === 0}>Apply</button>
                 </div>
               </div>
             </div>
@@ -1303,7 +1303,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
                 <div>
                   <div style={{ fontSize: 11, color: '#848E9C', marginBottom: 4 }}>Distribute among</div>
-                  <select className="aax-super-admin-select" value={shuffleScope} onChange={e => { setShuffleScope(e.target.value); setShuffleTargets([]); }}>
+                  <select className="crm-super-admin-select" value={shuffleScope} onChange={e => { setShuffleScope(e.target.value); setShuffleTargets([]); }}>
                     <option value="offices">Offices</option>
                     <option value="teams">Teams</option>
                     <option value="agents">Agents</option>
@@ -1311,7 +1311,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                 </div>
                 <div>
                   <div style={{ fontSize: 11, color: '#848E9C', marginBottom: 4 }}>Filter by status (optional)</div>
-                  <select className="aax-super-admin-select" value={shuffleStatus} onChange={e => setShuffleStatus(e.target.value)}>
+                  <select className="crm-super-admin-select" value={shuffleStatus} onChange={e => setShuffleStatus(e.target.value)}>
                     <option value="">All statuses</option>
                     {LEAD_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
@@ -1338,8 +1338,8 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                 ))}
               </div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <button className="aax-super-admin-btn" style={{ background: '#0A84FF', color: '#2A2E36' }} onClick={handleShuffle} disabled={shuffleTargets.length === 0}>🔀 Shuffle Now</button>
-                <button className="aax-super-admin-btn aax-super-admin-btn-small aax-super-admin-btn-secondary" onClick={() => setShuffleTargets([])}>Clear targets</button>
+                <button className="crm-super-admin-btn" style={{ background: '#0A84FF', color: '#2A2E36' }} onClick={handleShuffle} disabled={shuffleTargets.length === 0}>🔀 Shuffle Now</button>
+                <button className="crm-super-admin-btn crm-super-admin-btn-small crm-super-admin-btn-secondary" onClick={() => setShuffleTargets([])}>Clear targets</button>
               </div>
             </div>
           )}
@@ -1348,8 +1348,8 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
             Click any row to open the lead profile. Showing {paged.length} of {filtered.length} leads (page {page}/{totalPages})
           </div>
 
-          <div className="aax-admin-table-container">
-            <table className="aax-admin-table">
+          <div className="crm-admin-table-container">
+            <table className="crm-admin-table">
               <thead>
                 <tr>
                   <th style={{ width: 28 }}>
@@ -1410,7 +1410,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                       <div style={{ fontSize: 11, color: '#848E9C' }}>{lead.email}</div>
                     </td>
                     <td>{getCountryFlag(lead.countryCode, lead.country)} {lead.country}</td>
-                    <td><span className={`aax-status-badge ${statusClass(lead.stage)}`}>{normalizeStage(lead.stage)}</span></td>
+                    <td><span className={`crm-status-badge ${statusClass(lead.stage)}`}>{normalizeStage(lead.stage)}</span></td>
                     <td style={{ color: lead.assignedToOffice ? '#EAECEF' : '#F0B90B', fontSize: 12 }}>
                       {lead.assignedToOffice ? getOfficeName(lead.assignedToOffice, data.offices) : 'Pool'}
                     </td>
@@ -1442,12 +1442,12 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                     </td>
                     <td onClick={e => e.stopPropagation()} style={{ whiteSpace: 'nowrap' }}>
                       <button
-                        className="aax-super-admin-btn aax-super-admin-btn-small"
+                        className="crm-super-admin-btn crm-super-admin-btn-small"
                         style={{ fontSize: 11, padding: '4px 10px', background: '#3a7bd5', color: '#fff', fontWeight: 600 }}
                         onClick={() => { setEditingLead(lead); }}
                         title="Edit lead profile fields"
                       > Edit</button>
-                      <button className="aax-super-admin-btn aax-super-admin-btn-small" style={{ fontSize: 11, padding: '4px 10px', marginLeft: 4, background: '#c0392b', color: '#fff' }} onClick={() => deleteLead(lead)} title="Move to Recycle Bin">🗑 Bin</button>
+                      <button className="crm-super-admin-btn crm-super-admin-btn-small" style={{ fontSize: 11, padding: '4px 10px', marginLeft: 4, background: '#c0392b', color: '#fff' }} onClick={() => deleteLead(lead)} title="Move to Recycle Bin">🗑 Bin</button>
                     </td>
                   </tr>
                   {quickAssignLeadId === lead.id && (
@@ -1456,7 +1456,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
                           <span style={{ fontSize: 12, color: '#F0B90B', fontWeight: 600, whiteSpace: 'nowrap' }}>Assign "{lead.firstName} {lead.lastName}" to:</span>
                           <select
-                            className="aax-super-admin-select"
+                            className="crm-super-admin-select"
                             style={{ flex: '1 1 220px', minWidth: 180 }}
                             value={quickAssignAgentId}
                             onChange={e => setQuickAssignAgentId(e.target.value)}
@@ -1484,12 +1484,12 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                             ))}
                           </select>
                           <button
-                            className="aax-super-admin-btn aax-super-admin-btn-small"
+                            className="crm-super-admin-btn crm-super-admin-btn-small"
                             style={{ background: '#0ECB81', color: '#2A2E36', fontWeight: 700, whiteSpace: 'nowrap' }}
                             onClick={() => handleQuickAssign(lead)}
                           >✓ Apply</button>
                           <button
-                            className="aax-super-admin-btn aax-super-admin-btn-small"
+                            className="crm-super-admin-btn crm-super-admin-btn-small"
                             style={{ background: '#444A55', color: '#EAECEF' }}
                             onClick={() => { setQuickAssignLeadId(null); setQuickAssignAgentId(''); }}
                           >✕ Cancel</button>
@@ -1505,11 +1505,11 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
 
           {totalPages > 1 && (
             <div style={{ display: 'flex', gap: 8, marginTop: 12, alignItems: 'center' }}>
-              <button className="aax-super-admin-btn aax-super-admin-btn-small aax-pagination-btn-gold" disabled={page === 1} onClick={() => setPage(1)}>«</button>
-              <button className="aax-super-admin-btn aax-super-admin-btn-small aax-pagination-btn-gold" disabled={page === 1} onClick={() => setPage(p => p - 1)}>‹ Prev</button>
+              <button className="crm-super-admin-btn crm-super-admin-btn-small crm-pagination-btn-gold" disabled={page === 1} onClick={() => setPage(1)}>«</button>
+              <button className="crm-super-admin-btn crm-super-admin-btn-small crm-pagination-btn-gold" disabled={page === 1} onClick={() => setPage(p => p - 1)}>‹ Prev</button>
               <span style={{ color: '#848E9C', fontSize: 12 }}>Page {page} of {totalPages}</span>
-              <button className="aax-super-admin-btn aax-super-admin-btn-small aax-pagination-btn-gold" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>Next ›</button>
-              <button className="aax-super-admin-btn aax-super-admin-btn-small aax-pagination-btn-gold" disabled={page >= totalPages} onClick={() => setPage(totalPages)}>»</button>
+              <button className="crm-super-admin-btn crm-super-admin-btn-small crm-pagination-btn-gold" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>Next ›</button>
+              <button className="crm-super-admin-btn crm-super-admin-btn-small crm-pagination-btn-gold" disabled={page >= totalPages} onClick={() => setPage(totalPages)}>»</button>
             </div>
           )}
         </div>
@@ -1605,7 +1605,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, marginBottom: 20 }}>
               <div>
                 <label style={{ fontSize: 11, color: '#848E9C', display: 'block', marginBottom: 6 }}>Select Status</label>
-                <select className="aax-super-admin-select" style={{ width: '100%' }} value={profileStage} onChange={e => setProfileStage(e.target.value)}>
+                <select className="crm-super-admin-select" style={{ width: '100%' }} value={profileStage} onChange={e => setProfileStage(e.target.value)}>
                   {LEAD_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
@@ -1631,7 +1631,7 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
               <div style={{ marginBottom: 12 }}>
                 <div style={{ fontSize: 11, color: '#F0B90B', fontWeight: 600, marginBottom: 4 }}>Quick Assign to Agent</div>
                 <select
-                  className="aax-super-admin-select"
+                  className="crm-super-admin-select"
                   style={{ width: '100%' }}
                   value={reassignAgentId}
                   onChange={e => {
@@ -1677,14 +1677,14 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                   <div style={{ flex: '1 1 160px' }}>
                     <div style={{ fontSize: 11, color: '#848E9C', marginBottom: 4 }}>Office</div>
-                    <select className="aax-super-admin-select" style={{ width: '100%' }} value={reassignOfficeId} onChange={e => { setReassignOfficeId(e.target.value); setReassignTeamId(''); setReassignAgentId(''); }}>
+                    <select className="crm-super-admin-select" style={{ width: '100%' }} value={reassignOfficeId} onChange={e => { setReassignOfficeId(e.target.value); setReassignTeamId(''); setReassignAgentId(''); }}>
                       <option value="">None (Pool)</option>
                       {data.offices.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
                     </select>
                   </div>
                   <div style={{ flex: '1 1 160px' }}>
                     <div style={{ fontSize: 11, color: '#848E9C', marginBottom: 4 }}>Team</div>
-                    <select className="aax-super-admin-select" style={{ width: '100%' }} value={reassignTeamId} onChange={e => { setReassignTeamId(e.target.value); setReassignAgentId(''); }} disabled={!reassignOfficeId}>
+                    <select className="crm-super-admin-select" style={{ width: '100%' }} value={reassignTeamId} onChange={e => { setReassignTeamId(e.target.value); setReassignAgentId(''); }} disabled={!reassignOfficeId}>
                       <option value="">None</option>
                       {data.teams.filter(t => t.officeId === reassignOfficeId).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                     </select>
@@ -1822,12 +1822,12 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
             {/* Action Buttons */}
             <div style={{ display: 'flex', gap: 10, justifyContent: 'space-between', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <button className="aax-super-admin-btn aax-super-admin-btn-small" onClick={saveProfile}>💾 Save Changes</button>
-                <button className="aax-super-admin-btn aax-super-admin-btn-small aax-super-admin-btn-secondary" onClick={unassignLead}>Return to Pool</button>
+                <button className="crm-super-admin-btn crm-super-admin-btn-small" onClick={saveProfile}>💾 Save Changes</button>
+                <button className="crm-super-admin-btn crm-super-admin-btn-small crm-super-admin-btn-secondary" onClick={unassignLead}>Return to Pool</button>
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <button
-                  className="aax-super-admin-btn aax-super-admin-btn-small"
+                  className="crm-super-admin-btn crm-super-admin-btn-small"
                   style={{ background: '#7B2FBE', color: '#fff' }}
                   onClick={resetLeadStatus}
                   title="Reset stage to New and erase all status history"
@@ -1835,14 +1835,14 @@ function AllLeadsTable({ data, currentUser, setData, setLeadAssignment, showNoti
                   🔄 Reset Status
                 </button>
                 <button
-                  className="aax-super-admin-btn aax-super-admin-btn-small"
+                  className="crm-super-admin-btn crm-super-admin-btn-small"
                   style={{ background: '#8B3A1E', color: '#fff' }}
                   onClick={clearLeadComments}
                   title="Permanently delete all comments on this lead"
                 >
                   🗨 Clear Comments
                 </button>
-                <button className="aax-super-admin-btn aax-super-admin-btn-small" style={{ background: '#c0392b', color: '#fff' }} onClick={() => deleteLead(profileLead)}>🗑 Move to Bin</button>
+                <button className="crm-super-admin-btn crm-super-admin-btn-small" style={{ background: '#c0392b', color: '#fff' }} onClick={() => deleteLead(profileLead)}>🗑 Move to Bin</button>
               </div>
             </div>
           </div>
@@ -2004,17 +2004,17 @@ function RecycleBin({ data, setData, showNotification }) {
           <div style={{ fontSize: 12, color: '#848E9C', marginTop: 4 }}>{totalCount} item{totalCount !== 1 ? 's' : ''} pending permanent deletion.</div>
         </div>
         {totalCount > 0 && (
-          <button className="aax-super-admin-btn" style={{ background: '#c0392b', color: '#fff' }} onClick={emptyAll}>Empty Bin</button>
+          <button className="crm-super-admin-btn" style={{ background: '#c0392b', color: '#fff' }} onClick={emptyAll}>Empty Bin</button>
         )}
       </div>
 
-      <div className="aax-super-admin-card" style={{ marginBottom: 20 }}>
+      <div className="crm-super-admin-card" style={{ marginBottom: 20 }}>
         <h3 style={{ margin: '0 0 12px 0', fontSize: 13, color: '#848E9C', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Deleted Leads ({deletedLeads.length})</h3>
         {deletedLeads.length === 0 ? (
           <div style={{ color: '#848E9C', fontSize: 13, padding: 12, textAlign: 'center' }}>No deleted leads.</div>
         ) : (
-          <div className="aax-super-admin-table-wrapper">
-            <table className="aax-super-admin-table">
+          <div className="crm-super-admin-table-wrapper">
+            <table className="crm-super-admin-table">
               <thead><tr><th>Name</th><th>Email</th><th>Country</th><th>Status</th><th>Deleted</th><th>Actions</th></tr></thead>
               <tbody>
                 {deletedLeads.map(lead => (
@@ -2022,11 +2022,11 @@ function RecycleBin({ data, setData, showNotification }) {
                     <td style={{ fontWeight: 600 }}>{lead.firstName} {lead.lastName}</td>
                     <td style={{ fontSize: 12, color: '#848E9C' }}>{lead.email}</td>
                     <td>{lead.country}</td>
-                    <td><span className={`aax-status-badge ${statusClass(lead.stage)}`}>{normalizeStage(lead.stage)}</span></td>
+                    <td><span className={`crm-status-badge ${statusClass(lead.stage)}`}>{normalizeStage(lead.stage)}</span></td>
                     <td style={{ fontSize: 11, color: '#848E9C' }}>{lead.deletedAt ? new Date(lead.deletedAt).toLocaleString() : '-'}</td>
                     <td style={{ whiteSpace: 'nowrap' }}>
-                      <button className="aax-super-admin-btn aax-super-admin-btn-small" style={{ background: '#0ECB81', color: '#2A2E36' }} onClick={() => restoreLead(lead)}>↻ Restore</button>
-                      <button className="aax-super-admin-btn aax-super-admin-btn-small" style={{ marginLeft: 4, background: '#c0392b', color: '#fff' }} onClick={() => purgeLead(lead)}>✕ Delete</button>
+                      <button className="crm-super-admin-btn crm-super-admin-btn-small" style={{ background: '#0ECB81', color: '#2A2E36' }} onClick={() => restoreLead(lead)}>↻ Restore</button>
+                      <button className="crm-super-admin-btn crm-super-admin-btn-small" style={{ marginLeft: 4, background: '#c0392b', color: '#fff' }} onClick={() => purgeLead(lead)}>✕ Delete</button>
                     </td>
                   </tr>
                 ))}
@@ -2036,13 +2036,13 @@ function RecycleBin({ data, setData, showNotification }) {
         )}
       </div>
 
-      <div className="aax-super-admin-card">
+      <div className="crm-super-admin-card">
         <h3 style={{ margin: '0 0 12px 0', fontSize: 13, color: '#848E9C', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Deleted Offices  /  Teams  /  Agents ({recycleBin.length})</h3>
         {recycleBin.length === 0 ? (
           <div style={{ color: '#848E9C', fontSize: 13, padding: 12, textAlign: 'center' }}>No deleted offices, teams, or agents.</div>
         ) : (
-          <div className="aax-super-admin-table-wrapper">
-            <table className="aax-super-admin-table">
+          <div className="crm-super-admin-table-wrapper">
+            <table className="crm-super-admin-table">
               <thead><tr><th>Type</th><th>Name</th><th>Deleted</th><th>Actions</th></tr></thead>
               <tbody>
                 {recycleBin.map(entry => (
@@ -2051,8 +2051,8 @@ function RecycleBin({ data, setData, showNotification }) {
                     <td style={{ fontWeight: 600 }}>{entry.item?.name || entry.item?.firstName || entry.id}</td>
                     <td style={{ fontSize: 11, color: '#848E9C' }}>{entry.deletedAt ? new Date(entry.deletedAt).toLocaleString() : '-'}</td>
                     <td style={{ whiteSpace: 'nowrap' }}>
-                      <button className="aax-super-admin-btn aax-super-admin-btn-small" style={{ background: '#0ECB81', color: '#2A2E36' }} onClick={() => restoreItem(entry)}>↻ Restore</button>
-                      <button className="aax-super-admin-btn aax-super-admin-btn-small" style={{ marginLeft: 4, background: '#c0392b', color: '#fff' }} onClick={() => purgeItem(entry)}>✕ Delete</button>
+                      <button className="crm-super-admin-btn crm-super-admin-btn-small" style={{ background: '#0ECB81', color: '#2A2E36' }} onClick={() => restoreItem(entry)}>↻ Restore</button>
+                      <button className="crm-super-admin-btn crm-super-admin-btn-small" style={{ marginLeft: 4, background: '#c0392b', color: '#fff' }} onClick={() => purgeItem(entry)}>✕ Delete</button>
                     </td>
                   </tr>
                 ))}
@@ -2107,10 +2107,10 @@ function ClientBackOfficeManager({ data, showNotification }) {
   };
 
   return (
-    <div className="aax-super-admin-card" style={{ padding: 22 }}>
+    <div className="crm-super-admin-card" style={{ padding: 22 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 20 }}>
         <div><h2 style={{ margin: 0 }}>Client Back Office</h2><p style={{ color: '#848E9C', fontSize: 13, margin: '6px 0 0' }}>Configure the business tools inside a client&apos;s Back Office.</p></div>
-        <select className="aax-super-admin-select" value={selectedId} onChange={(event) => setSelectedId(event.target.value)} style={{ minWidth: 240 }}>
+        <select className="crm-super-admin-select" value={selectedId} onChange={(event) => setSelectedId(event.target.value)} style={{ minWidth: 240 }}>
           <option value="">Select a client</option>
           {clients.map((client) => <option key={client.id} value={client.id}>{client.firstName} {client.lastName} · {client.email}</option>)}
         </select>
@@ -2122,11 +2122,11 @@ function ClientBackOfficeManager({ data, showNotification }) {
               const link = getLink(type);
               return <div key={type} style={{ border: '1px solid #444A55', borderRadius: 9, padding: 16, background: '#2A2E36' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 8 }}><div><strong>{title}</strong><div style={{ color: '#848E9C', fontSize: 12, marginTop: 3 }}>{detail}</div></div><select value={link.status || 'not_connected'} onChange={(event) => updateLink(type, { status: event.target.value })} style={{ background: '#363B44', color: '#EAECEF', border: '1px solid #4A515C', borderRadius: 6, padding: '6px 8px', fontSize: 12 }}><option value="not_connected">Not connected</option><option value="requested">Connection requested</option><option value="connected">Connected</option><option value="expired">Expired</option></select></div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}><input className="aax-super-admin-input" value={link.provider || ''} onChange={(event) => updateLink(type, { provider: event.target.value })} placeholder="Provider (Zoho, Hostinger, WordPress...)" /><input className="aax-super-admin-input" value={link.url || ''} onChange={(event) => updateLink(type, { url: event.target.value })} placeholder="External URL" /></div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}><input className="crm-super-admin-input" value={link.provider || ''} onChange={(event) => updateLink(type, { provider: event.target.value })} placeholder="Provider (Zoho, Hostinger, WordPress...)" /><input className="crm-super-admin-input" value={link.url || ''} onChange={(event) => updateLink(type, { url: event.target.value })} placeholder="External URL" /></div>
               </div>;
             })}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 18 }}><button className="aax-super-admin-btn" onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save Back Office'}</button></div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 18 }}><button className="crm-super-admin-btn" onClick={save} disabled={saving}>{saving ? 'Saving...' : 'Save Back Office'}</button></div>
         </>
       )}
     </div>
@@ -2290,7 +2290,6 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
     }
   };
 
-  const [panelTransactions, setPanelTransactions] = useState([]);
   const [panelActivityLog, setPanelActivityLog] = useState([]);
   const [panelAuditLog, setPanelAuditLog] = useState([]);
 
@@ -2337,8 +2336,6 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
     agentId: lead.assignedToAgent,
     leadStatus: lead.stage,
     password: lead.clientPassword || '',
-    balances: lead.balances || {},
-    balanceHistory: lead.balanceHistory || [],
     accountStatus: lead.accountStatus || 'active',
   }));
 
@@ -2352,8 +2349,6 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
         agentId: l.assignedToAgent,
         leadStatus: l.stage,
         password: l.clientPassword || '',
-        balances: l.balances || {},
-        balanceHistory: l.balanceHistory || [],
         accountStatus: l.accountStatus || 'active',
       }));
       const updated = typeof updater === 'function' ? updater(mapped) : updater;
@@ -2380,8 +2375,6 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
             stage: u.stage ?? u.leadStatus ?? l.stage,
             status: u.status ?? l.status,
             clientPassword: u.clientPassword ?? u.password ?? l.clientPassword,
-            balances: u.balances || {},
-            balanceHistory: u.balanceHistory || [],
             accountStatus: u.accountStatus || 'active',
           };
           if (
@@ -2428,7 +2421,6 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
   const dataContextValue = {
     leads: leadAccounts, setLeads: setLeadAccounts,
     users: leadAccounts, setUsers: setLeadAccounts,
-    transactionData: panelTransactions, setTransactionData: setPanelTransactions,
     activityLog: panelActivityLog, setActivityLog: setPanelActivityLog,
     auditLog: panelAuditLog, setAuditLog: setPanelAuditLog,
     logAdminAction,
@@ -2761,7 +2753,7 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
   return (
     <NotificationContext.Provider value={showPanelNotification}>
       <DataContext.Provider value={dataContextValue}>
-        <div className="aax-super-admin-container">
+        <div className="crm-super-admin-container">
           {saConfirmDialog}
           {editingOffice && (() => {
             const _mgr = editingOffice._mgr || null;
@@ -2772,14 +2764,14 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
             return <EditTeamModal team={editingTeam} offices={data.offices} teamLeader={_ldr} isLeaderBlocked={_ldr ? !!staffBlockedStatus[_ldr.id] : false} onBlock={_ldr ? () => blockUnblockStaff(_ldr.id, ROLE.TEAM_LEADER) : undefined} onClose={() => setEditingTeam(null)} onSave={saveTeamEdit} />;
           })()}
           {editingAgent && <EditAgentModal agent={editingAgent} teams={data.teams} isBlocked={!!staffBlockedStatus[editingAgent.id]} onBlock={() => blockUnblockStaff(editingAgent.id, ROLE.AGENT)} onClose={() => setEditingAgent(null)} onSave={saveAgentEdit} />}
-          <div className="aax-super-admin-header aax-role-panel-header">
-            <div className="aax-super-admin-header-top">
-              <h3 className="aax-super-admin-title">⚙ Super Admin Panel</h3>
+          <div className="crm-super-admin-header crm-role-panel-header">
+            <div className="crm-super-admin-header-top">
+              <h3 className="crm-super-admin-title">⚙ Super Admin Panel</h3>
               <HealthIndicator token={getAdminToken()} />
             </div>
             <div
               ref={tabsScrollRef}
-              className="aax-super-admin-tabs"
+              className="crm-super-admin-tabs"
             >
               {tabs.map(tab => {
                 const badge = 0;
@@ -2787,12 +2779,12 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                   <button
                     key={tab.name}
                     onClick={() => setActiveTab(tab.name)}
-                    className={`aax-super-admin-tab-btn ${activeTab === tab.name ? 'aax-active' : ''}`}
+                    className={`crm-super-admin-tab-btn ${activeTab === tab.name ? 'crm-active' : ''}`}
                   >
                     <FontAwesomeIcon icon={tab.icon} />
                     {tab.name}
                     {badge > 0 && (
-                      <span className="aax-tab-pending-badge" aria-label={`${badge} pending`}>
+                      <span className="crm-tab-pending-badge" aria-label={`${badge} pending`}>
                         {badge > 99 ? '99+' : badge}
                       </span>
                     )}
@@ -2801,9 +2793,9 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
               })}
             </div>
           </div>
-          <div className="aax-super-admin-content">
+          <div className="crm-super-admin-content">
             {activeTab === 'Sessions' ? (
-              <div className="aax-super-admin-card">
+              <div className="crm-super-admin-card">
                 <h2 style={{ marginBottom: 6 }}>🟢 Live Sessions</h2>
                 <p style={{ color: '#848E9C', fontSize: 13, marginBottom: 20 }}>
                   Real-time view of who is online across all offices, teams, and the client portal. Track individuals to get notified when they come online.
@@ -2812,30 +2804,30 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
               </div>
             ) : activeTab === 'Leads' ? (
               <div className="leads-content">
-                <div className="aax-tab-row">
-                  <button className={"aax-tab-btn " + (activeSubTab === 'Lead Management' ? 'aax-active' : '')} onClick={() => setActiveSubTab('Lead Management')}>
+                <div className="crm-tab-row">
+                  <button className={"crm-tab-btn " + (activeSubTab === 'Lead Management' ? 'crm-active' : '')} onClick={() => setActiveSubTab('Lead Management')}>
                     Lead Management
                   </button>
-                  <button className={"aax-tab-btn " + (activeSubTab === 'Lead Upload' ? 'aax-active' : '')} onClick={() => setActiveSubTab('Lead Upload')}>
+                  <button className={"crm-tab-btn " + (activeSubTab === 'Lead Upload' ? 'crm-active' : '')} onClick={() => setActiveSubTab('Lead Upload')}>
                     Lead Upload
                   </button>
-                  <button className={"aax-tab-btn " + (activeSubTab === 'Back Office' ? 'aax-active' : '')} onClick={() => setActiveSubTab('Back Office')}>
+                  <button className={"crm-tab-btn " + (activeSubTab === 'Back Office' ? 'crm-active' : '')} onClick={() => setActiveSubTab('Back Office')}>
                     Back Office
                   </button>
-                  <button className={"aax-tab-btn " + (activeSubTab === 'Registrations' ? 'aax-active' : '')} onClick={() => setActiveSubTab('Registrations')}>
+                  <button className={"crm-tab-btn " + (activeSubTab === 'Registrations' ? 'crm-active' : '')} onClick={() => setActiveSubTab('Registrations')}>
                     Registrations
                   </button>
-                  <button className={"aax-tab-btn " + (activeSubTab === 'Notifications' ? 'aax-active' : '')} onClick={() => setActiveSubTab('Notifications')}>
+                  <button className={"crm-tab-btn " + (activeSubTab === 'Notifications' ? 'crm-active' : '')} onClick={() => setActiveSubTab('Notifications')}>
                     Notifications
                   </button>
-                  <button className={"aax-tab-btn " + (activeSubTab === 'Security' ? 'aax-active' : '')} onClick={() => setActiveSubTab('Security')} style={{ position: 'relative' }}>
+                  <button className={"crm-tab-btn " + (activeSubTab === 'Security' ? 'crm-active' : '')} onClick={() => setActiveSubTab('Security')} style={{ position: 'relative' }}>
                     Security
-                    {pendingCounts.password_resets > 0 && <span className="aax-tab-pending-badge" aria-label={`${pendingCounts.password_resets} pending`}>{pendingCounts.password_resets > 99 ? '99+' : pendingCounts.password_resets}</span>}
+                    {pendingCounts.password_resets > 0 && <span className="crm-tab-pending-badge" aria-label={`${pendingCounts.password_resets} pending`}>{pendingCounts.password_resets > 99 ? '99+' : pendingCounts.password_resets}</span>}
                   </button>
                 </div>
                 {activeSubTab === 'Lead Management' ? (
                   <div>
-                    <div className="aax-super-admin-card">
+                    <div className="crm-super-admin-card">
                       <h2 style={{ marginBottom: 6 }}>[users] Lead Management</h2>
                       <p style={{ color: '#848E9C', fontSize: 13, marginBottom: 20 }}>
                         Leads are the single account source visible to agents, teams, and offices - filtered by their scope. Here you see every record system-wide.
@@ -2845,7 +2837,7 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                   </div>
                 ) : activeSubTab === 'Lead Upload' ? (
                   <div style={{ padding: 24 }}>
-                    <div className="aax-super-admin-card" style={{ marginBottom: 20 }}>
+                    <div className="crm-super-admin-card" style={{ marginBottom: 20 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                         <div>
                           <h2 style={{ margin: '0 0 4px 0' }}>[upload] Lead Import</h2>
@@ -2853,24 +2845,24 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                         </div>
                         <a href="data:text/csv;charset=utf-8,firstName,lastName,email,phone,country,funnel,affiliate" download="leads-template.csv" style={{ padding: '8px 16px', background: '#444A55', color: '#EAECEF', borderRadius: 8, fontSize: 13, textDecoration: 'none', border: '1px solid #3C4754', whiteSpace: 'nowrap' }}>⬇ Template</a>
                       </div>
-                      <div className="aax-super-admin-form-row" style={{ marginBottom: 0 }}>
-                        <div className="aax-super-admin-form-group">
+                      <div className="crm-super-admin-form-row" style={{ marginBottom: 0 }}>
+                        <div className="crm-super-admin-form-group">
                           <label>Assign to Office</label>
-                          <select className="aax-super-admin-select" value={uploadOfficeId} onChange={e => { setUploadOfficeId(e.target.value); setUploadTeamId(''); setUploadAgentId(''); }}>
+                          <select className="crm-super-admin-select" value={uploadOfficeId} onChange={e => { setUploadOfficeId(e.target.value); setUploadTeamId(''); setUploadAgentId(''); }}>
                             <option value="">- Any Office -</option>
                             {data.offices.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
                           </select>
                         </div>
-                        <div className="aax-super-admin-form-group">
+                        <div className="crm-super-admin-form-group">
                           <label>Assign to Team</label>
-                          <select className="aax-super-admin-select" value={uploadTeamId} onChange={e => { setUploadTeamId(e.target.value); setUploadAgentId(''); }}>
+                          <select className="crm-super-admin-select" value={uploadTeamId} onChange={e => { setUploadTeamId(e.target.value); setUploadAgentId(''); }}>
                             <option value="">- Any Team -</option>
                             {data.teams.filter(t => !uploadOfficeId || t.officeId === uploadOfficeId).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                           </select>
                         </div>
-                        <div className="aax-super-admin-form-group">
+                        <div className="crm-super-admin-form-group">
                           <label>Assign to Agent</label>
-                          <select className="aax-super-admin-select" value={uploadAgentId} onChange={e => setUploadAgentId(e.target.value)}>
+                          <select className="crm-super-admin-select" value={uploadAgentId} onChange={e => setUploadAgentId(e.target.value)}>
                             <option value="">- Any Agent -</option>
                             {data.users.filter(u => u.role === ROLE.AGENT && (!uploadTeamId || u.teamId === uploadTeamId)).map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                           </select>
@@ -2878,7 +2870,7 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                       </div>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-                      <div className="aax-super-admin-card">
+                      <div className="crm-super-admin-card">
                         <h3 style={{ margin: '0 0 16px 0', fontSize: 14, fontWeight: 600 }}>CSV File Import</h3>
                         <div
                           onDragOver={e => { e.preventDefault(); setUploadDragOver(true); }}
@@ -2921,14 +2913,14 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                               <span style={{ color: '#848E9C', fontSize: 13 }}>{csvPreview.length} rows detected</span>
                               <button onClick={() => { setCsvPreview([]); setImportResults(null); }} style={{ padding: '3px 10px', background: 'transparent', border: '1px solid #3C4754', borderRadius: 6, color: '#848E9C', fontSize: 12, cursor: 'pointer' }}>✕ Clear</button>
                             </div>
-                            <div className="aax-super-admin-table-wrapper" style={{ maxHeight: 220, overflowY: 'auto', marginBottom: 12 }}>
-                              <table className="aax-super-admin-table">
+                            <div className="crm-super-admin-table-wrapper" style={{ maxHeight: 220, overflowY: 'auto', marginBottom: 12 }}>
+                              <table className="crm-super-admin-table">
                                 <thead><tr>{csvPreview[0] && Object.keys(csvPreview[0]).map(h => <th key={h}>{h}</th>)}</tr></thead>
                                 <tbody>{csvPreview.slice(0,10).map((row,i) => <tr key={i}>{Object.values(row).map((v,j) => <td key={j}>{v||'-'}</td>)}</tr>)}</tbody>
                               </table>
                             </div>
                             {csvPreview.length > 10 && <p style={{ color: '#848E9C', fontSize: 11, marginBottom: 10, margin: '0 0 10px 0' }}>Showing first 10 of {csvPreview.length} rows</p>}
-                            <button className="aax-super-admin-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={async () => {
+                            <button className="crm-super-admin-btn" style={{ width: '100%', justifyContent: 'center' }} onClick={async () => {
                               let successCount = 0;
                               let failCount = 0;
                               for (const row of csvPreview) {
@@ -2959,14 +2951,14 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                           </div>
                         )}
                       </div>
-                      <div className="aax-super-admin-card">
+                      <div className="crm-super-admin-card">
                         <h3 style={{ margin: '0 0 16px 0', fontSize: 14, fontWeight: 600 }}>Manual Entry</h3>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                            <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>First Name *</div><input className="aax-super-admin-input" placeholder="First name..." value={manualLead.firstName} onChange={e => setManualLead(p => ({ ...p, firstName: e.target.value }))} autoComplete="off" /></div>
-                            <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Last Name</div><input className="aax-super-admin-input" placeholder="Last name..." value={manualLead.lastName} onChange={e => setManualLead(p => ({ ...p, lastName: e.target.value }))} autoComplete="off" /></div>
+                            <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>First Name *</div><input className="crm-super-admin-input" placeholder="First name..." value={manualLead.firstName} onChange={e => setManualLead(p => ({ ...p, firstName: e.target.value }))} autoComplete="off" /></div>
+                            <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Last Name</div><input className="crm-super-admin-input" placeholder="Last name..." value={manualLead.lastName} onChange={e => setManualLead(p => ({ ...p, lastName: e.target.value }))} autoComplete="off" /></div>
                           </div>
-                          <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Email *</div><input className="aax-super-admin-input" placeholder="email@example.com" type="email" value={manualLead.email} onChange={e => setManualLead(p => ({ ...p, email: e.target.value }))} autoComplete="off" /></div>
+                          <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Email *</div><input className="crm-super-admin-input" placeholder="email@example.com" type="email" value={manualLead.email} onChange={e => setManualLead(p => ({ ...p, email: e.target.value }))} autoComplete="off" /></div>
                           <div>
                             <div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Country</div>
                             <CountrySelect
@@ -2993,10 +2985,10 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                             />
                           </div>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                            <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Funnel</div><input className="aax-super-admin-input" placeholder="Funnel name..." value={manualLead.funnel} onChange={e => setManualLead(p => ({ ...p, funnel: e.target.value }))} autoComplete="off" /></div>
-                            <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Affiliate</div><input className="aax-super-admin-input" placeholder="Affiliate code..." value={manualLead.affiliate} onChange={e => setManualLead(p => ({ ...p, affiliate: e.target.value }))} autoComplete="off" /></div>
+                            <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Funnel</div><input className="crm-super-admin-input" placeholder="Funnel name..." value={manualLead.funnel} onChange={e => setManualLead(p => ({ ...p, funnel: e.target.value }))} autoComplete="off" /></div>
+                            <div><div style={{ fontSize: 12, color: '#848E9C', marginBottom: 4 }}>Affiliate</div><input className="crm-super-admin-input" placeholder="Affiliate code..." value={manualLead.affiliate} onChange={e => setManualLead(p => ({ ...p, affiliate: e.target.value }))} autoComplete="off" /></div>
                           </div>
-                          <button className="aax-super-admin-btn" style={{ width: '100%', justifyContent: 'center', marginTop: 4 }} disabled={!manualLead.firstName || !manualLead.email} onClick={async () => {
+                          <button className="crm-super-admin-btn" style={{ width: '100%', justifyContent: 'center', marginTop: 4 }} disabled={!manualLead.firstName || !manualLead.email} onClick={async () => {
                             const emailVal = (manualLead.email || '').trim();
                             if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailVal)) {
                               alert('Please enter a valid email address.');
@@ -3072,53 +3064,53 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
               />
             ) : activeTab === 'Staff' ? (
               <div style={{ padding: 24 }}>
-                <div className="aax-tab-row" style={{ marginBottom: 18 }}>
-                  <button className={"aax-tab-btn " + (staffSubTab === 'Staff' ? 'aax-active' : '')} onClick={() => setStaffSubTab('Staff')}>
+                <div className="crm-tab-row" style={{ marginBottom: 18 }}>
+                  <button className={"crm-tab-btn " + (staffSubTab === 'Staff' ? 'crm-active' : '')} onClick={() => setStaffSubTab('Staff')}>
                     Staff
                   </button>
-                  <button className={"aax-tab-btn " + (staffSubTab === 'Offices' ? 'aax-active' : '')} onClick={() => setStaffSubTab('Offices')}>
+                  <button className={"crm-tab-btn " + (staffSubTab === 'Offices' ? 'crm-active' : '')} onClick={() => setStaffSubTab('Offices')}>
                     Offices
                   </button>
-                  <button className={"aax-tab-btn " + (staffSubTab === 'Teams' ? 'aax-active' : '')} onClick={() => setStaffSubTab('Teams')}>
+                  <button className={"crm-tab-btn " + (staffSubTab === 'Teams' ? 'crm-active' : '')} onClick={() => setStaffSubTab('Teams')}>
                     Teams
                   </button>
-                  <button className={"aax-tab-btn " + (staffSubTab === 'Agents' ? 'aax-active' : '')} onClick={() => setStaffSubTab('Agents')}>
+                  <button className={"crm-tab-btn " + (staffSubTab === 'Agents' ? 'crm-active' : '')} onClick={() => setStaffSubTab('Agents')}>
                     Agents
                   </button>
                 </div>
 
                 {staffSubTab === 'Offices' ? (
                   <div>
-                    <div className="aax-super-admin-card" style={{ marginBottom: 20 }}>
+                    <div className="crm-super-admin-card" style={{ marginBottom: 20 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
                           <h2 style={{ margin: '0 0 4px 0' }}>[office] Offices</h2>
                           <p style={{ margin: 0, color: '#848E9C', fontSize: 13 }}>{data.offices.length} offices &mdash; manage offices and their managers</p>
                         </div>
-                        <button className="aax-super-admin-btn" onClick={() => setExpandedOffices(prev => { const s = new Set(prev); s.has('__create') ? s.delete('__create') : s.add('__create'); return s; })}>
+                        <button className="crm-super-admin-btn" onClick={() => setExpandedOffices(prev => { const s = new Set(prev); s.has('__create') ? s.delete('__create') : s.add('__create'); return s; })}>
                           {expandedOffices.has('__create') ? '✕ Cancel' : '+ New Office'}
                         </button>
                       </div>
                     </div>
                     {expandedOffices.has('__create') && (
-                      <div className="aax-super-admin-card" style={{ marginBottom: 20, background: 'rgba(243,186,47,0.04)', borderColor: '#F0B90B30' }}>
+                      <div className="crm-super-admin-card" style={{ marginBottom: 20, background: 'rgba(243,186,47,0.04)', borderColor: '#F0B90B30' }}>
                         <h3 style={{ margin: '0 0 14px 0', fontSize: 14, fontWeight: 600 }}>New Office &amp; Manager</h3>
-                        <div className="aax-super-admin-form-row">
-                          <div className="aax-super-admin-form-group">
+                        <div className="crm-super-admin-form-row">
+                          <div className="crm-super-admin-form-group">
                             <label>Office Name</label>
-                            <input className="aax-super-admin-input" autoComplete="off" placeholder="Office name..." value={officeName} onChange={e => setOfficeName(e.target.value)} />
+                            <input className="crm-super-admin-input" autoComplete="off" placeholder="Office name..." value={officeName} onChange={e => setOfficeName(e.target.value)} />
                           </div>
-                          <div className="aax-super-admin-form-group">
+                          <div className="crm-super-admin-form-group">
                             <label>Manager Name</label>
-                            <input className="aax-super-admin-input" autoComplete="off" placeholder="Manager name..." value={managerName} onChange={e => setManagerName(e.target.value)} />
+                            <input className="crm-super-admin-input" autoComplete="off" placeholder="Manager name..." value={managerName} onChange={e => setManagerName(e.target.value)} />
                           </div>
-                          <div className="aax-super-admin-form-group">
+                          <div className="crm-super-admin-form-group">
                             <label>Password</label>
-                            <input className="aax-super-admin-input" autoComplete="new-password" placeholder="Password..." type="password" value={managerPassword} onChange={e => setManagerPassword(e.target.value)} />
+                            <input className="crm-super-admin-input" autoComplete="new-password" placeholder="Password..." type="password" value={managerPassword} onChange={e => setManagerPassword(e.target.value)} />
                           </div>
-                          <div className="aax-super-admin-form-group" style={{ justifyContent: 'flex-end' }}>
+                          <div className="crm-super-admin-form-group" style={{ justifyContent: 'flex-end' }}>
                             <label style={{ visibility: 'hidden' }}>_</label>
-                            <button className="aax-super-admin-btn" disabled={!officeName || !managerName || !managerPassword} onClick={async () => {
+                            <button className="crm-super-admin-btn" disabled={!officeName || !managerName || !managerPassword} onClick={async () => {
                               const newMgr = await createOfficeWithManager(officeName, managerName, managerPassword);
                               if (newMgr) setNewManager(newMgr);
                               setOfficeName(''); setManagerName(''); setManagerPassword('');
@@ -3127,20 +3119,20 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                           </div>
                         </div>
                         {newManager && (
-                          <div className="aax-credentials-output-container" style={{ marginTop: 14 }}>
+                          <div className="crm-credentials-output-container" style={{ marginTop: 14 }}>
                             <h4 style={{ margin: '0 0 10px 0', fontSize: 13 }}>Created: {newManager.name}</h4>
-                            <div className="aax-credential-item"><span>Login Link</span><code>{newManager.loginLink}</code><button className="aax-link-copy-btn" onClick={() => copyToClipboard(newManager.loginLink)}>[list] Copy</button></div>
-                            <div className="aax-credential-item"><span>Password</span><code>{newManager.password}</code><button className="aax-link-copy-btn" onClick={() => copyToClipboard(newManager.password)}>[list] Copy</button></div>
+                            <div className="crm-credential-item"><span>Login Link</span><code>{newManager.loginLink}</code><button className="crm-link-copy-btn" onClick={() => copyToClipboard(newManager.loginLink)}>[list] Copy</button></div>
+                            <div className="crm-credential-item"><span>Password</span><code>{newManager.password}</code><button className="crm-link-copy-btn" onClick={() => copyToClipboard(newManager.password)}>[list] Copy</button></div>
                           </div>
                         )}
                       </div>
                     )}
-                    <div className="aax-super-admin-card">
+                    <div className="crm-super-admin-card">
                       <div style={{ marginBottom: 12 }}>
-                        <input className="aax-super-admin-input" style={{ width: '100%', maxWidth: 340 }} placeholder="[search]  Search offices or managers..." value={officeSearch} onChange={e => setOfficeSearch(e.target.value)} autoComplete="off" />
+                        <input className="crm-super-admin-input" style={{ width: '100%', maxWidth: 340 }} placeholder="[search]  Search offices or managers..." value={officeSearch} onChange={e => setOfficeSearch(e.target.value)} autoComplete="off" />
                       </div>
-                      <div className="aax-super-admin-table-wrapper">
-                        <table className="aax-super-admin-table">
+                      <div className="crm-super-admin-table-wrapper">
+                        <table className="crm-super-admin-table">
                           <thead>
                             <tr>
                               <th>ID</th>
@@ -3178,16 +3170,16 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                                   <td>
                                     {officeManager ? (
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                        <span className={'status-indicator ' + (officeManager.isLoggedIn ? 'aax-online' : 'aax-offline')}></span>
+                                        <span className={'status-indicator ' + (officeManager.isLoggedIn ? 'crm-online' : 'crm-offline')}></span>
                                         {officeManager.name}
                                       </div>
                                     ) : (
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                        <select className="aax-super-admin-select" style={{ fontSize: 12, padding: '3px 6px', flex: 1 }} value={officeId} onChange={e => setOfficeId(e.target.value)}>
+                                        <select className="crm-super-admin-select" style={{ fontSize: 12, padding: '3px 6px', flex: 1 }} value={officeId} onChange={e => setOfficeId(e.target.value)}>
                                           <option value="">Assign manager...</option>
                                           {data.users.filter(u => u.role === ROLE.OFFICE_MANAGER && !u.officeId).map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
                                         </select>
-                                        <button className="aax-super-admin-btn aax-super-admin-btn-small" disabled={!officeId} onClick={() => { assignOfficeManager(office.id, officeId); showNotification('Manager assigned!'); setOfficeId(''); }}>✓</button>
+                                        <button className="crm-super-admin-btn crm-super-admin-btn-small" disabled={!officeId} onClick={() => { assignOfficeManager(office.id, officeId); showNotification('Manager assigned!'); setOfficeId(''); }}>✓</button>
                                       </div>
                                     )}
                                   </td>
@@ -3197,16 +3189,16 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                                   <td style={{ textAlign: 'center', color: '#45d2a0', fontWeight: 600 }}>{officeDeposits}</td>
                                   <td>
                                     {officeManager ? (
-                                      <span className={'aax-badge ' + (staffBlockedStatus[officeManager.id] ? 'aax-badge-danger' : 'aax-badge-success')}>{staffBlockedStatus[officeManager.id] ? 'Blocked' : 'Active'}</span>
-                                    ) : <span className="aax-badge aax-badge-warning">No Manager</span>}
+                                      <span className={'crm-badge ' + (staffBlockedStatus[officeManager.id] ? 'crm-badge-danger' : 'crm-badge-success')}>{staffBlockedStatus[officeManager.id] ? 'Blocked' : 'Active'}</span>
+                                    ) : <span className="crm-badge crm-badge-warning">No Manager</span>}
                                   </td>
                                   <td>
                                     <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }} onClick={e => e.stopPropagation()}>
                                       {officeManager && (
-                                        <button className="aax-staff-action-btn btn-impersonate" onClick={() => navigate(`/admin/office-manager/${officeManager.id}`)} title="View panel">View Panel</button>
+                                        <button className="crm-staff-action-btn btn-impersonate" onClick={() => navigate(`/admin/office-manager/${officeManager.id}`)} title="View panel">View Panel</button>
                                       )}
-                                      <button className="aax-staff-action-btn btn-edit-name" onClick={() => setEditingOffice({ ...office, _mgr: officeManager })} title="Edit office"> Edit</button>
-                                      <button className="aax-staff-action-btn" style={{ background: 'rgba(246,70,93,0.15)', color: '#F6465D', border: '1px solid #F6465D40' }} onClick={() => softDeleteOffice(office)} title="Move office to bin">🗑 Delete</button>
+                                      <button className="crm-staff-action-btn btn-edit-name" onClick={() => setEditingOffice({ ...office, _mgr: officeManager })} title="Edit office"> Edit</button>
+                                      <button className="crm-staff-action-btn" style={{ background: 'rgba(246,70,93,0.15)', color: '#F6465D', border: '1px solid #F6465D40' }} onClick={() => softDeleteOffice(office)} title="Move office to bin">🗑 Delete</button>
                                     </div>
                                   </td>
                                 </tr>
@@ -3219,47 +3211,47 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                   </div>
                 ) : staffSubTab === 'Teams' ? (
                   <div style={{ padding: 24 }}>
-                    <div className="aax-super-admin-card" style={{ marginBottom: 20 }}>
+                    <div className="crm-super-admin-card" style={{ marginBottom: 20 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
                           <h2 style={{ margin: '0 0 4px 0' }}>[users] Teams</h2>
                           <p style={{ margin: 0, color: '#848E9C', fontSize: 13 }}>{data.teams.length} teams &mdash; manage teams and their leaders</p>
                         </div>
-                        <button className="aax-super-admin-btn" onClick={() => setExpandedTeams(prev => { const s = new Set(prev); s.has('__create') ? s.delete('__create') : s.add('__create'); return s; })}>
+                        <button className="crm-super-admin-btn" onClick={() => setExpandedTeams(prev => { const s = new Set(prev); s.has('__create') ? s.delete('__create') : s.add('__create'); return s; })}>
                           {expandedTeams.has('__create') ? '✕ Cancel' : '+ New Team'}
                         </button>
                       </div>
                     </div>
                     {expandedTeams.has('__create') && (
-                      <div className="aax-super-admin-card" style={{ marginBottom: 20, background: 'rgba(69,210,160,0.04)', borderColor: '#45d2a030' }}>
+                      <div className="crm-super-admin-card" style={{ marginBottom: 20, background: 'rgba(69,210,160,0.04)', borderColor: '#45d2a030' }}>
                         <h3 style={{ margin: '0 0 14px 0', fontSize: 14, fontWeight: 600 }}>New Team &amp; Leader</h3>
-                        <div className="aax-super-admin-form-row">
-                          <div className="aax-super-admin-form-group">
+                        <div className="crm-super-admin-form-row">
+                          <div className="crm-super-admin-form-group">
                             <label>Office</label>
-                            <select className="aax-super-admin-select" value={tlOfficeId} onChange={e => setTlOfficeId(e.target.value)}>
+                            <select className="crm-super-admin-select" value={tlOfficeId} onChange={e => setTlOfficeId(e.target.value)}>
                               <option value="">Choose office...</option>
                               {data.offices.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
                             </select>
                           </div>
-                          <div className="aax-super-admin-form-group">
+                          <div className="crm-super-admin-form-group">
                             <label>Team Name</label>
-                            <input className="aax-super-admin-input" autoComplete="off" placeholder="Team name..." value={tlTeamName} onChange={e => setTlTeamName(e.target.value)} />
+                            <input className="crm-super-admin-input" autoComplete="off" placeholder="Team name..." value={tlTeamName} onChange={e => setTlTeamName(e.target.value)} />
                           </div>
-                          <div className="aax-super-admin-form-group">
+                          <div className="crm-super-admin-form-group">
                             <label>Max Size</label>
-                            <input className="aax-super-admin-input" autoComplete="off" placeholder="e.g. 10" type="number" value={tlTeamSize} onChange={e => setTlTeamSize(e.target.value)} />
+                            <input className="crm-super-admin-input" autoComplete="off" placeholder="e.g. 10" type="number" value={tlTeamSize} onChange={e => setTlTeamSize(e.target.value)} />
                           </div>
-                          <div className="aax-super-admin-form-group">
+                          <div className="crm-super-admin-form-group">
                             <label>Leader Name</label>
-                            <input className="aax-super-admin-input" autoComplete="off" placeholder="Leader name..." value={tlLeaderName} onChange={e => setTlLeaderName(e.target.value)} />
+                            <input className="crm-super-admin-input" autoComplete="off" placeholder="Leader name..." value={tlLeaderName} onChange={e => setTlLeaderName(e.target.value)} />
                           </div>
-                          <div className="aax-super-admin-form-group">
+                          <div className="crm-super-admin-form-group">
                             <label>Password</label>
-                            <input className="aax-super-admin-input" autoComplete="new-password" placeholder="Password..." type="password" value={tlLeaderPassword} onChange={e => setTlLeaderPassword(e.target.value)} />
+                            <input className="crm-super-admin-input" autoComplete="new-password" placeholder="Password..." type="password" value={tlLeaderPassword} onChange={e => setTlLeaderPassword(e.target.value)} />
                           </div>
-                          <div className="aax-super-admin-form-group" style={{ justifyContent: 'flex-end' }}>
+                          <div className="crm-super-admin-form-group" style={{ justifyContent: 'flex-end' }}>
                             <label style={{ visibility: 'hidden' }}>_</label>
-                            <button className="aax-super-admin-btn" disabled={!tlOfficeId || !tlTeamName || !tlLeaderName || !tlLeaderPassword || !tlTeamSize} onClick={async () => {
+                            <button className="crm-super-admin-btn" disabled={!tlOfficeId || !tlTeamName || !tlLeaderName || !tlLeaderPassword || !tlTeamSize} onClick={async () => {
                               const newTl = await createTeamLeader(tlOfficeId, tlTeamName, tlLeaderName, tlLeaderPassword, tlTeamSize);
                               if (newTl) setNewTeamLeader(newTl);
                               setTlOfficeId(''); setTlTeamName(''); setTlLeaderName(''); setTlLeaderPassword(''); setTlTeamSize('');
@@ -3268,20 +3260,20 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                           </div>
                         </div>
                         {newTeamLeader && (
-                          <div className="aax-credentials-output-container" style={{ marginTop: 14 }}>
+                          <div className="crm-credentials-output-container" style={{ marginTop: 14 }}>
                             <h4 style={{ margin: '0 0 10px 0', fontSize: 13 }}>Created: {newTeamLeader.name}</h4>
-                            <div className="aax-credential-item"><span>Login Link</span><code>{newTeamLeader.loginLink}</code><button className="aax-link-copy-btn" onClick={() => copyToClipboard(newTeamLeader.loginLink)}>[list] Copy</button></div>
-                            <div className="aax-credential-item"><span>Password</span><code>{newTeamLeader.password}</code><button className="aax-link-copy-btn" onClick={() => copyToClipboard(newTeamLeader.password)}>[list] Copy</button></div>
+                            <div className="crm-credential-item"><span>Login Link</span><code>{newTeamLeader.loginLink}</code><button className="crm-link-copy-btn" onClick={() => copyToClipboard(newTeamLeader.loginLink)}>[list] Copy</button></div>
+                            <div className="crm-credential-item"><span>Password</span><code>{newTeamLeader.password}</code><button className="crm-link-copy-btn" onClick={() => copyToClipboard(newTeamLeader.password)}>[list] Copy</button></div>
                           </div>
                         )}
                       </div>
                     )}
-                    <div className="aax-super-admin-card">
+                    <div className="crm-super-admin-card">
                       <div style={{ marginBottom: 12 }}>
-                        <input className="aax-super-admin-input" style={{ width: '100%', maxWidth: 340 }} placeholder="[search]  Search teams, offices, or leaders..." value={teamSearch} onChange={e => setTeamSearch(e.target.value)} autoComplete="off" />
+                        <input className="crm-super-admin-input" style={{ width: '100%', maxWidth: 340 }} placeholder="[search]  Search teams, offices, or leaders..." value={teamSearch} onChange={e => setTeamSearch(e.target.value)} autoComplete="off" />
                       </div>
-                      <div className="aax-super-admin-table-wrapper">
-                        <table className="aax-super-admin-table">
+                      <div className="crm-super-admin-table-wrapper">
+                        <table className="crm-super-admin-table">
                           <thead>
                             <tr>
                               <th>ID</th>
@@ -3325,7 +3317,7 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                                   <td>
                                     {teamLeader ? (
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                        <span className={'status-indicator ' + (teamLeader.isLoggedIn ? 'aax-online' : 'aax-offline')}></span>
+                                        <span className={'status-indicator ' + (teamLeader.isLoggedIn ? 'crm-online' : 'crm-offline')}></span>
                                         {teamLeader.name}
                                       </div>
                                     ) : <span style={{ color: '#848E9C', fontSize: 12 }}>Unassigned</span>}
@@ -3335,16 +3327,16 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                                   <td style={{ textAlign: 'center', color: '#45d2a0', fontWeight: 600 }}>{teamDeposits}</td>
                                   <td>
                                     {teamLeader ? (
-                                      <span className={'aax-badge ' + (staffBlockedStatus[teamLeader.id] ? 'aax-badge-danger' : 'aax-badge-success')}>{staffBlockedStatus[teamLeader.id] ? 'Blocked' : 'Active'}</span>
-                                    ) : <span className="aax-badge aax-badge-warning">No Leader</span>}
+                                      <span className={'crm-badge ' + (staffBlockedStatus[teamLeader.id] ? 'crm-badge-danger' : 'crm-badge-success')}>{staffBlockedStatus[teamLeader.id] ? 'Blocked' : 'Active'}</span>
+                                    ) : <span className="crm-badge crm-badge-warning">No Leader</span>}
                                   </td>
                                   <td>
                                     <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }} onClick={e => e.stopPropagation()}>
                                       {teamLeader && (
-                                        <button className="aax-staff-action-btn btn-impersonate" onClick={() => navigate(`/admin/team-leader/${teamLeader.id}`)} title="View panel">View Panel</button>
+                                        <button className="crm-staff-action-btn btn-impersonate" onClick={() => navigate(`/admin/team-leader/${teamLeader.id}`)} title="View panel">View Panel</button>
                                       )}
-                                      <button className="aax-staff-action-btn btn-edit-name" onClick={() => setEditingTeam({ ...team, _ldr: teamLeader })} title="Edit team"> Edit</button>
-                                      <button className="aax-staff-action-btn" style={{ background: 'rgba(246,70,93,0.15)', color: '#F6465D', border: '1px solid #F6465D40' }} onClick={() => softDeleteTeam(team)} title="Move team to bin">🗑 Delete</button>
+                                      <button className="crm-staff-action-btn btn-edit-name" onClick={() => setEditingTeam({ ...team, _ldr: teamLeader })} title="Edit team"> Edit</button>
+                                      <button className="crm-staff-action-btn" style={{ background: 'rgba(246,70,93,0.15)', color: '#F6465D', border: '1px solid #F6465D40' }} onClick={() => softDeleteTeam(team)} title="Move team to bin">🗑 Delete</button>
                                     </div>
                                   </td>
                                 </tr>
@@ -3357,29 +3349,29 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                   </div>
                 ) : staffSubTab === 'Agents' ? (
                   <div style={{ padding: 24 }}>
-                    <div className="aax-super-admin-card">
+                    <div className="crm-super-admin-card">
                       <h2>[user] Agents Management</h2>
                       <p style={{ color: '#848E9C', fontSize: 13, marginBottom: 20 }}>Manage agents, assign to teams, and oversee agent performance.</p>
-                      <div className="aax-super-admin-card" style={{ marginBottom: 24, background: 'rgba(52,152,219,0.1)' }}>
+                      <div className="crm-super-admin-card" style={{ marginBottom: 24, background: 'rgba(52,152,219,0.1)' }}>
                         <h3>[user] Create Agent</h3>
-                        <div className="aax-super-admin-form-row">
-                          <div className="aax-super-admin-form-group">
+                        <div className="crm-super-admin-form-row">
+                          <div className="crm-super-admin-form-group">
                             <label>Select Team</label>
-                            <select className="aax-super-admin-select" value={agTeamId} onChange={(e) => setAgTeamId(e.target.value)}>
+                            <select className="crm-super-admin-select" value={agTeamId} onChange={(e) => setAgTeamId(e.target.value)}>
                               <option value="">Choose a team...</option>
                               {data.teams.map((team) => <option key={team.id} value={team.id}>{team.name} ({getOfficeName(team.officeId, data.offices)})</option>)}
                             </select>
                           </div>
-                          <div className="aax-super-admin-form-group">
+                          <div className="crm-super-admin-form-group">
                             <label>Agent Name</label>
-                            <input className="aax-super-admin-input" autoComplete="off" placeholder="Enter agent name..." value={agAgentName} onChange={(e) => setAgAgentName(e.target.value)} />
+                            <input className="crm-super-admin-input" autoComplete="off" placeholder="Enter agent name..." value={agAgentName} onChange={(e) => setAgAgentName(e.target.value)} />
                           </div>
-                          <div className="aax-super-admin-form-group">
+                          <div className="crm-super-admin-form-group">
                             <label>Agent Password</label>
-                            <input className="aax-super-admin-input" autoComplete="new-password" placeholder="Enter password..." value={agAgentPassword} onChange={(e) => setAgAgentPassword(e.target.value)} type="password" />
+                            <input className="crm-super-admin-input" autoComplete="new-password" placeholder="Enter password..." value={agAgentPassword} onChange={(e) => setAgAgentPassword(e.target.value)} type="password" />
                           </div>
-                          <div className="aax-super-admin-form-group">
-                            <button className="aax-super-admin-btn aax-super-admin-btn-small" disabled={!agTeamId || !agAgentName || !agAgentPassword} onClick={async () => {
+                          <div className="crm-super-admin-form-group">
+                            <button className="crm-super-admin-btn crm-super-admin-btn-small" disabled={!agTeamId || !agAgentName || !agAgentPassword} onClick={async () => {
                               const newAg = await createAgent(agTeamId, agAgentName, agAgentPassword);
                               if (newAg) setNewAgent(newAg);
                               setAgTeamId(''); setAgAgentName(''); setAgAgentPassword('');
@@ -3387,19 +3379,19 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                           </div>
                         </div>
                         {newAgent && (
-                          <div className="aax-credentials-output-container">
+                          <div className="crm-credentials-output-container">
                             <h4>New Agent Created</h4>
-                            <div className="aax-credential-item"><span>Name:</span><code>{newAgent.name}</code></div>
-                            <div className="aax-credential-item"><span>Login Link:</span><code>{newAgent.loginLink}</code><button className="aax-link-copy-btn" onClick={() => copyToClipboard(newAgent.loginLink)} title="Copy login link">[list] Copy Link</button></div>
-                            <div className="aax-credential-item"><span>Password:</span><code>{newAgent.password}</code><button className="aax-link-copy-btn" onClick={() => copyToClipboard(newAgent.password)} title="Copy password">[list] Copy Password</button></div>
+                            <div className="crm-credential-item"><span>Name:</span><code>{newAgent.name}</code></div>
+                            <div className="crm-credential-item"><span>Login Link:</span><code>{newAgent.loginLink}</code><button className="crm-link-copy-btn" onClick={() => copyToClipboard(newAgent.loginLink)} title="Copy login link">[list] Copy Link</button></div>
+                            <div className="crm-credential-item"><span>Password:</span><code>{newAgent.password}</code><button className="crm-link-copy-btn" onClick={() => copyToClipboard(newAgent.password)} title="Copy password">[list] Copy Password</button></div>
                           </div>
                         )}
                       </div>
                       <div style={{ marginBottom: 12 }}>
-                        <input className="aax-super-admin-input" style={{ width: '100%', maxWidth: 340 }} placeholder="[search]  Search agents, teams, or offices..." value={agentSearch} onChange={e => setAgentSearch(e.target.value)} autoComplete="off" />
+                        <input className="crm-super-admin-input" style={{ width: '100%', maxWidth: 340 }} placeholder="[search]  Search agents, teams, or offices..." value={agentSearch} onChange={e => setAgentSearch(e.target.value)} autoComplete="off" />
                       </div>
-                      <div className="aax-super-admin-table-wrapper">
-                        <table className="aax-super-admin-table">
+                      <div className="crm-super-admin-table-wrapper">
+                        <table className="crm-super-admin-table">
                           <thead>
                             <tr>
                               <th>ID</th>
@@ -3439,7 +3431,7 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                                   </td>
                                   <td>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                      <span className={`status-indicator ${agent.isLoggedIn ? 'aax-online' : 'aax-offline'}`}></span>
+                                      <span className={`status-indicator ${agent.isLoggedIn ? 'crm-online' : 'crm-offline'}`}></span>
                                       {agent.name}
                                     </div>
                                   </td>
@@ -3448,15 +3440,15 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                                   <td>{agentLeads.length}</td>
                                   <td>{agentDeposits}</td>
                                   <td>
-                                    <span className={`aax-badge ${staffBlockedStatus[agent.id] ? 'aax-badge-danger' : 'aax-badge-success'}`}>
+                                    <span className={`crm-badge ${staffBlockedStatus[agent.id] ? 'crm-badge-danger' : 'crm-badge-success'}`}>
                                       {staffBlockedStatus[agent.id] ? 'Blocked' : 'Active'}
                                     </span>
                                   </td>
                                   <td>
                                     <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                                      <button className="aax-staff-action-btn btn-impersonate" onClick={() => navigate(`/admin/agent/${agent.id}`)} title="View agent panel">View Panel</button>
-                                      <button className="aax-staff-action-btn btn-edit-name" onClick={() => setEditingAgent(agent)} title="Edit agent"> Edit</button>
-                                      <button className="aax-staff-action-btn" style={{ background: 'rgba(246,70,93,0.15)', color: '#F6465D', border: '1px solid #F6465D40' }} onClick={() => softDeleteAgent(agent)} title="Move agent to bin">🗑 Delete</button>
+                                      <button className="crm-staff-action-btn btn-impersonate" onClick={() => navigate(`/admin/agent/${agent.id}`)} title="View agent panel">View Panel</button>
+                                      <button className="crm-staff-action-btn btn-edit-name" onClick={() => setEditingAgent(agent)} title="Edit agent"> Edit</button>
+                                      <button className="crm-staff-action-btn" style={{ background: 'rgba(246,70,93,0.15)', color: '#F6465D', border: '1px solid #F6465D40' }} onClick={() => softDeleteAgent(agent)} title="Move agent to bin">🗑 Delete</button>
                                     </div>
                                   </td>
                                 </tr>
@@ -3469,7 +3461,7 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                   </div>
                 ) : (
                   <div style={{ padding: 24 }}>
-                    <div className="aax-super-admin-card" style={{ marginBottom: 20 }}>
+                    <div className="crm-super-admin-card" style={{ marginBottom: 20 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
                         <div>
                           <h2 style={{ margin: '0 0 4px 0' }}>[users] All Staff</h2>
@@ -3477,21 +3469,21 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                         </div>
                       </div>
                     </div>
-                    <div className="aax-super-admin-card">
+                    <div className="crm-super-admin-card">
                       <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
-                        <input className="aax-super-admin-input" style={{ flex: '1 1 260px', minWidth: 200 }} placeholder="[search]  Search by name, email, office, or team..." value={staffSearch} onChange={e => setStaffSearch(e.target.value)} autoComplete="off" />
-                        <select className="aax-super-admin-select" style={{ flex: '0 0 180px' }} value={staffRoleFilter} onChange={e => setStaffRoleFilter(e.target.value)}>
+                        <input className="crm-super-admin-input" style={{ flex: '1 1 260px', minWidth: 200 }} placeholder="[search]  Search by name, email, office, or team..." value={staffSearch} onChange={e => setStaffSearch(e.target.value)} autoComplete="off" />
+                        <select className="crm-super-admin-select" style={{ flex: '0 0 180px' }} value={staffRoleFilter} onChange={e => setStaffRoleFilter(e.target.value)}>
                           <option value="">All roles</option>
                           <option value={ROLE.OFFICE_MANAGER}>Office Managers</option>
                           <option value={ROLE.TEAM_LEADER}>Team Leaders</option>
                           <option value={ROLE.AGENT}>Agents</option>
                         </select>
                         {(staffSearch || staffRoleFilter) && (
-                          <button className="aax-super-admin-btn aax-super-admin-btn-small" style={{ background: '#444A55', color: '#EAECEF' }} onClick={() => { setStaffSearch(''); setStaffRoleFilter(''); }}>✕ Clear</button>
+                          <button className="crm-super-admin-btn crm-super-admin-btn-small" style={{ background: '#444A55', color: '#EAECEF' }} onClick={() => { setStaffSearch(''); setStaffRoleFilter(''); }}>✕ Clear</button>
                         )}
                       </div>
-                      <div className="aax-super-admin-table-wrapper">
-                        <table className="aax-super-admin-table">
+                      <div className="crm-super-admin-table-wrapper">
+                        <table className="crm-super-admin-table">
                           <thead>
                             <tr>
                               <th>ID</th>
@@ -3523,7 +3515,7 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                                   </td>
                                   <td>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                      <span className={`status-indicator ${u.isLoggedIn ? 'aax-online' : 'aax-offline'}`} />
+                                      <span className={`status-indicator ${u.isLoggedIn ? 'crm-online' : 'crm-offline'}`} />
                                       <span style={{ fontWeight: 600 }}>{u.name}</span>
                                     </div>
                                     {u.email && <div style={{ fontSize: 11, color: '#848E9C', marginTop: 2 }}>{u.email}</div>}
@@ -3537,18 +3529,18 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                                   <td style={{ color: team ? '#EAECEF' : '#848E9C', fontSize: 12 }}>{team ? team.name : '-'}</td>
                                   <td style={{ textAlign: 'center', color: '#848E9C' }}>{leads}</td>
                                   <td>
-                                    <span className={`aax-badge ${isBlocked ? 'aax-badge-danger' : 'aax-badge-success'}`}>
+                                    <span className={`crm-badge ${isBlocked ? 'crm-badge-danger' : 'crm-badge-success'}`}>
                                       {isBlocked ? 'Blocked' : 'Active'}
                                     </span>
                                   </td>
                                   <td>
                                     <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                                      <button className="aax-staff-action-btn" style={{ background: 'rgba(240,185,11,0.15)', color: '#F0B90B', border: '1px solid #F0B90B40' }} onClick={() => { const link = u.loginLink || makeLoginLink(u.id, u.role); copyToClipboard(link); }} title="Copy login link to clipboard">[refresh] Copy Link</button>
-                                      <button className={`aax-staff-action-btn ${isBlocked ? 'btn-unblock' : 'btn-block'}`} onClick={() => blockUnblockStaff(u.id)} title={isBlocked ? 'Unblock' : 'Block'}>{isBlocked ? '🔓 Unblock' : '🔒 Block'}</button>
-                                      <button className="aax-staff-action-btn btn-edit-name" onClick={() => { setEditingStaffId(u.id); setEditModalType('name'); setEditingValue(u.name); setStaffMemberName(u.name); setEditModalTitle(`Edit Name - ${u.name}`); setIsEditModalOpen(true); }} title="Edit name"> Rename</button>
-                                      <button className="aax-staff-action-btn btn-edit-password" onClick={() => { setEditingStaffId(u.id); setEditModalType('password'); setEditingValue(''); setStaffMemberName(u.name); setEditModalTitle(`Change Password - ${u.name}`); setIsEditModalOpen(true); }} title="Change password">[security] Password</button>
-                                      <button className="aax-staff-action-btn btn-impersonate" onClick={() => navigate(navPath)} title="View panel">View Panel</button>
-                                      <button className="aax-staff-action-btn" style={{ background: 'rgba(246,70,93,0.15)', color: '#F6465D', border: '1px solid #F6465D40' }} onClick={() => softDeleteAgent(u)} title="Delete staff member">🗑 Delete</button>
+                                      <button className="crm-staff-action-btn" style={{ background: 'rgba(240,185,11,0.15)', color: '#F0B90B', border: '1px solid #F0B90B40' }} onClick={() => { const link = u.loginLink || makeLoginLink(u.id, u.role); copyToClipboard(link); }} title="Copy login link to clipboard">[refresh] Copy Link</button>
+                                      <button className={`crm-staff-action-btn ${isBlocked ? 'btn-unblock' : 'btn-block'}`} onClick={() => blockUnblockStaff(u.id)} title={isBlocked ? 'Unblock' : 'Block'}>{isBlocked ? '🔓 Unblock' : '🔒 Block'}</button>
+                                      <button className="crm-staff-action-btn btn-edit-name" onClick={() => { setEditingStaffId(u.id); setEditModalType('name'); setEditingValue(u.name); setStaffMemberName(u.name); setEditModalTitle(`Edit Name - ${u.name}`); setIsEditModalOpen(true); }} title="Edit name"> Rename</button>
+                                      <button className="crm-staff-action-btn btn-edit-password" onClick={() => { setEditingStaffId(u.id); setEditModalType('password'); setEditingValue(''); setStaffMemberName(u.name); setEditModalTitle(`Change Password - ${u.name}`); setIsEditModalOpen(true); }} title="Change password">[security] Password</button>
+                                      <button className="crm-staff-action-btn btn-impersonate" onClick={() => navigate(navPath)} title="View panel">View Panel</button>
+                                      <button className="crm-staff-action-btn" style={{ background: 'rgba(246,70,93,0.15)', color: '#F6465D', border: '1px solid #F6465D40' }} onClick={() => softDeleteAgent(u)} title="Delete staff member">🗑 Delete</button>
                                     </div>
                                   </td>
                                 </tr>
@@ -3671,12 +3663,12 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
                   {isOffice && manager && (
-                    <button className="aax-super-admin-btn aax-super-admin-btn-small" onClick={() => { navigate(`/admin/office-manager/${manager.id}`); setInfoModal(null); }}>View Open Manager Panel</button>
+                    <button className="crm-super-admin-btn crm-super-admin-btn-small" onClick={() => { navigate(`/admin/office-manager/${manager.id}`); setInfoModal(null); }}>View Open Manager Panel</button>
                   )}
                   {!isOffice && leader && (
-                    <button className="aax-super-admin-btn aax-super-admin-btn-small" onClick={() => { navigate(`/admin/team-leader/${leader.id}`); setInfoModal(null); }}>View Open Team Leader Panel</button>
+                    <button className="crm-super-admin-btn crm-super-admin-btn-small" onClick={() => { navigate(`/admin/team-leader/${leader.id}`); setInfoModal(null); }}>View Open Team Leader Panel</button>
                   )}
-                  <button className="aax-super-admin-btn aax-super-admin-btn-small aax-super-admin-btn-secondary" onClick={() => setInfoModal(null)}>Close</button>
+                  <button className="crm-super-admin-btn crm-super-admin-btn-small crm-super-admin-btn-secondary" onClick={() => setInfoModal(null)}>Close</button>
                 </div>
               </div>
             </div>
@@ -3701,14 +3693,14 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                 >✕</button>
               </div>
               {editModalType === 'password' ? (
-                <div className="aax-pw-field">
-                  <div className="aax-pw-field-head">
-                    <label className="aax-pw-field-label" htmlFor="aax-pw-edit-input">
+                <div className="crm-pw-field">
+                  <div className="crm-pw-field-head">
+                    <label className="crm-pw-field-label" htmlFor="crm-pw-edit-input">
                       Account password
                     </label>
                     <button
                       type="button"
-                      className="aax-pw-generate"
+                      className="crm-pw-generate"
                       onClick={generateStrongPassword}
                       title="Generate a strong password"
                     >
@@ -3720,10 +3712,10 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                       Generate
                     </button>
                   </div>
-                  <div className="aax-pw-input-wrap">
+                  <div className="crm-pw-input-wrap">
                     <input
-                      id="aax-pw-edit-input"
-                      className="aax-pw-input"
+                      id="crm-pw-edit-input"
+                      className="crm-pw-input"
                       autoFocus
                       type={editPasswordShown ? 'text' : 'password'}
                       autoComplete="new-password"
@@ -3734,7 +3726,7 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                     />
                     <button
                       type="button"
-                      className="aax-pw-toggle"
+                      className="crm-pw-toggle"
                       onClick={() => setEditPasswordShown(v => !v)}
                       title={editPasswordShown ? 'Hide password' : 'Show password'}
                       aria-label={editPasswordShown ? 'Hide password' : 'Show password'}
@@ -3754,16 +3746,16 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                       )}
                     </button>
                   </div>
-                  <div className="aax-pw-meta">
-                    <div className="aax-pw-strength" data-level={passwordStrength(editingValue).level}>
+                  <div className="crm-pw-meta">
+                    <div className="crm-pw-strength" data-level={passwordStrength(editingValue).level}>
                       {[0, 1, 2, 3, 4].map((i) => (
                         <span
                           key={i}
-                          className={'aax-pw-bar' + (i < passwordStrength(editingValue).level ? ' is-on' : '')}
+                          className={'crm-pw-bar' + (i < passwordStrength(editingValue).level ? ' is-on' : '')}
                         />
                       ))}
                     </div>
-                    <span className="aax-pw-hint">
+                    <span className="crm-pw-hint">
                       {editingValue
                         ? `${passwordStrength(editingValue).label}  /  ${editingValue.length} chars`
                         : 'Use 12+ chars with letters, numbers, and a symbol'}
@@ -3776,7 +3768,7 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
                     New Name
                   </label>
                   <input
-                    className="aax-super-admin-input"
+                    className="crm-super-admin-input"
                     autoFocus
                     type="text"
                     autoComplete="off"
@@ -3790,11 +3782,11 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
               )}
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
                 <button
-                  className="aax-super-admin-btn aax-super-admin-btn-small aax-super-admin-btn-secondary"
+                  className="crm-super-admin-btn crm-super-admin-btn-small crm-super-admin-btn-secondary"
                   onClick={closeEditModal}
                 >Cancel</button>
                 <button
-                  className="aax-super-admin-btn aax-super-admin-btn-small"
+                  className="crm-super-admin-btn crm-super-admin-btn-small"
                   disabled={!editingValue.trim()}
                   onClick={saveStaffEdit}
                 >✓ Save</button>

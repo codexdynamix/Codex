@@ -42,10 +42,10 @@ export default function AgentAccess({ showNotification }) {
 
   const currentStaff = staff.find((user) => user.id === selected);
   return (
-    <div className="aax-super-admin-card agent-access-panel">
+    <div className="crm-super-admin-card agent-access-panel">
       <div className="agent-capability-heading">
         <div><h2>Agent Access</h2><p>Grant or revoke CRM tools for Agents, Team Leaders, and Office Managers.</p></div>
-        <select className="aax-super-admin-select" value={selected} onChange={(event) => setSelected(event.target.value)}>
+        <select className="crm-super-admin-select" value={selected} onChange={(event) => setSelected(event.target.value)}>
           <option value="">Select staff account...</option>
           {staff.map((user) => <option key={user.id} value={user.id}>{user.name} - {user.role}</option>)}
         </select>
@@ -58,7 +58,7 @@ export default function AgentAccess({ showNotification }) {
               <label key={key}><input type="checkbox" checked={!!capabilities[key]} onChange={(event) => { setCapabilities((previous) => ({ ...previous, [key]: event.target.checked })); setDirty(true); }} /><span>{label}</span></label>
             ))}
           </div>
-          <div className="agent-capability-actions"><span className="agent-cap-status">{status}</span><button type="button" className="aax-super-admin-btn primary" disabled={!dirty} onClick={save}>Save access</button></div>
+          <div className="agent-capability-actions"><span className="agent-cap-status">{status}</span><button type="button" className="crm-super-admin-btn primary" disabled={!dirty} onClick={save}>Save access</button></div>
         </>
       ) : <div className="agent-empty-state">Select a staff account to manage access.</div>}
     </div>
