@@ -8,7 +8,7 @@ import {
 } from '../shared';
 import { useConfirmDialog } from '../components/ConfirmModal/ConfirmModal';
 import Dashboard from '../components/Dashboard/Dashboard.jsx';
-import { SiteContentTab } from '../../../components/admin/SiteContentTab';
+import SiteSettingsTab from '../components/SiteSettings/SiteSettingsTab.jsx';
 import SiteCrmWorkspace from '../components/SiteCrmWorkspace.jsx';
 import AuditLog from '../components/AuditLog/AuditLog.jsx';
 import Notifications from '../components/Notifications/Notifications.jsx';
@@ -3556,9 +3556,7 @@ function SuperAdminPanel({ data, currentUser, setData, assignOfficeManager, crea
             ) : activeTab === 'Dashboard' ? (
               <Dashboard offices={data.offices} teams={data.teams} staffUsers={data.users} />
             ) : activeTab === 'Site Settings' ? (
-              <div className="codex-site-settings">
-                <SiteContentTab />
-              </div>
+              <SiteSettingsTab showNotification={showNotification} />
             ) : activeTab === 'Audit Log' ? (
               <AuditLog />
             ) : activeTab === 'Recycle Bin' ? (
