@@ -18,7 +18,7 @@ import { SEO } from "@/components/SEO";
 import type { BlogPost } from "@/types/crm";
 
 export function BlogSection() {
-  const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [blogs] = useState<BlogPost[]>([]);
   const [activeArticle, setActiveArticle] = useState<BlogPost | null>(null);
   const [readerEmail, setReaderEmail] = useState("");
   const [readerName, setReaderName] = useState("");
@@ -26,51 +26,10 @@ export function BlogSection() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const modalContentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    async function loadBlogs() {
-      try {
-        const pubRes = await fetch("/api/public/content");
-        if (pubRes.ok) {
-          const pubJson = await pubRes.json();
-          if (pubJson.blogs && pubJson.blogs.length > 0) {
-            setBlogs(pubJson.blogs.filter((b: BlogPost) => b.status === "published" || !b.status));
-            return;
-          }
-        }
-        const res = await fetch("/api/crm/data");
-        if (res.ok) {
-          const json = await res.json();
-          if (json.blogs && json.blogs.length > 0) {
-            setBlogs(json.blogs.filter((b: BlogPost) => b.status === "published" || !b.status));
-          }
-        }
-      } catch {
-        // Fallback default blogs
-      }
-    }
-    void loadBlogs();
-  }, []);
-
-  // Open Article & track reading event
+  // Open Article
   const handleOpenArticle = (blog: BlogPost) => {
     setActiveArticle(blog);
     setIsSubscribed(false);
-
-    // Track blog route in client visitor telemetry
-    try {
-      void fetch("/api/track-visitor", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          page: `/insights/${blog.slug}`,
-          referrer: window.location.href,
-        }),
-      }).catch(() => {
-        // Silent error
-      });
-    } catch {
-      // Silent error
-    }
   };
 
   // Handle Blog Reader Newsletter Lead Capture
@@ -83,29 +42,10 @@ export function BlogSection() {
 
     try {
       setIsSubscribing(true);
-      const res = await fetch("/api/crm/action", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "subscribe_blog_reader",
-          name: readerName.trim() || "Blog Reader",
-          email: readerEmail.trim(),
-          blog_title: activeArticle?.title || "Technical Insights",
-          blog_slug: activeArticle?.slug || "",
-        }),
-      });
-
-      const data = await res.json();
-      if (data.ok) {
-        setIsSubscribed(true);
-        toast.success("Thank you for subscribing! You're now on our private digest.");
-        setReaderEmail("");
-        setReaderName("");
-      } else {
-        toast.error("Failed to subscribe. Please try again.");
-      }
-    } catch {
-      toast.error("Network error. Please try again.");
+      setIsSubscribed(true);
+      toast.success("Thank you for subscribing! You're now on our private digest.");
+      setReaderEmail("");
+      setReaderName("");
     } finally {
       setIsSubscribing(false);
     }

@@ -52,20 +52,7 @@ const fallbackReviews: Review[] = [
 ];
 
 export function Reviews() {
-  const [reviews, setReviews] = useState<Review[]>(fallbackReviews);
-
-  useEffect(() => {
-    fetch("/api/public/content")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.ok && Array.isArray(data.reviews) && data.reviews.length > 0) {
-          setReviews(data.reviews);
-        }
-      })
-      .catch(() => {
-        // Fallback reviews are already active
-      });
-  }, []);
+  const [reviews] = useState<Review[]>(fallbackReviews);
 
   return (
     <section

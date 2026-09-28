@@ -45,37 +45,18 @@ export function TidioWidget() {
     setThreadId(storedId);
   }, []);
 
-  // Poll messages for active visitor thread
+  // Load visitor chat messages from localStorage
   useEffect(() => {
-    if (!threadId || isExternalTidio || !isEnabled) return;
-
-    const fetchMessages = async () => {
-      try {
-        const res = await fetch(`/api/crm/chat/messages?threadId=${encodeURIComponent(threadId)}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.ok && Array.isArray(data.messages)) {
-            setMessages((prev) => {
-              if (data.messages.length > prev.length) {
-                // If new messages from operator arrive while closed, show unread badge
-                const lastMsg = data.messages[data.messages.length - 1];
-                if (!isOpen && (lastMsg.sender === "operator" || lastMsg.sender === "bot")) {
-                  setHasUnread(true);
-                }
-              }
-              return data.messages;
-            });
-          }
-        }
-      } catch {
-        // Silent polling catch
+    if (!threadId || isExternalTidio || !isEnabled || typeof window === "undefined") return;
+    try {
+      const saved = localStorage.getItem(`cdx_chat_msgs_${threadId}`);
+      if (saved) {
+        setMessages(JSON.parse(saved));
       }
-    };
-
-    void fetchMessages();
-    const interval = setInterval(fetchMessages, 3500);
-    return () => clearInterval(interval);
-  }, [threadId, isOpen, isExternalTidio, isEnabled]);
+    } catch {
+      // ignore
+    }
+  }, [threadId, isExternalTidio, isEnabled]);
 
   // Scroll to bottom when messages update
   useEffect(() => {
@@ -427,30 +408,25 @@ export function TidioWidget() {
     setMessages((prev) => [...prev, tempMsg]);
 
     try {
-      const res = await fetch("/api/crm/chat/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          threadId,
-          sender: "visitor",
-          senderName: "Website Visitor",
-          message: content,
-          autoReply: messages.length === 0, // auto reply on first message
-          visitorInfo: {
-            pageUrl: typeof window !== "undefined" ? window.location.pathname : "/",
-            device: typeof navigator !== "undefined" ? (navigator.userAgent.includes("Mobile") ? "Mobile" : "Desktop") : "Web",
-          },
-        }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.ok && data.message) {
-          setMessages((prev) => prev.map((m) => (m.id === tempMsg.id ? data.message : m)));
-        }
+      const isFirst = messages.length === 0;
+      const nextList: ChatMessage[] = [...messages, tempMsg];
+      if (isFirst) {
+        nextList.push({
+          id: Date.now() + 1,
+          thread_id: threadId,
+          sender: "operator",
+          sender_name: tidio?.agentName || "Codex Support",
+          message: "Thanks for reaching out! A member of our team will follow up shortly.",
+          created_at: new Date().toISOString(),
+          is_read: 1,
+        });
+      }
+      setMessages(nextList);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(`cdx_chat_msgs_${threadId}`, JSON.stringify(nextList));
       }
     } catch {
-      // Revert optimistic or keep error indicator
+      // ignore
     } finally {
       setIsSending(false);
     }

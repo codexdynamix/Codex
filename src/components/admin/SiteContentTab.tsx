@@ -216,33 +216,31 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
   const fetchCurrentConfig = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/public/site-config");
-      if (res.ok) {
-        const data = await res.json();
-        const cfg = data.config || data || {};
-        setRawConfig(cfg);
+      const raw = typeof window !== "undefined" ? localStorage.getItem("codex_site_config") : null;
+      const cfg = raw ? JSON.parse(raw) : {};
+      setRawConfig(cfg);
 
-        setForm({
-          siteName: cfg.siteName || "Codex Dynamics",
-          copyrightYear: cfg.copyrightYear || "2026",
-          formSubmitEmail: cfg.formSubmitEmail || "codexdynamix@gmail.com",
-          heroBadge: cfg.hero?.badge || "Codex Dynamics",
-          heroTitle: cfg.hero?.title || "Precision on every screen.",
-          heroSubtitle:
-            cfg.hero?.subtitle ||
-            "Websites, web apps, and social campaigns — composed with the care of a product launch.",
-        });
+      setForm({
+        siteName: cfg.siteName || "Codex Dynamics",
+        copyrightYear: cfg.copyrightYear || "2026",
+        formSubmitEmail: cfg.formSubmitEmail || "codexdynamix@gmail.com",
+        heroBadge: cfg.hero?.badge || "Codex Dynamics",
+        heroTitle: cfg.hero?.title || "Precision on every screen.",
+        heroSubtitle:
+          cfg.hero?.subtitle ||
+          "Websites, web apps, and social campaigns — composed with the care of a product launch.",
+      });
 
-        if (Array.isArray(cfg.socialContacts) && cfg.socialContacts.length > 0) {
-          setContacts(cfg.socialContacts);
-        } else {
-          // Defaults if empty
-          setContacts([
-            {
-              id: "ph-1",
-              type: "phone",
-              label: "Direct Call / Desk",
-              value: "+380 63 640 6783",
+      if (Array.isArray(cfg.socialContacts) && cfg.socialContacts.length > 0) {
+        setContacts(cfg.socialContacts);
+      } else {
+        // Defaults if empty
+        setContacts([
+          {
+            id: "ph-1",
+            type: "phone",
+            label: "Direct Call / Desk",
+            value: "+380 63 640 6783",
               href: "tel:+380636406783",
               isPrimary: true,
             },
@@ -377,7 +375,6 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
             },
           });
         }
-      }
     } catch {
       // Keep defaults
     } finally {
@@ -622,24 +619,13 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
         addresses,
       };
 
-      const res = await fetch("/api/crm/action", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "save_site_content",
-          config: payloadConfig,
-        }),
-      });
-
-      const data = await res.json();
-      if (data.ok) {
-        toast.success("All contacts, phone lines, whatsapps, addresses & copy saved to SQLite!");
-        setContacts(updatedContacts);
-      } else {
-        toast.error(data.error || "Failed to save site content.");
+      if (typeof window !== "undefined") {
+        localStorage.setItem("codex_site_config", JSON.stringify(payloadConfig));
       }
+      toast.success("All contacts, phone lines, whatsapps, addresses & copy saved!");
+      setContacts(updatedContacts);
     } catch {
-      toast.error("Network error while saving site content.");
+      toast.error("Error while saving site content.");
     } finally {
       setSaving(false);
     }
@@ -649,17 +635,12 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
     if (!window.confirm("Reset all site texts, phone numbers, and addresses back to default?")) return;
     try {
       setResetting(true);
-      const res = await fetch("/api/crm/action", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "reset_site_content" }),
-      });
-      const data = await res.json();
-      if (data.ok) {
-        toast.success("Site content reset to factory defaults.");
-        setHeaderSocials(DEFAULT_HEADER_SOCIALS);
-        fetchCurrentConfig();
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("codex_site_config");
       }
+      toast.success("Site content reset to factory defaults.");
+      setHeaderSocials(DEFAULT_HEADER_SOCIALS);
+      fetchCurrentConfig();
     } catch {
       toast.error("Failed to reset site content.");
     } finally {

@@ -33,78 +33,13 @@ const DEFAULT_CATEGORIES = [
 ];
 
 export function ProjectShowcaseGrid() {
-  const [projects, setProjects] = useState<ShowcaseProject[]>(RECENT_WEB_PROJECTS);
+  const [projects] = useState<ShowcaseProject[]>(RECENT_WEB_PROJECTS);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedProject, setSelectedProject] = useState<ShowcaseProject | null>(null);
   const [layoutMode, setLayoutMode] = useState<"bento" | "grid">("bento");
 
   const { openContactModal } = useContactModal();
-
-  // Load custom projects from database if available
-  useEffect(() => {
-    fetch("/api/public/content")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.ok && Array.isArray(data.projects) && data.projects.length > 0) {
-          const fallbackPool = [
-            "/work/nordic-goods.jpg",
-            "/work/krypton-horology.jpg",
-            "/work/omnicall-sales.jpg",
-            "/work/aura-growth.jpg",
-            "/work/kinetic-fitness.jpg",
-            "/work/flow-retain-email.jpg",
-            "/work/northline-logistics.jpg",
-            "/work/apex-sales.jpg",
-            "/work/developer-portal.jpg",
-            "/work/brand-identity.jpg",
-          ];
-          const dbProjects: ShowcaseProject[] = data.projects.map((p: CrmProject, idx: number) => ({
-            id: `db-${p.id}`,
-            title: p.title,
-            client: p.site_name || p.title,
-            tag: p.category || "Web Development",
-            category: p.category || "Websites & Web Apps",
-            shortDescription:
-              p.description ||
-              "High-performance bespoke web development solution crafted for conversion, speed, and responsive elegance.",
-            detailedDescription:
-              p.description ||
-              "Full-scale production digital solution architected with modern web technologies, zero-latency caching, and precision design systems.",
-            challenge: "Client required a modern web presence engineered to outperform competitors on mobile speed and conversion.",
-            solution: "Delivered a lightweight, edge-optimized React application with complete SEO optimization and high-fidelity typography.",
-            impact: "Sub-second load times and measurable engagement gains across international visitor traffic.",
-            techStack: ["React", "TypeScript", "Tailwind CSS", "Edge CDN"],
-            metrics: [
-              { label: "Status", value: "Live" },
-              { label: "Performance", value: "99/100" },
-              { label: "Architecture", value: "Custom" },
-              { label: "Delivery", value: "Complete" },
-            ],
-            features: [
-              "Responsive edge-rendered layouts",
-              "Sub-second First Contentful Paint",
-              "Full accessibility & SEO compliance",
-            ],
-            image: p.image_url || fallbackPool[idx % fallbackPool.length],
-            site_url: p.site_url,
-            completionDate: p.created_at ? new Date(p.created_at).getFullYear().toString() : "Recent",
-            lighthouse: {
-              performance: 98,
-              accessibility: 100,
-              bestPractices: 98,
-              seo: 100,
-            },
-          }));
-
-          // Merge: db projects followed by recent default projects
-          setProjects([...dbProjects, ...RECENT_WEB_PROJECTS]);
-        }
-      })
-      .catch(() => {
-        // Fallback to RECENT_WEB_PROJECTS
-      });
-  }, []);
 
   const categories = useMemo(() => {
     const set = new Set<string>();

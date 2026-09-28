@@ -116,33 +116,6 @@ async function fetchClientGeo(): Promise<{ ip?: string; country: string; country
     }
   // eslint-disable-next-line no-empty
   } catch {}
-
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 2000);
-    const res = await fetch("https://ipapi.co/json/", { signal: controller.signal });
-    clearTimeout(timeout);
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.country_name) {
-        const geo = {
-          ip: data.ip || "",
-          country: data.country_name,
-          countryCode: data.country_code || "",
-          flag: getFlagEmoji(data.country_code),
-          city: data.city || "",
-          region: data.region || "",
-        };
-        try {
-          sessionStorage.setItem("__cdx_geo_cache", JSON.stringify(geo));
-        // eslint-disable-next-line no-empty
-        } catch {}
-        return geo;
-      }
-    }
-  // eslint-disable-next-line no-empty
-  } catch {}
-
   return null;
 }
 
@@ -307,12 +280,10 @@ export async function trackCurrentVisitor(page = "/"): Promise<void> {
       phone,
     };
 
-    // Send to SQLite API endpoint
-    await fetch("/api/track-visitor", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    }).catch(() => {});
+    // Store visitor session locally
+    try {
+      sessionStorage.setItem("__cdx_last_visitor_payload", JSON.stringify(payload));
+    } catch {}
 
     // Set up heartbeat listener once
     if (!isTrackerInitialized && typeof window !== "undefined") {
@@ -332,15 +303,6 @@ export async function trackCurrentVisitor(page = "/"): Promise<void> {
         heartbeatInterval = setInterval(() => {
           const currentDuration = Math.max(1, Math.floor((Date.now() - sessionStartTime) / 1000));
           setCookie("__cdx_duration_secs", String(currentDuration), 1);
-          void fetch("/api/track-visitor", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              session_id: sessionId,
-              duration_seconds: currentDuration,
-              page: window.location.pathname + window.location.hash,
-            }),
-          }).catch(() => {});
         }, 15000);
       }
     }

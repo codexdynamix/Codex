@@ -21,7 +21,7 @@ function ClientLoginPage() {
         .then(async (lead) => {
           let stashedLead: typeof lead = null;
           try {
-            const raw = sessionStorage.getItem("codex_impersonate_lead") || sessionStorage.getItem("chainiq_impersonate_lead");
+            const raw = sessionStorage.getItem("codex_impersonate_lead");
             stashedLead = raw ? JSON.parse(raw) : null;
           } catch (_) {
             stashedLead = null;
@@ -34,7 +34,6 @@ function ClientLoginPage() {
           const user = await authLogin(accountLead.email, accountPassword);
           if (!user) throw new Error("Could not enter the lead account.");
           sessionStorage.removeItem("codex_impersonate_lead");
-          sessionStorage.removeItem("chainiq_impersonate_lead");
           window.location.assign("/client");
         })
         .catch((err) => {
