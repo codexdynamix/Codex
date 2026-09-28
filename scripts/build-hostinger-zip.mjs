@@ -3,15 +3,7 @@ import { join } from "node:path";
 import JSZip from "jszip";
 
 async function main() {
-  console.log("==> Step 1: Checkpointing SQLite database...");
-  try {
-    const crmDb = await import("../server/chainiq-site-db.mjs");
-    const db = crmDb.getDb();
-    db.exec("PRAGMA wal_checkpoint(TRUNCATE);");
-    console.log("    ✓ Database WAL checkpointed successfully.");
-  } catch (err) {
-    console.warn("    ! Notice on WAL checkpoint:", err.message);
-  }
+  console.log("==> Step 1: Preparing build environment...");
 
   console.log("==> Step 2: Fetching pre-rendered index.html from production preview...");
   let html = "";

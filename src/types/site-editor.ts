@@ -315,6 +315,7 @@ export interface TidioSettings {
   hideOnMobile: boolean;
   position: "bottom-right" | "bottom-left";
   welcomeMessage?: string;
+  agentName?: string;
 }
 
 export const DEFAULT_SITE_CONFIG: SiteConfig = {

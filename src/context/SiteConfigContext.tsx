@@ -96,11 +96,11 @@ export function SiteConfigProvider({ children }: { children: React.ReactNode }) 
   const fetchConfig = useCallback(async () => {
     try {
       setIsLoading(true);
-      const res = await fetch("/api/public/site-config");
-      if (res.ok) {
-        const data = await res.json();
-        if (data.ok && data.config) {
-          setConfig((prev) => safeMergeConfig(prev || DEFAULT_SITE_CONFIG, data.config));
+      if (typeof window !== "undefined") {
+        const raw = localStorage.getItem("codex_site_config");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          setConfig((prev) => safeMergeConfig(prev || DEFAULT_SITE_CONFIG, parsed));
         }
       }
     } catch {
