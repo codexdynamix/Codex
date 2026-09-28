@@ -20,6 +20,7 @@ import {
   Mail,
   ChevronDown,
   ChevronsUpDown,
+  X,
 } from "lucide-react";
 import {
   LinkedInLogo,
@@ -138,6 +139,64 @@ const SOCIAL_PLATFORMS = [
 ];
 
 type FilterCategory = "all" | "phone" | "whatsapp" | "telegram" | "viber" | "address" | "email" | "header_socials" | "brand";
+
+function ContactExtraValuesEditor({
+  contact,
+  onAddExtra,
+  onUpdateExtra,
+  onRemoveExtra,
+  placeholder,
+}: {
+  contact: SocialContact;
+  onAddExtra: (id: string) => void;
+  onUpdateExtra: (id: string, index: number, value: string) => void;
+  onRemoveExtra: (id: string, index: number) => void;
+  placeholder?: string;
+}) {
+  const extras = Array.isArray(contact.extraValues) ? contact.extraValues : [];
+
+  return (
+    <div className="pt-2 border-t border-hairline/60 space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-subtle">
+          Multiple Endpoints ({extras.length})
+        </span>
+        <button
+          type="button"
+          onClick={() => onAddExtra(contact.id)}
+          className="text-[10px] font-semibold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 inline-flex items-center gap-1 cursor-pointer"
+        >
+          <Plus className="size-3" />
+          <span>+ Add Value</span>
+        </button>
+      </div>
+
+      {extras.length > 0 && (
+        <div className="space-y-1.5">
+          {extras.map((val, idx) => (
+            <div key={idx} className="flex items-center gap-1.5">
+              <input
+                type="text"
+                value={val}
+                placeholder={placeholder || `Additional endpoint #${idx + 2}`}
+                onChange={(e) => onUpdateExtra(contact.id, idx, e.target.value)}
+                className="flex-1 bg-white dark:bg-black/20 border border-black/8 focus:border-emerald-500 rounded-md px-2.5 py-1 text-xs text-label font-mono outline-none transition"
+              />
+              <button
+                type="button"
+                onClick={() => onRemoveExtra(contact.id, idx)}
+                className="size-6 rounded text-muted-foreground hover:text-red-500 hover:bg-red-500/10 flex items-center justify-center transition cursor-pointer"
+                title="Remove this extra value"
+              >
+                <X className="size-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface SiteContentTabProps {
   onSwitchTab?: (tab: any) => void;
@@ -468,6 +527,50 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
       return [...remaining];
     });
     toast.info("Contact removed.");
+  };
+
+  const handleAddExtraValue = (id: string) => {
+    setContacts((prev) =>
+      prev.map((c) => {
+        if (c.id !== id) return c;
+        const currentExtras = Array.isArray(c.extraValues) ? [...c.extraValues] : [];
+        return {
+          ...c,
+          extraValues: [...currentExtras, ""],
+        };
+      })
+    );
+    setHasUnsavedChanges(true);
+  };
+
+  const handleUpdateExtraValue = (id: string, index: number, value: string) => {
+    setContacts((prev) =>
+      prev.map((c) => {
+        if (c.id !== id) return c;
+        const currentExtras = Array.isArray(c.extraValues) ? [...c.extraValues] : [];
+        currentExtras[index] = value;
+        return {
+          ...c,
+          extraValues: currentExtras,
+        };
+      })
+    );
+    setHasUnsavedChanges(true);
+  };
+
+  const handleRemoveExtraValue = (id: string, index: number) => {
+    setContacts((prev) =>
+      prev.map((c) => {
+        if (c.id !== id) return c;
+        const currentExtras = Array.isArray(c.extraValues) ? [...c.extraValues] : [];
+        currentExtras.splice(index, 1);
+        return {
+          ...c,
+          extraValues: currentExtras,
+        };
+      })
+    );
+    setHasUnsavedChanges(true);
   };
 
   // Multi-address helpers
@@ -986,7 +1089,7 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
 
                         <div>
                           <label className="block text-[10px] uppercase font-semibold text-subtle mb-1">
-                            Phone Number
+                            Primary Phone Number
                           </label>
                           <input
                             type="text"
@@ -996,6 +1099,14 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
                             className="w-full bg-white dark:bg-black/20 border border-black/8 focus:border-emerald-500 rounded-lg px-3 py-1.5 text-xs text-label font-mono outline-none transition"
                           />
                         </div>
+
+                        <ContactExtraValuesEditor
+                          contact={p}
+                          onAddExtra={handleAddExtraValue}
+                          onUpdateExtra={handleUpdateExtraValue}
+                          onRemoveExtra={handleRemoveExtraValue}
+                          placeholder="+380 44 123 4567"
+                        />
                       </div>
 
                       <div className="pt-2 border-t border-hairline flex items-center justify-between text-[11px]">
@@ -1079,8 +1190,29 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
                       )}
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <WhatsAppLogo className="size-5 shrink-0" />
+                          <select
+                            value={w.type}
+                            onChange={(e) => {
+                              const newType = e.target.value as SocialContact["type"];
+                              handleUpdateContact(w.id, {
+                                type: newType,
+                                href: computeHref(newType, w.value),
+                              });
+                              setHasUnsavedChanges(true);
+                              toast.info(`Changed contact type to ${newType}.`);
+                            }}
+                            className="bg-fill/60 hover:bg-fill border border-black/10 rounded-md px-1.5 py-0.5 text-[10px] font-medium text-label outline-none cursor-pointer"
+                            title="Change channel type"
+                          >
+                            <option value="phone">📞 Phone</option>
+                            <option value="whatsapp">💬 WhatsApp</option>
+                            <option value="telegram">✈️ Telegram</option>
+                            <option value="viber">🟣 Viber</option>
+                            <option value="email">✉️ Email</option>
+                          </select>
+
                           <button
                             type="button"
                             onClick={() => handleSetPrimaryContact(w.id, "whatsapp")}
@@ -1132,6 +1264,14 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
                             className="w-full bg-white dark:bg-black/20 border border-black/8 focus:border-emerald-500 rounded-lg px-3 py-1.5 text-xs text-label font-mono outline-none transition"
                           />
                         </div>
+
+                        <ContactExtraValuesEditor
+                          contact={w}
+                          onAddExtra={handleAddExtraValue}
+                          onUpdateExtra={handleUpdateExtraValue}
+                          onRemoveExtra={handleRemoveExtraValue}
+                          placeholder="+380 63 000 0000"
+                        />
                       </div>
 
                       <div className="pt-2 border-t border-hairline flex items-center justify-between text-[11px]">
@@ -1215,8 +1355,29 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
                       )}
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <TelegramLogo className="size-5 shrink-0" />
+                          <select
+                            value={t.type}
+                            onChange={(e) => {
+                              const newType = e.target.value as SocialContact["type"];
+                              handleUpdateContact(t.id, {
+                                type: newType,
+                                href: computeHref(newType, t.value),
+                              });
+                              setHasUnsavedChanges(true);
+                              toast.info(`Changed contact type to ${newType}.`);
+                            }}
+                            className="bg-fill/60 hover:bg-fill border border-black/10 rounded-md px-1.5 py-0.5 text-[10px] font-medium text-label outline-none cursor-pointer"
+                            title="Change channel type"
+                          >
+                            <option value="phone">📞 Phone</option>
+                            <option value="whatsapp">💬 WhatsApp</option>
+                            <option value="telegram">✈️ Telegram</option>
+                            <option value="viber">🟣 Viber</option>
+                            <option value="email">✉️ Email</option>
+                          </select>
+
                           <button
                             type="button"
                             onClick={() => handleSetPrimaryContact(t.id, "telegram")}
@@ -1268,6 +1429,14 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
                             className="w-full bg-white dark:bg-black/20 border border-black/8 focus:border-sky-500 rounded-lg px-3 py-1.5 text-xs text-label font-mono outline-none transition"
                           />
                         </div>
+
+                        <ContactExtraValuesEditor
+                          contact={t}
+                          onAddExtra={handleAddExtraValue}
+                          onUpdateExtra={handleUpdateExtraValue}
+                          onRemoveExtra={handleRemoveExtraValue}
+                          placeholder="@extra_handle or https://t.me/..."
+                        />
                       </div>
 
                       <div className="pt-2 border-t border-hairline flex items-center justify-between text-[11px]">
@@ -1351,8 +1520,29 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
                       )}
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <ViberLogo className="size-5 shrink-0" />
+                          <select
+                            value={v.type}
+                            onChange={(e) => {
+                              const newType = e.target.value as SocialContact["type"];
+                              handleUpdateContact(v.id, {
+                                type: newType,
+                                href: computeHref(newType, v.value),
+                              });
+                              setHasUnsavedChanges(true);
+                              toast.info(`Changed contact type to ${newType}.`);
+                            }}
+                            className="bg-fill/60 hover:bg-fill border border-black/10 rounded-md px-1.5 py-0.5 text-[10px] font-medium text-label outline-none cursor-pointer"
+                            title="Change channel type"
+                          >
+                            <option value="phone">📞 Phone</option>
+                            <option value="whatsapp">💬 WhatsApp</option>
+                            <option value="telegram">✈️ Telegram</option>
+                            <option value="viber">🟣 Viber</option>
+                            <option value="email">✉️ Email</option>
+                          </select>
+
                           <button
                             type="button"
                             onClick={() => handleSetPrimaryContact(v.id, "viber")}
@@ -1404,6 +1594,14 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
                             className="w-full bg-white dark:bg-black/20 border border-black/8 focus:border-purple-500 rounded-lg px-3 py-1.5 text-xs text-label font-mono outline-none transition"
                           />
                         </div>
+
+                        <ContactExtraValuesEditor
+                          contact={v}
+                          onAddExtra={handleAddExtraValue}
+                          onUpdateExtra={handleUpdateExtraValue}
+                          onRemoveExtra={handleRemoveExtraValue}
+                          placeholder="+380 63 000 0000"
+                        />
                       </div>
 
                       <div className="pt-2 border-t border-hairline flex items-center justify-between text-[11px]">
@@ -1658,8 +1856,29 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
                       )}
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <GmailLogo className="size-5 shrink-0" />
+                          <select
+                            value={em.type}
+                            onChange={(e) => {
+                              const newType = e.target.value as SocialContact["type"];
+                              handleUpdateContact(em.id, {
+                                type: newType,
+                                href: computeHref(newType, em.value),
+                              });
+                              setHasUnsavedChanges(true);
+                              toast.info(`Changed contact type to ${newType}.`);
+                            }}
+                            className="bg-fill/60 hover:bg-fill border border-black/10 rounded-md px-1.5 py-0.5 text-[10px] font-medium text-label outline-none cursor-pointer"
+                            title="Change channel type"
+                          >
+                            <option value="phone">📞 Phone</option>
+                            <option value="whatsapp">💬 WhatsApp</option>
+                            <option value="telegram">✈️ Telegram</option>
+                            <option value="viber">🟣 Viber</option>
+                            <option value="email">✉️ Email</option>
+                          </select>
+
                           <button
                             type="button"
                             onClick={() => handleSetPrimaryContact(em.id, "email")}
@@ -1711,6 +1930,14 @@ export function SiteContentTab({ onSwitchTab }: SiteContentTabProps = {}) {
                             className="w-full bg-white dark:bg-black/20 border border-black/8 focus:border-blue rounded-lg px-3 py-1.5 text-xs text-label font-mono outline-none transition"
                           />
                         </div>
+
+                        <ContactExtraValuesEditor
+                          contact={em}
+                          onAddExtra={handleAddExtraValue}
+                          onUpdateExtra={handleUpdateExtraValue}
+                          onRemoveExtra={handleRemoveExtraValue}
+                          placeholder="alternate-inbox@codexdynamics.com"
+                        />
                       </div>
 
                       <div className="pt-2 border-t border-hairline flex items-center justify-between text-[11px]">
